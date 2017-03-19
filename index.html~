@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="LEVINE NAIDOO" >
+
+    <title>Creative - Start Bootstrap Theme</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <!-- Plugin CSS -->
+    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link href="css/creative.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top">
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">LXN & Associates Pty Ltd</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="#more">Find out more</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About Us</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+                <h2 id="homeHeading">Are you on the path to digital success?</h2>   
+                <hr>
+                <h1>STRATEGISE.     ORGANISE.     TRANSFORM </h1>
+                <hr>
+                <a href="#more" class="btn btn-primary btn-xl page-scroll">Find Out More</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-primary" id="more">
+        <div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h2>Who we are</h2>
+      <p class="text-faded">We are an Australian Company established to bring subject matter expertise and intellectual property to help improve the success rate of digital transformation programs. Our staff have global expertise and a solid track record for successful delivery of high profile programmes under the banner of top global consulting firms!</p>
+    </div>
+    <div class="col-sm-4">
+      <h2>Our Vision</h2>
+       <p class="text-faded">We believe that digital transformation is most importantly about business transformation, focusing on changing an organisation and impacting its external constituents. It has become the ultimate change management challenge because it tackles strategic positioning, all aspects of a business’ operating model and its extended supply chain.</p>
+    </div>
+    <div class="col-sm-4">
+      <h2>Our Services</h2>
+		<p class="text-faded">- Digital Economy/Transformation</p>
+		<p class="text-faded">- GRC Programmes</p>
+		<p class="text-faded"> - Regulatory information supply chain</p>
+		<p class="text-faded">- B2B eCommerce/API Economy strategies</p>
+		<p class="text-faded">- Market engagement strategy</p>
+		<p class="text-faded">- High profile programme health-check</p>    
+    </div>
+     <div class="col-lg-8 col-lg-offset-2 text-center">  
+     <a href="#about" class="page-scroll btn btn-default btn-xl sr-button">About Us</a>
+     </div>
+  </div>
+</div>
+    </section>
+    
+   <!- <i class="fa fa-4x fa-paper-plane text-primary sr-icons"></i>
+
+<section id="about">
+        <div class="container">
+            <div class="row">
+            <span style="font-size: smaller;"></span>
+                    <h1 class="text-primary" >About Us</h1>         
+						<hr align="left">
+						 <em>
+                    <p>LXN and Associates Pty Ltd is an Australian Company established to bring subject matter expertise and intellectual property to help improve the success rate of digital transformation programs. Our staff have had global expertise and a solid track record for successful delivery of high profile programmes under the banner of top global consulting firms.
+				       </p>
+                   <p>				
+									Founded in 2016 by a thought leader on accelerated delivery of high impact and innovative programmes our brand independence means we are wholly committed to our clients’ outcomes yet lean extensively on our global network.
+                    </p>
+                    </em>
+                </div>
+		    <div class="row">
+					<span style="font-size: smaller;"></span>             
+                <h1 class="text-primary">Our Vision</h1>
+						<hr align="left">
+						<em>
+                    <p>
+                    We believe that digital transformation is most importantly about business transformation, focusing on changing an organisation and impacting its external constituents. It has become the ultimate change management challenge because it tackles strategic positioning, all aspects of a business’ operating model and its extended supply chain. Technology-enabled change can improve governance, provide efficiency gains, generate growth and improve service delivery. People are the most important part in the digital transformation journey.
+ 						</p> 
+						 <p >                
+                    Our conscious approach in bringing about positive change for our clients’ stakeholders and constituents is backed by a holistic view to digital transformation, business enablement and continuous value alignment.
+                    </p>
+                    </em>
+             </div>
+               <p> </p>  
+             <div class="row">
+                <h3 class="text-info">Digital Transformation</h3>
+                <em>
+                    <p>
+   							Digital transformation as we know it today is more than turning paper into digital formats or improving channels of business integration and interaction. Our staff have had first-hand experience with how digital transformation has evolved into a more holistic approach in shaping many aspects of the enterprise, such as
+ 					</p> 		
+    <ul class="list-unstyled">
+        <ul>
+          <li>Uplifting customer/constituent experience (seamless and wherever, whenever service delivery)</li>
+          <li>Business model innovation (operating model transformation including competencies, activities, processes & automation, organizational structure and infrastructure)</li>
+          <li>Digital marketing (more effective use of digital channels to market/raise awareness and capture mindshare amidst significant media and news feeds)</li> 
+          <li>Governance (improved decision support and risk mitigation through advanced use of information management and analytics)</li>
+       </ul>
+    </ul>
+              </em>
+             </div>
+               <p> </p>  
+                        <div class="row">
+                <h3 class="text-info">Business Enablement</h3>
+                <em>
+                    <p>
+A key success factor on every engagement is business enablement. Our preferred consulting approach is to work with client staff so that any strategy, plan or deliverable is created in conjunction with client staff so that it is well understood and accepted. The approach yields a more positive result, reduces the risk of a deliverable not meeting client expectations and has a greater chance of being executed by the client, resulting in a win-win for all.
+ 					</p> 
+ 					</em>		
+             </div>
+               <p> </p>  
+                        <div class="row">
+                <h3 class="text-info">Continuous Value Alignment</h3>
+                <em>
+                    <p>
+We have a seasoned approach to continuous value alignment for assessing organisational and program performance along the following dimensions
+ 					</p> 	
+    <ul class="list-unstyled">
+        <ul>
+		<li> Business alignment – are the rights part of the business aligned with the overall business direction and is the business investment portfolio focused in the right areas? </li>
+		<li> Capability alignment – does the business have the right organizational capability in terms of organisation structure, business process, resources and supporting infrastructure to deliver on its mission efficiently? </li>
+		<li> Outcomes alignment – is the business delivering on its outcomes, are the benefits being realized? </li>
+       </ul>
+    </ul>
+    <p> </p>  
+    <p>  
+    Our staff have provided thought leadership and delivery expertise on several high profile programs and of national significance such as SBR, SuperStream, ELS to SBR and the Digital Business Council’s eInvoicing initiative.
+     </p>   
+     </em>
+      <div class="col-lg-8 col-lg-offset-2 text-center">  
+      <a href="#contact" class="btn btn-primary btn-xl page-scroll">Get in Touch</a>
+      </div>
+             </div>
+            </div>
+    </section>
+
+    <section id="contact" class="bg-danger">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <h1 class="text-	info">Get In Touch!</h1>
+                    <p></p>
+                     <img class="img-responsive" src="img/busypeople.jpg" alt="Busypeople" > 
+							<p> </p>
+                    <p>Ready to start your next project with us? That's great! Give us a call or connect on LinkedIn</p>
+                </div>
+                <div class="col-lg-4 col-lg-offset-3 text-center">
+                <a class="fa fa-phone fa-3x " href="tel:+61 481 471 758" >
+					</a>
+					 </div>
+				<a href="https://www.linkedin.com/in/levinenaidoo/" target="_blank">
+  				      <img src="img/linkedin.png" alt="LinkedIn" />
+				</a>
+				<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-3">Fluid jumbotron</h1>
+    <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+  </div>
+</div>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="vendor/scrollreveal/scrollreveal.min.js"></script>
+    <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/creative.min.js"></script>
+
+</body>
+
+</html>
