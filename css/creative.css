@@ -42,6 +42,14 @@ a:focus {
   color: #45b7af;
 }
 
+.contact-icon {
+  color: rgb(0, 183, 255) !important;
+  transition: color 0.35s;
+}
+.contact-icon:hover {
+  color: #222 !important;
+}
+
 /* NAVBAR */
 .navbar-default {
   background-color: #112836;
