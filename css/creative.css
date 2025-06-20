@@ -113,6 +113,44 @@ header h1 {
   padding-top: 0;
 }
 
+@media (max-width: 768px) {
+    header img {
+        min-height: 160px; /* Adjust to your preference */
+    }
+
+    .header-content {
+        padding-top: 30px !important;
+        padding-bottom: 30px !important;
+    }
+
+    .header-content-inner h1 {
+        font-size: 22px !important;
+    }
+
+    .header-content-inner h3 {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    header img {
+        min-height: 120px; /* Adjust to your preference */
+    }
+
+    .header-content {
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+    }
+
+    .header-content-inner h1 {
+        font-size: 18px !important;
+    }
+
+    .header-content-inner h3 {
+        font-size: 14px !important;
+    }
+}
+
 /* FADED TEXT */
 .text-faded {
   color: #C7CED2 !important;
