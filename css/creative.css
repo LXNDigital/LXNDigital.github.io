@@ -79,7 +79,7 @@ header {
   width: 100%;
   min-height: 100vh;
   background-position: center;
-  /*background-image: url('../img/header.jpg');*/
+  /* background-image: url('../img/NewHeader.png'); */
   text-align: center;
   color: #fff;
   display: flex;
@@ -241,4 +241,24 @@ li.text-faded {
   /* Optional: for extra padding inside the “cell” */
   padding: 1.25 rem;
   background-color: #112836;   /* Optional: match page bg or use a card colour */
+}
+
+.hero-banner-strip {
+  width: 100vw;
+  min-width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  background: #112836; /* fallback in case image doesn't load */
+}
+
+.hero-strip-img {
+  width: 100vw;
+  min-width: 100%;
+  max-width: 100%;
+  height: 120px;        /* Adjust as needed: 80px, 100px, 160px, etc */
+  object-fit: cover;    /* Ensures the image covers the area */
+  display: block;
+  margin: 0 auto;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
 }
