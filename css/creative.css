@@ -84,9 +84,22 @@ header {
   color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Space items top/middle/bottom */
+  justify-content: flex-start; /* Space items top/middle/bottom */
   padding: 0;        /* Remove padding so h1 is at the very top */
 }
+
+.banner-wrapper {
+  width: 100%;
+  height: auto;
+}
+
+.banner-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 300px; /* Optional: limits size on larger screens */
+}
+
 
 .header-content {
   max-width: 1000px;
@@ -115,43 +128,31 @@ header h1 {
 
 /* Ensures banner remains visible and adequately sized on mobile devices */
 @media (max-width: 768px) {
-    header img {
-        height: 200px; /* Adjust this height as needed for your design */
-        object-fit: cover;
-    }
+  .banner-wrapper img {
+    max-height: 200px;
+  }
 
-    .header-content {
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-    }
+  .header-content-inner h1 {
+    font-size: 22px;
+  }
 
-    .header-content-inner h1 {
-        font-size: 22px !important;
-        margin-top: 10px;
-    }
-
-    .header-content-inner h3 {
-        font-size: 15px !important;
-    }
+  .header-content-inner h3 {
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 576px) {
-    header img {
-        height: 160px; /* Adjust this height as needed */
-    }
+  .banner-wrapper img {
+    max-height: 160px;
+  }
 
-    .header-content {
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-    }
+  .header-content-inner h1 {
+    font-size: 18px;
+  }
 
-    .header-content-inner h1 {
-        font-size: 18px !important;
-    }
-
-    .header-content-inner h3 {
-        font-size: 13px !important;
-    }
+  .header-content-inner h3 {
+    font-size: 14px;
+  }
 }
 
 /* FADED TEXT */
