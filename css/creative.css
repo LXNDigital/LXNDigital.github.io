@@ -86,6 +86,7 @@ header {
   flex-direction: column;
   justify-content: flex-start; /* Space items top/middle/bottom */
   padding: 0;        /* Remove padding so h1 is at the very top */
+  overflow-x: hidden; 
 }
 
 .banner-wrapper {
