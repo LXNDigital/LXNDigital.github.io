@@ -1,0 +1,345 @@
+/* ====== GLOBAL BASE STYLES ====== */
+body {
+    color: #c7ced2e4;
+    background-color: #001624;
+    font-size: 0.875rem;
+}
+
+/* ====== TEXT COLORS ====== */
+h1, h2, h3, h4, h5, h6 {
+    color: white !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-align: left !important;
+}
+
+body, h1, h2, h3, h4, h5, h6, p {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+p, li, ul, ol {
+    color: #c7ced2e4;
+    font-size: 0.875rem;
+}
+
+.text-muted {
+    color: #c7ced2e4 !important;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ====== PRIMARY COLOR REPLACEMENTS ====== */
+.bg-primary {
+    background-color: #001624 !important;
+}
+
+.text-primary {
+    color: #07988B !important;
+}
+
+.btn-primary {
+    background-color: #07988B !important;
+    border-color: #07988B !important;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    background-color: #05756B !important;
+    border-color: #04635A !important;
+}
+
+/* ====== LIGHT BUTTON ON DARK BG ====== */
+.btn-light {
+    color: #001624 !important;
+    background-color: #c7ced2e4 !important;
+    border-color: #c7ced2e4 !important;
+}
+
+.btn-light:hover,
+.btn-light:focus {
+    background-color: #aab2b6 !important;
+    border-color: #aab2b6 !important;
+}
+
+/* ====== NAVBAR ====== */
+.navbar-light .navbar-nav .nav-link {
+    color: #c7ced2e4 !important;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #07988B !important;
+}
+
+.navbar-brand {
+    color: white !important;
+}
+
+.navbar-brand:hover {
+    color: #07988B !important;
+}
+
+
+
+/* ====== DIVIDERS ====== */
+.divider {
+    border-color: #07988B !important;
+}
+
+/* ====== HR Divider Styling ====== */
+hr.divider,
+hr.divider-light {
+    border: 0;
+    border-top: 4px solid #07988B;
+    width: 60px;
+    margin-left: 0;     /* Aligns to left */
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/* ====== ICONS ====== */
+.bi {
+    color: white;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+
+/* ====== FOOTER ====== */
+footer.bg-light {
+    background-color: #001624 !important;
+    color: #c7ced2e4 !important;
+}
+
+/* ====== FORMS ====== */
+.form-control, .form-control:focus {
+    background-color: #001624;
+    color: white;
+    border-color: #07988B;
+}
+
+.form-control::placeholder {
+    color: #c7ced2e4;
+}
+
+/* ====== DARK THEME PORTFOLIO HOVER ====== */
+.portfolio-box {
+    position: relative;
+    display: block;
+}
+
+.portfolio-box .portfolio-box-caption {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75); /* Dark translucent overlay */
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    color: #c7ced2e4;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.portfolio-box:hover .portfolio-box-caption {
+    opacity: 1;
+}
+
+.portfolio-box-caption .project-category {
+    font-size: 0.9rem;
+    color: #c7ced2e4;
+    margin-bottom: 0.5rem;
+}
+
+.portfolio-box-caption .project-name {
+    font-size: 1.25rem;
+    color: white;
+    font-weight: bold;
+}
+
+/* Optional: Add accent border on hover */
+.portfolio-box:hover {
+    outline: 3px solid #07988B;
+    outline-offset: -3px;
+    
+}
+
+/* Override orange hover effect on portfolio boxes */
+.portfolio-box:hover {
+    outline: 3px solid #07988B;
+    outline-offset: -3px;
+}
+
+/* If there's a background tint or icon/text colour on hover */
+.portfolio-box:hover .portfolio-box-caption {
+    background-color: rgba(7, 152, 139, 0.9) !important; /* Teal overlay instead of orange */
+}
+
+/* Ensure any text/icons don't revert to orange */
+.portfolio-box-caption .project-category,
+.portfolio-box-caption .project-name {
+    color: white !important;
+}
+
+/* Default icon colour (optional, in case you want to enforce a base state) */
+.bi {
+    color: inherit; /* or #c7ced2e4 if you want a base faded look */
+    transition: color 0.2s ease-in-out;
+}
+
+/* On hover, globally apply #07988B */
+.bi:hover {
+    color: #07988B !important;
+}
+
+/* Prevent orange flash on hover out */
+.portfolio-box .portfolio-box-caption {
+    background-color: rgba(0, 0, 0, 0.75) !important; /* Default non-hover state */
+    transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.portfolio-box:hover .portfolio-box-caption {
+    background-color: rgba(7, 152, 139, 0.9) !important;
+}
+
+/* Prevent any JS-added orange overlay by hard-coding overlay box background */
+.portfolio-box-caption {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* In case there's a hidden overlay effect class causing flicker */
+.portfolio-box .portfolio-box-caption:hover {
+    background-color: rgba(7, 152, 139, 0.9) !important;
+}
+
+/* Stop any animation or JS transition overriding it */
+.portfolio-box-caption,
+.portfolio-box-caption * {
+    transition: none !important;
+}
+
+/* FINAL OVERRIDE FOR ORANGE NAV SCROLL ISSUE */
+a.text-primary,
+.navbar-nav .nav-link.text-primary,
+.navbar-nav .nav-link.active.text-primary,
+.navbar-nav .nav-item .nav-link.text-primary {
+    color: #07988B !important;
+}
+
+/* Hard override for .text-primary across navbar (scrollspy active links) */
+.navbar-nav .nav-link.text-primary,
+.navbar-nav .nav-item .nav-link.text-primary,
+.navbar-nav .nav-link.active.text-primary,
+.navbar-nav .nav-link:focus.text-primary,
+.navbar-nav .nav-link:hover.text-primary,
+a.nav-link.text-primary {
+    color: #07988B !important;
+}
+
+/* ===== CUSTOM NAVBAR ===== */
+.custom-navbar {
+    background-color: #001624 !important;
+}
+
+.custom-navbar .navbar-nav .nav-link,
+.custom-navbar .navbar-brand {
+    color: white !important;
+}
+
+.custom-navbar .navbar-nav .nav-link:hover,
+.custom-navbar .navbar-nav .nav-link.active,
+.custom-navbar .navbar-brand:hover {
+    color: #07988B !important;
+}
+
+/* === Force navbar to stay dark and white-text, even on scroll === */
+.navbar,
+#mainNav,
+.navbar.navbar-light,
+#mainNav.navbar-scrolled {
+    background-color: #001624 !important;
+    color: white !important;
+    box-shadow: none !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+#mainNav .navbar-brand,
+#mainNav .nav-link,
+.navbar.navbar-light .navbar-brand,
+.navbar.navbar-light .nav-link,
+#mainNav.navbar-scrolled .navbar-brand,
+#mainNav.navbar-scrolled .nav-link {
+    color: #c7ced2e4 !important;
+}
+
+#mainNav .nav-link:hover,
+#mainNav .nav-link.active,
+.navbar-light .navbar-nav .nav-link.active,
+#mainNav.navbar-scrolled .nav-link:hover,
+#mainNav.navbar-scrolled .nav-link.active {
+    color: #07988B !important;
+}
+ 
+header.masthead {
+    background-image: url('../assets/img/LXNBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #001624 !important; /* Optional: set your primary background */
+    color: white;
+     min-height: 100vh; /* Full viewport height */
+    display: flex;
+    align-items: center;
+}
+
+
+/* FADED TEXT */
+.text-faded {
+  color: #C7CED2 !important;
+}
+
+.text-info {
+  color: #C7CED2 !important;
+}
+
+.extra-top-space {
+    margin-top: 6rem; /* Or tweak to 2.5rem, 3rem, etc. */
+}
+
+.loose-heading {
+    letter-spacing: 0.5px;
+}
+
+.service-box {
+    background-color: #354553; /* Lighter than primary */
+    border: 2px solid rgba(255, 255, 255, 0.1);  /* Transparent border */
+    padding: 1.5rem 1.5rem 0rem 1.5rem;
+    height: 100%;
+    border-radius: 0.5rem;
+}
+.loose-heading {
+    letter-spacing: 0.5px;
+}
+
+
+.contact-icon:hover .contact-icon {
+    color: #ffffff; /* keep it white so it doesn't match the background */
+    transform: scale(1.1);
+}
+
+/* Fix icon visibility */
+.bi {
+    color: white !important;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.contact-box:hover .bi {
+    color:#001624 !important;
+    transform: scale(1.1);
+}
