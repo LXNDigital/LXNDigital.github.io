@@ -362,3 +362,7 @@ header.masthead {
     margin-top: 3rem;
     margin-bottom: 4rem;
 }
+
+#homeHeading {
+    margin-bottom: 3rem; /* Adjust as needed (e.g., 4rem, 5rem) */
+}
