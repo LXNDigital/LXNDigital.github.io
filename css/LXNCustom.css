@@ -287,29 +287,20 @@ a.nav-link.text-primary {
 }
  
 header.masthead {
-    background-image: url('../assets/img/LXNBackground.png');
+    background-image: url('../assets/img/LXNBackground_faded.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-color: #001624 !important; /* Optional: set your primary background */
     color: white;
-     min-height: 100vh; /* Full viewport height */
+    min-height: 100vh; /* Full viewport height */
     display: flex;
     align-items: center;
 }
 
-/* Fade the masthead*/
-.masthead::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Adjust opacity here */
-    z-index: 1;
-}
 
 .masthead > .container {
     position: relative;
-    z-index: 2;
 }
 
 /* FADED TEXT */
