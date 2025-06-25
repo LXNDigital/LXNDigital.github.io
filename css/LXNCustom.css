@@ -357,3 +357,9 @@ header.masthead {
 #homeHeading {
     margin-bottom: 3rem; /* Adjust as needed (e.g., 4rem, 5rem) */
 }
+
+@media (max-width: 576px) {
+  .masthead {
+    background-position: top center;
+  }
+}
