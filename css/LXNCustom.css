@@ -358,6 +358,26 @@ header.masthead {
     margin-bottom: 3rem; /* Adjust as needed (e.g., 4rem, 5rem) */
 }
 
+/* change colour when hovering over links*/
+
+/* a.ai-download-link:hover {
+    color: #00B0F0 !important;
+}*/ 
+
+/* .ai-download-link {
+    color: #f8f9fa;
+    transition: all 0.3s ease;
+} */
+
+.ai-download-link:hover {
+    background-color:  #07988B ; 
+    color: #fff !important;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
 @media (max-width: 576px) {
   .masthead {
     background-position: top center;
