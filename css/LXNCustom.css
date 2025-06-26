@@ -364,10 +364,10 @@ header.masthead {
     color: #00B0F0 !important;
 }*/ 
 
-/* .ai-download-link {
-    color: #f8f9fa;
+.ai-download-link {
+    color:  #07988B ;
     transition: all 0.3s ease;
-} */
+} 
 
 .ai-download-link:hover {
     background-color:  #07988B ; 
