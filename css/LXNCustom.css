@@ -364,11 +364,13 @@ header.masthead {
     color: #00B0F0 !important;
 }*/ 
 
+/* download link to accent colour*/
 .ai-download-link {
     color:  #07988B ;
     transition: all 0.3s ease;
 } 
 
+/* temporarily make download link look like button*/
 .ai-download-link:hover {
     background-color:  #07988B ; 
     color: #fff !important;
