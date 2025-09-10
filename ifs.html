@@ -1,0 +1,2974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innovation Fitness Scorecard — Innovation Index</title>
+  <meta name="description" content="Experimental register of innovation fitness scores (TRI, AVI, II, EVI) built from public sources.">
+  <meta name="robots" content="noindex"> <!-- remove when ready to index -->
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <!-- Bootstrap Icons-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Site CSS (from your project) -->
+  <link href="css/styles.css" rel="stylesheet" />
+  <link href="css/LXNCustom.css" rel="stylesheet" />
+  <style>
+    /* Minimal page-local tweaks */
+    .page-header { padding: 6rem 0 2rem; background: radial-gradient(1000px 400px at 10% -10%, rgba(122,162,247,.18), transparent), radial-gradient(1000px 400px at 90% -10%, rgba(124,58,237,.15), transparent); }
+    .badge-kicker { background: linear-gradient(90deg,#fde68a,#fca5a5,#c7d2fe); color: #111; border-radius: 999px; padding: .25rem .6rem; font-size: .75rem; }
+    .table thead th { position: sticky; top: 0; background-color: #121212; z-index: 2; }
+    .filters .form-select, .filters .btn { min-width: 200px; }
+    .card-elevate { border: 1px solid rgba(255,255,255,.12); }
+    .truncate { max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .diag { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  
+    .group-sep td{border-top:2px solid rgba(255,255,255,.25)!important}
+    .merged { vertical-align: middle; }
+    </style>
+        
+</head>
+<body id="page-top">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="container px-4 px-lg-5">
+      <a class="navbar-brand" href="index.html">
+        <img src="assets/img/LXNDigitalLogo.png" alt="LXNDigital" height="35">
+      </a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ms-auto my-2 my-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html#approach">Approach</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#aigovernance">AI Governance</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#supplychain">Supply Chain</a></li>
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="ifs.html">Innovation Index</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#aboutus">About Us & Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header text-white bg-dark">
+    <div class="container px-4 px-lg-5">
+      <span class="badge-kicker">Experimental Register</span>
+      <h1 class="mt-3">Innovation Fitness Scorecard — Beyond the Hype Cycle</h1>
+      <p class="text-white-50 mb-0">Real-world deployments scored on readiness (TRI), adoption (AVI), impact (II), and viability (EVI).</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="container px-4 px-lg-5 my-4">
+      <div id="topNotice" class="alert alert-warning border-0 d-none" role="alert"></div>
+    </section>
+
+    <!-- Framework -->
+    <section class="container px-4 px-lg-5">
+      <div class="row g-4">
+        <div class="col-lg-12">
+          <div class="card card-elevate bg-dark text-white">
+            <div class="card-body">
+              <h5 class="card-title">Thesis: The Hype Cycle Doesn’t Chart Technology — It Charts Our Infatuation Curve</h5>
+              <p class="card-text text-white-50">We like to think of the Hype Cycle as a tidy chart of innovation maturity. In reality, 
+                                    it’s a mirror — reflecting our own emotional swings.<br><br> 
+                                    By sketching a neat rise–crash–recovery arc, it doesn’t just capture market psychology
+                                     — it scripts it. We follow the plot: rush in when novelty dazzles, bail when the shine 
+                                     fades. The result? Inflated bubbles, abandoned breakthroughs, and a system where hype outruns merit.<br><br>
+
+                                      Worse, where a technology is placed on the curve can quietly warp decisions. A premature “Peak of 
+                                      Inflated Expectations” can send capital stampeding the wrong way; a “Trough of Disillusionment” can stall
+                                       promising work until the moment has passed or a rival has seized it. By the time the model signals it’s 
+                                      safe to re‑engage, the need may have shifted — or the solution may already belong to someone else.<br><br>
+
+                                      The Hype Cycle seems to shape behaviour at both ends of the adoption curve. For the late majority, 
+                                      it can offer comfort — a reason to wait. A “Trough” label can make delay feel like prudence, turning 
+                                      inaction into a socially validated strategy. For would‑be early adopters, it can act as a deterrent: 
+                                      a “Peak” risks branding them as hype‑chasers, while a “Trough” can make even the curious hesitate. 
+                                      In both cases, the chart doesn’t just mirror sentiment — it can influence our sense of when it feels safe 
+                                      to act. Strip away the tech gloss and it starts to look like an <strong>Infatuation Curve</strong> — the same arc 
+                                      you might recognise in a new romance, a dream job, or the hobby you swore would change your life. 
+                                      It’s not necessarily charting capability; it’s charting our highs, our lows, and the rationalisations in between. <br><br>
+
+                                      If we want better decisions, we may need to break the hype habit. <strong>The Innovation Fitness Scorecard</strong> 
+                                      can offer one possible alternative — a lens that measures readiness, fit, and value without letting 
+                                      sentiment set the tempo. Because the future shouldn’t be dictated by our mood swings, or by the 
+                                      comfort of waiting for someone else to go first.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- Summary (Mean by Innovation + Avg by Sector) -->
+    <section class="container px-4 px-lg-5 my-4">
+      <div class="row g-4" id="summaryCards"></div>
+    </section>
+
+    <!-- Scorecard Table -->
+    <section class="container px-4 px-lg-5 my-4">
+      <div class="card card-elevate bg-dark text-white">
+        <div class="card-body">
+          <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+            <div>
+              <h5 class="card-title mb-1">Innovation Fitness Scorecard</h5>
+              <small id="datasetMeta" class="text-white-50">Loading dataset…</small>
+            </div>
+            <div class="filters d-flex gap-2">
+              <select class="form-select form-select-sm" id="innovationFilter" aria-label="Filter by innovation"></select>
+              <select class="form-select form-select-sm" id="sectorFilter" aria-label="Filter by sector"></select>
+              <select class="form-select form-select-sm" id="indexFilter" aria-label="Filter by index"></select>
+              <button class="btn btn-outline-light btn-sm" id="downloadBtn"><i class="bi bi-download me-1"></i>Download visible CSV</button>
+            </div>
+          </div>
+
+          <div class="table-responsive table-sticky-wrap">
+            <table class="table table-dark table-hover table-striped align-middle" id="scoreTable">
+            <thead class="small">
+              <tr>
+                <th>Innovation</th>
+                <th>Sector</th>
+                <th>Organisation</th>
+                <th>Product</th>
+                <th>Use Case</th>
+                <th>Index</th>
+                <th>Rating (1–5)</th>
+                <th>One Number to Check</th>
+                <th>Commentary</th>
+                <th>Proof Artefact</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+
+    
+    
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between text-white-50 small">
+            <div>Tip: combine filters to focus your view. Click “Source” to open the evidence in a new tab.</div>
+            <div id="rowCount"></div>
+          </div>
+          <div id="diagnostics" class="diag text-white-50 small mt-3 d-none"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container px-4 px-lg-5 my-4">
+  <div class="row g-4 align-items-stretch">
+    <!-- Scoring Guidance -->
+    <div class="col-12 col-lg-6">
+      <div class="card card-elevate bg-dark text-white h-100">
+        <div class="card-body">
+          <h5 class="card-title">Scoring Guidance</h5>
+          <div class="small text-white-50 mb-2">Tap to view each index’s rubric (scoring 1-5). If any index scores 1, do not scale—address that gap first.</div>
+
+          <div class="accordion accordion-flush" id="guidanceAccordion">
+            <!-- TRI -->
+            <div class="accordion-item bg-dark text-white border-secondary">
+              <h2 class="accordion-header" id="triHead">
+                <button class="accordion-button collapsed bg-dark text-white" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#triBody" aria-expanded="false" aria-controls="triBody">
+                  <span class="mb-3 text-white">Technology Readiness Index (TRI)</span>
+                  <span class="badge bg-secondary ms-auto me-2">One number: % targets met (90d)</span>
+                  <span class="badge bg-secondary">Proof: ops snapshot</span>
+                </button>
+              </h2>
+              <div id="triBody" class="accordion-collapse collapse" aria-labelledby="triHead" data-bs-parent="#guidanceAccordion">
+                <div class="accordion-body pt-2">
+                  <ol class="mb-0 ps-3">
+                    <li>Not live or fewer than 50% of reliability targets met.</li>
+                    <li>50–69% of targets met (pilot or staging only).</li>
+                    <li>70–84% of targets met (one live site or a strong pilot).</li>
+                    <li>85–94% of targets met across two or more live customers.</li>
+                    <li>95% or more of targets met across two or more live customers.</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <!-- AVI -->
+            <div class="accordion-item bg-dark text-white border-secondary">
+              <h2 class="accordion-header" id="aviHead">
+                <button class="accordion-button collapsed bg-dark text-white" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#aviBody" aria-expanded="false" aria-controls="aviBody">
+                  <span class="mb-3 text-white">Adoption Velocity Index (AVI)</span>
+                  <span class="badge bg-secondary ms-auto me-2">One number: QoQ growth</span>
+                  <span class="badge bg-secondary">Proof: billing/usage export</span>
+                </button>
+              </h2>
+              <div id="aviBody" class="accordion-collapse collapse" aria-labelledby="aviHead" data-bs-parent="#guidanceAccordion">
+                <div class="accordion-body pt-2">
+                  <ol class="mb-0 ps-3">
+                    <li>Declining or flat.</li>
+                    <li>0–9% growth since last quarter.</li>
+                    <li>10–24% growth since last quarter.</li>
+                    <li>25–49% growth since last quarter.</li>
+                    <li>50% or more growth since last quarter and most customers remain after six months (around 80% or higher).</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <!-- II -->
+            <div class="accordion-item bg-dark text-white border-secondary">
+              <h2 class="accordion-header" id="iiHead">
+                <button class="accordion-button collapsed bg-dark text-white" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#iiBody" aria-expanded="false" aria-controls="iiBody">
+                  <span class="mb-3 text-white">Impact Index (II)</span>
+                  <span class="badge bg-secondary ms-auto me-2">One number: % improvement</span>
+                  <span class="badge bg-secondary">Proof: audited study</span>
+                </button>
+              </h2>
+              <div id="iiBody" class="accordion-collapse collapse" aria-labelledby="iiHead" data-bs-parent="#guidanceAccordion">
+                <div class="accordion-body pt-2">
+                  <ol class="mb-0 ps-3">
+                    <li>Only stories; no measurement.</li>
+                    <li>Up to 5% improvement one time.</li>
+                    <li>At least 10% improvement one time (one outcome).</li>
+                    <li>At least 20% improvement, replicated (two sites or two outcomes).</li>
+                    <li>At least 30% improvement, replicated or verified by an independent third party.</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <!-- EVI -->
+            <div class="accordion-item bg-dark text-white border-secondary">
+              <h2 class="accordion-header" id="eviHead">
+                <button class="accordion-button collapsed bg-dark text-white" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#eviBody" aria-expanded="false" aria-controls="eviBody">
+                  <span class="mb-3 text-white">Economic Viability Index (EVI)</span>
+                  <span class="badge bg-secondary ms-auto me-2">One number: payback (months)</span>
+                  <span class="badge bg-secondary">Proof: cost/benefit (base &amp; downside)</span>
+                </button>
+              </h2>
+              <div id="eviBody" class="accordion-collapse collapse" aria-labelledby="eviHead" data-bs-parent="#guidanceAccordion">
+                <div class="accordion-body pt-2">
+                  <ol class="mb-0 ps-3">
+                    <li>Payback greater than 24 months or negative.</li>
+                    <li>18–24 months.</li>
+                    <li>12–18 months.</li>
+                    <li>6–12 months.</li>
+                    <li>Fewer than 6 months and still holds in the downside scenario.</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div><!-- /accordion -->
+
+        </div><!-- /card-body -->
+      </div><!-- /card -->
+    </div><!-- /col -->
+
+    <!-- Disclaimer -->
+    <div class="col-12 col-lg-6">
+      <div class="card card-elevate bg-dark text-white h-100">
+        <div class="card-body">
+          <h5 class="card-title">Disclaimer</h5>
+          <div class="text-white-50">
+          <p><em>Experimental register.</em> This site aggregates publicly accessible information and the author’s independent scoring framework (“Innovation Fitness Scorecard”). It is provided strictly for general information, research, and discussion, and is <strong>not</strong> advice.</p>
+          <ul>
+            <li><strong>No claims of completeness or accuracy.</strong> Sources may be incomplete or revised without notice. Summaries can contain errors.</li>
+            <li><strong>No reliance.</strong> Do not make operational, purchasing, investment, or policy decisions based on this register.</li>
+            <li><strong>No warranties; use at your own risk.</strong> Content is provided “as is.”</li>
+            <li><strong>Corrections &amp; takedown.</strong> Email <strong>info(at)lxndigital.com </strong></a> with concerns or updated evidence; we will review in good faith.</li>
+          </ul>
+          </div>
+          <div class="text-white-50 small">Dataset version: <span id="datasetVersion">—</span></div>
+        </div><!-- /card-body -->
+      </div><!-- /card -->
+    </div><!-- /col -->
+  </div><!-- /row -->
+</section>
+  </main>
+
+  <footer class="bg-dark text-white py-5 mt-5">
+    <div class="container px-4 px-lg-5"><div class="small text-center text-muted">Copyright &copy; <span id="year"></span> - LXNDigital</div></div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  "use strict";
+
+  // Column order for CSV export and table mapping
+  const COLUMNS = [
+  "Innovation",
+  "Sector",
+  "Organisation",
+  "Product",
+  "Use Case",
+  "Index",
+  "Rating (1–5)",
+  "One Number to Check",
+  "Commentary (explain what the number means in context)",
+  "Proof Artefact (type of evidence)",
+  "Source URL"
+];
+
+  const el = (q) => document.querySelector(q);
+
+  function escCSV(t) {
+    return '\"' + String(t ?? '').replace(/\"/g,'\"\"') + '\"';
+  }
+
+  function linkify(url) {
+    if (!url) return "";
+    const safe = String(url).replace(/\"/g, "%22");
+    return '<a href=\"' + safe + '\" target=\"_blank\" rel=\"noopener\">Source</a>';
+  }
+
+  function toCSV(rows) {
+    const header = COLUMNS.join(",");
+    const lines  = rows.map(r => COLUMNS.map(k => escCSV(r[k])).join(","));
+    return [header, ...lines].join("\\n");
+  }
+
+  function computeSummary(rows) {
+  // Keep average by Sector as before
+  const bySector = {};
+  const byIndex = {};
+  for (const r of rows) {
+    const sec = r["Sector"] || "";
+    const idx = r["Index"] || "";
+    const val = Number(r["Rating (1–5)"]);
+    if (!isNaN(val)) {
+      (bySector[sec] ||= []).push(val);
+      (byIndex[idx]  ||= []).push(val);
+    }
+  }
+  const mean = (arr) => arr.length ? arr.reduce((a,b)=>a+b,0) / arr.length : 0;
+  const sectorPairs = Object.entries(bySector).map(([k,arr]) => [k, mean(arr).toFixed(2)]);
+
+  // Per-solution composite (mean of the index ratings for each unique solution)
+  function solKey(r){
+    return [
+      r["Innovation"] ?? "",
+      r["Sector"] ?? "",
+      r["Organisation"] ?? r["Organisation / Product"] ?? "",
+      r["Product"] ?? "",
+      r["Use Case"] ?? ""
+    ].join("||");
+  }
+  const perSolution = new Map();
+  for (const r of rows) {
+    const v = Number(r["Rating (1–5)"]);
+    const key = solKey(r);
+    if (!perSolution.has(key)) {
+      perSolution.set(key, { innovation: r["Innovation"] || "", ratings: [] });
+    }
+    if (!Number.isNaN(v)) perSolution.get(key).ratings.push(v);
+  }
+  const compsByInnovation = new Map();
+  perSolution.forEach(({innovation, ratings}) => {
+    if (!ratings.length) return;
+    const composite = ratings.reduce((a,b)=>a+b,0) / ratings.length;
+    (compsByInnovation.get(innovation) || compsByInnovation.set(innovation, []).get(innovation)).push(composite);
+  });
+  const median = (arr) => {
+    if (!arr.length) return 0;
+    const a = [...arr].sort((x,y)=>x-y);
+    const m = Math.floor(a.length/2);
+    return a.length % 2 ? a[m] : (a[m-1] + a[m]) / 2;
+  };
+  const byInnovationTriples = Array.from(compsByInnovation.entries())
+    .map(([name, arr]) => [name, median(arr).toFixed(2), arr.length])
+    .sort((a,b) => parseFloat(b[1]) - parseFloat(a[1]) || a[0].localeCompare(b[0]));
+
+  return { byInnovationTriples, bySector: sectorPairs };
+}
+
+  // Triple-aware card: [Innovation, Median, Solutions]
+function mkCard3(title, triples) {
+  const header = `
+    <div class="d-flex justify-content-between text-white-50 border-bottom border-secondary pb-1">
+      <span>Innovation</span>
+      <div class="d-flex" style="gap:1rem;">
+        <span class="text-end" style="min-width:6ch;">Median</span>
+        <span class="text-end" style="min-width:9ch;">Solutions</span>
+      </div>
+    </div>`;
+  const rowsHtml = (triples || []).map(([k,v,n]) => `
+    <div class="d-flex justify-content-between border-bottom border-secondary py-1">
+      <span class="text-white-50">${k}</span>
+      <div class="d-flex" style="gap:1rem;">
+        <strong class="text-end" style="min-width:6ch;">${v}</strong>
+        <span class="text-end text-white-50" style="min-width:9ch;">${n}</span>
+      </div>
+    </div>`).join("");
+  return `
+    <div class="col-12 col-lg-6">
+      <div class="card card-elevate bg-dark text-white h-100">
+        <div class="card-body">
+          <h6 class="card-title mb-3">${title}</h6>
+          ${header}
+          ${rowsHtml}
+        </div>
+      </div>
+    </div>`;
+}
+
+
+    // Indices legend card to sit beside the median summary card
+    function mkIndicesCard() {
+      return `
+ <div class="col-12 col-lg-6">
+      <div class="card card-elevate bg-dark text-white h-100">
+        <div class="card-body">
+          <h6 class="card-title mb-3">The Innovation Fitness Indices</h5>
+          <div class="table-responsive">
+  <table class="table table-dark table-bordered table-sm align-middle mb-0" style="table-layout:fixed;">
+    <colgroup>
+      <col style="width:22ch;">   <!-- Index -->
+      <col>                       <!-- What it measures -->
+    </colgroup>
+    <tbody>
+      <tr>
+        <td>Index</td>
+        <td>What it measures</td>
+      </tr>
+      <tr>
+        <td><span class="text-white-50">Technology Readiness Index(TRI)</span></td>
+        <td><span class="text-white-50">How mature is the technology in practical, deployable terms? Not to be confused with Technology Readiness Level (Feasibility) — it’s about deployability right now.</span></td>
+      </tr>
+      <tr>
+        <td><span class="text-white-50">Adoption Velocity Index (AVI)</span></td>
+        <td><span class="text-white-50">How quickly is it being adopted across relevant sectors?</span></td>
+      </tr>
+      <tr>
+        <td><span class="text-white-50">Impact Index (II)</span></td>
+        <td><span class="text-white-50">What measurable societal or environmental benefits does it deliver?</span></td>
+      </tr>
+      <tr>
+        <td><span class="text-white-50">Economic Viability Index (EVI)</span></td>
+        <td><span class="text-white-50">Is it scalable, sustainable, and economically sound?</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+        </div><!-- /card-body -->
+      </div><!-- /card -->
+    </div><!-- /col -->`
+    }
+
+    
+    
+function renderSummaryCards(summary) {
+    const wrap = el("#summaryCards");
+    function mkCard(title, pairs) {
+      return `
+        <div class="col-12 col-lg-6">
+          <div class="card card-elevate bg-dark text-white h-100">
+            <div class="card-body">
+              <h6 class="card-title mb-3">${title}</h6>
+              ${pairs.map(([k,v]) => `
+                <div class="d-flex justify-content-between border-bottom border-secondary py-1">
+                  <span class="text-white-50">${k}</span>
+                  <strong>${v}</strong>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </div>`;
+    }
+    wrap.innerHTML = mkIndicesCard()+ mkCard3("Median Fitness by Innovation", summary.byInnovationTriples);
+  }
+
+  async function loadJSON() {
+    // Order: ?data= override -> default path -> inline fallback
+    const qp = new URLSearchParams(location.search).get("data");
+    const candidates = qp ? [qp] : ["data/scorecard.json"];
+    const errors = [];
+
+    for (const p of candidates) {
+      try {
+        const res = await fetch(p, { cache: "no-store" });
+        if (res.ok) {
+          const j = await res.json();
+          j.__path = p;
+          return j;
+        } else {
+          errors.push(p + " → HTTP " + res.status);
+        }
+      } catch (e) {
+        errors.push(p + " → " + e.message);
+      }
+    }
+
+    // Inline fallback
+    const inline = document.getElementById("inlineScorecardJson");
+    if (inline && inline.textContent.trim()) {
+      try {
+        const j = JSON.parse(inline.textContent);
+        j.__path = "inline";
+        return j;
+      } catch (e) {
+        errors.push("inline JSON → " + e.message);
+      }
+    }
+
+    const diag = el("#diagnostics");
+    diag.classList.remove("d-none");
+    diag.textContent = "Failed to load scorecard JSON. Tried:\\n  - " + candidates.join("\\n  - ");
+    throw new Error("JSON load failed: " + errors.join(" | "));
+  }
+
+  
+  function renderTable(rows) {
+  const tbody = el("#scoreTable tbody");
+  const abbr = {
+    "Technology Readiness Index": "TRI",
+    "Adoption Velocity Index": "AVI",
+    "Impact Index": "II",
+    "Economic Viability Index": "EVI"
+  };
+
+  // Group by Solution key: Innovation + Sector + Organisation + Product + Use Case
+  const keyOf = (r) => [
+    r["Innovation"] ?? "",
+    r["Sector"] ?? "",
+    r["Organisation"] ?? "",
+    r["Product"] ?? "",
+    r["Use Case"] ?? ""
+  ].join("||");
+
+  const groups = {};
+  for (const r of rows) {
+    const k = keyOf(r);
+    (groups[k] ||= []).push(r);
+  }
+
+  // Ensure per-group row order: TRI, AVI, II, EVI (fallback alphabetical)
+  const order = ["Technology Readiness Index", "Adoption Velocity Index", "Impact Index", "Economic Viability Index"];
+  function sortByIndex(a,b) {
+    const ia = order.indexOf(a["Index"]); const ib = order.indexOf(b["Index"]);
+    if (ia === -1 && ib === -1) return String(a["Index"]).localeCompare(String(b["Index"]));
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  }
+
+  // Render
+  const rowsHtml = [];
+  let isFirstGroup = true; // sentinel for border on subsequent groups
+  for (const [k, list] of Object.entries(groups)) {
+    const sorted = list.slice().sort(sortByIndex);
+    const rowspan = sorted.length || 1;
+    const [innovation, sector, organisation, product, usecase] = k.split("||");
+
+    for (let i = 0; i < sorted.length; i++) {
+      const r = sorted[i];
+      const idxLabel = abbr[r["Index"]] || (r["Index"] ?? "");
+      const rating   = r["Rating (1–5)"] ?? "";
+      const oneNum   = r["One Number to Check"] ?? "";
+      const comm     = r["Commentary (explain what the number means in context)"] ?? "";
+      const proof    = r["Proof Artefact (type of evidence)"] ?? "";
+      const srcUrl   = r["Source URL"] ?? "";
+      const orgTitle = String(organisation).replace(/\"/g, "&quot;");
+      const prodTitle = String(product).replace(/\"/g, "&quot;");
+
+      rowsHtml.push(
+        `<tr class="${i===0 ? 'group-head' : 'group-body'} ${i===0 && !isFirstGroup ? 'group-sep' : ''}">` +
+          (i===0 ? `<td class="merged" rowspan="${rowspan}">${innovation}</td>` : "") +
+          (i===0 ? `<td class="merged" rowspan="${rowspan}">${sector}</td>` : "") +
+          (i===0 ? `<td class="merged truncate" title="${orgTitle}" rowspan="${rowspan}">${organisation}</td>` : "") +
+          (i===0 ? `<td class="merged truncate" title="${prodTitle}" rowspan="${rowspan}">${product}</td>` : "") +
+          (i===0 ? `<td class="merged" rowspan="${rowspan}">${usecase}</td>` : "") +
+          `<td>${idxLabel}</td>` +
+          `<td>${rating}</td>` +
+          `<td>${oneNum}</td>` +
+          `<td>${comm}</td>` +
+          `<td>${proof}</td>` +
+          `<td>${linkify(srcUrl)}</td>` +
+        `</tr>`
+      );
+    }
+    isFirstGroup = false;
+  }
+
+  tbody.innerHTML = rowsHtml.join("");
+  el("#rowCount").textContent = `${rows.length} rows (${Object.keys(groups).length} solutions)`;
+}
+
+
+  async function main
+() {
+    el("#year").textContent = new Date().getFullYear();
+    const data = await loadJSON();
+    const rows = data.rows || [];
+
+    // Meta
+    el("#datasetMeta").textContent = `Dataset: ${data.source || "unknown"} · Rows: ${rows.length} · Version: ${data.version || "n/a"} · Path: ${data.__path}`;
+    el("#datasetVersion").textContent = data.version || "n/a";
+
+    // Filters
+    const sectors = Array.from(new Set(rows.map(r => r["Sector"]).filter(Boolean))).sort();
+const indices = Array.from(new Set(rows.map(r => r["Index"]).filter(Boolean))).sort();
+const innovations = Array.from(new Set(rows.map(r => r["Innovation"]).filter(Boolean))).sort();
+const sectorSel = el("#sectorFilter");
+const indexSel  = el("#indexFilter");
+const innovationSel = el("#innovationFilter");
+sectorSel.innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => `<option>${s}</option>`).join("");
+indexSel.innerHTML  = '<option value="">All Indices</option>'  + indices.map(s => `<option>${s}</option>`).join("");
+innovationSel.innerHTML = '<option value="">All Innovations</option>' + innovations.map(s => `<option>${s}</option>`).join("");
+
+
+    // Initial render
+    function applyFilters() {
+      const s = sectorSel.value;
+      const i = indexSel.value;
+      const inv = innovationSel.value;
+      const filtered = rows.filter(r =>
+        (!s || r["Sector"] === s) &&
+        (!i || r["Index"] === i) &&
+        (!inv || r["Innovation"] === inv)
+      );
+      renderTable(filtered, rows);
+      return filtered;
+    }
+    let current = applyFilters();
+    sectorSel.addEventListener("change", () => { current = applyFilters(); });
+    indexSel .addEventListener("change", () => { current = applyFilters(); });
+    innovationSel.addEventListener("change", () => { current = applyFilters(); });
+
+    // Summary
+    const summary = computeSummary(rows);
+    renderSummaryCards(summary);
+
+    // Download visible CSV
+    el("#downloadBtn").addEventListener("click", () => {
+      const csv = toCSV(current);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "innovation_fitness_visible_rows.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  main().catch((err) => {
+    console.error(err);
+    el("#datasetMeta").textContent = "Failed to load scorecard dataset.";
+  });
+  </script>
+
+  <!-- Inline fallback JSON (auto-generated) -->
+  <script type="application/json" id="inlineScorecardJson">{
+  "version": "2025-09-09",
+  "source": "AI Innovation Fitness Scorecard.xlsx",
+  "sheet": "All AI",
+  "notes": "Public, experimental register. Ratings 1–5. Index and column labels normalised. Includes 'Innovation'.",
+  "columns": [
+    "Innovation",
+    "Sector",
+    "Organisation",
+    "Product",
+    "Use Case",
+    "Index",
+    "Rating (1–5)",
+    "One Number to Check",
+    "Commentary (explain what the number means in context)",
+    "Proof Artefact (type of evidence)",
+    "Source URL"
+  ],
+  "rows": [
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "UBS",
+      "Product": "Legal AI Assistant (LAIA)",
+      "Use Case": "Clause extraction and legal review",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "97%+ uptime (last 90 days)",
+      "Commentary (explain what the number means in context)": "Global legal team usage with governed access to 26M+ docs requires disciplined SLOs and incident response",
+      "Proof Artefact (type of evidence)": "One-page ops snapshot (uptime, latency, incidents, access controls)",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/03/18/ubs-uses-microsoft-copilot-to-transform-legal-operations/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "UBS",
+      "Product": "Legal AI Assistant (LAIA)",
+      "Use Case": "Clause extraction and legal review",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+48% QoQ active users",
+      "Commentary (explain what the number means in context)": "Growth across practice groups indicates workflow fit beyond pilot purgatory",
+      "Proof Artefact (type of evidence)": "Usage export (active users by practice, WAU/MAU retention)",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/03/18/ubs-uses-microsoft-copilot-to-transform-legal-operations/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "UBS",
+      "Product": "Legal AI Assistant (LAIA)",
+      "Use Case": "Clause extraction and legal review",
+      "Index": "Impact Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "30% time reduction in clause sourcing",
+      "Commentary (explain what the number means in context)": "Replicated across regulatory and contracts teams; reviewer agreement confirms quality",
+      "Proof Artefact (type of evidence)": "Audited before/after with method note, reviewer checks",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/03/18/ubs-uses-microsoft-copilot-to-transform-legal-operations/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "UBS",
+      "Product": "Legal AI Assistant (LAIA)",
+      "Use Case": "Clause extraction and legal review",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "5-month payback",
+      "Commentary (explain what the number means in context)": "Savings from reduced drafting/research time and faster compliance cycles",
+      "Proof Artefact (type of evidence)": "One-page ROI (base and downside)",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/03/18/ubs-uses-microsoft-copilot-to-transform-legal-operations/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Allen & Overy",
+      "Product": "Harvey AI",
+      "Use Case": "Contract drafting copilot",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "95%+ SLA targets met",
+      "Commentary (explain what the number means in context)": "Large firm, broad matter diversity; guardrails and citation integrity are key",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, latency, guardrail events)",
+      "Source URL": "https://harvey.ai/case-studies/allen-overy"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Allen & Overy",
+      "Product": "Harvey AI",
+      "Use Case": "Contract drafting copilot",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Thousands of fee earners live",
+      "Commentary (explain what the number means in context)": "Wide practitioner coverage shows institutionalisation, not a lab toy",
+      "Proof Artefact (type of evidence)": "Seat/billing export with practice-area breakdown",
+      "Source URL": "https://harvey.ai/case-studies/allen-overy"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Allen & Overy",
+      "Product": "Harvey AI",
+      "Use Case": "Contract drafting copilot",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20–30% faster first drafts",
+      "Commentary (explain what the number means in context)": "Partner acceptance as a quality gate; fewer revision loops",
+      "Proof Artefact (type of evidence)": "Time-and-quality study with rubric",
+      "Source URL": "https://harvey.ai/case-studies/allen-overy"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Allen & Overy",
+      "Product": "Harvey AI",
+      "Use Case": "Contract drafting copilot",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "<12-month payback",
+      "Commentary (explain what the number means in context)": "Mix of AFAs and hourly matters; sensitivity to realisation rates",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://harvey.ai/case-studies/allen-overy"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Thomson Reuters",
+      "Product": "Westlaw Precision AI",
+      "Use Case": "Legal research copilot",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ retrieval uptime",
+      "Commentary (explain what the number means in context)": "Emphasis on grounding/citations; monitored hallucination rate",
+      "Proof Artefact (type of evidence)": "Ops snapshot + retrieval eval report",
+      "Source URL": "https://www.thomsonreuters.com/en/press-releases/2023/march/thomson-reuters-unveils-generative-ai-legal-research-features.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Thomson Reuters",
+      "Product": "Westlaw Precision AI",
+      "Use Case": "Legal research copilot",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Rapid seat growth across firms",
+      "Commentary (explain what the number means in context)": "Cross-segment adoption (Am Law, corporate) signals trust",
+      "Proof Artefact (type of evidence)": "Billing/usage export by firm segment",
+      "Source URL": "https://www.thomsonreuters.com/en/press-releases/2023/march/thomson-reuters-unveils-generative-ai-legal-research-features.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Thomson Reuters",
+      "Product": "Westlaw Precision AI",
+      "Use Case": "Legal research copilot",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20%+ research time saved",
+      "Commentary (explain what the number means in context)": "Evaluated on accuracy and citation integrity across matter types",
+      "Proof Artefact (type of evidence)": "Controlled study with adjudication rubric",
+      "Source URL": "https://www.thomsonreuters.com/en/press-releases/2023/march/thomson-reuters-unveils-generative-ai-legal-research-features.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Legal",
+      "Organisation": "Thomson Reuters",
+      "Product": "Westlaw Precision AI",
+      "Use Case": "Legal research copilot",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Value depends on practice mix; downside includes complex litigation",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://www.thomsonreuters.com/en/press-releases/2023/march/thomson-reuters-unveils-generative-ai-legal-research-features.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "NHS Trusts",
+      "Product": "Nuance DAX Copilot",
+      "Use Case": "Clinical documentation automation",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ uptime across live trusts",
+      "Commentary (explain what the number means in context)": "Real-world clinical settings; safety and EHR integration are critical",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents, EHR integration status)",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/01/22/nhs-trusts-to-use-ai-to-help-free-up-time-for-patient-care/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "NHS Trusts",
+      "Product": "Nuance DAX Copilot",
+      "Use Case": "Clinical documentation automation",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Multi-trust rollout confirmed",
+      "Commentary (explain what the number means in context)": "Cross-site adoption indicates operational maturity",
+      "Proof Artefact (type of evidence)": "Rollout tracker (go-lives by trust/ward)",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/01/22/nhs-trusts-to-use-ai-to-help-free-up-time-for-patient-care/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "NHS Trusts",
+      "Product": "Nuance DAX Copilot",
+      "Use Case": "Clinical documentation automation",
+      "Index": "Impact Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "50% reduction in documentation time",
+      "Commentary (explain what the number means in context)": "Reported by early adopters; sustained beyond novelty period",
+      "Proof Artefact (type of evidence)": "Time-and-motion audit + QA review",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/01/22/nhs-trusts-to-use-ai-to-help-free-up-time-for-patient-care/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "NHS Trusts",
+      "Product": "Nuance DAX Copilot",
+      "Use Case": "Clinical documentation automation",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "<6-month payback",
+      "Commentary (explain what the number means in context)": "Overtime reduced, throughput increased; conservative downside modeled",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://news.microsoft.com/en-gb/2024/01/22/nhs-trusts-to-use-ai-to-help-free-up-time-for-patient-care/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic",
+      "Product": "Google MedLM",
+      "Use Case": "Radiology triage",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ uptime",
+      "Commentary (explain what the number means in context)": "Clinically reliable inference and failover in PACS workflows",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, inference latency, failover events)",
+      "Source URL": "https://cloud.google.com/customers/mayo-clinic"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic",
+      "Product": "Google MedLM",
+      "Use Case": "Radiology triage",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Multi-site use (documented)",
+      "Commentary (explain what the number means in context)": "Broad adoption across departments/hospitals",
+      "Proof Artefact (type of evidence)": "Department rollouts and usage volumes",
+      "Source URL": "https://cloud.google.com/customers/mayo-clinic"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic",
+      "Product": "Google MedLM",
+      "Use Case": "Radiology triage",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Measurable time-to-read reduction",
+      "Commentary (explain what the number means in context)": "Outcome replicated across modalities/departments",
+      "Proof Artefact (type of evidence)": "Audited before/after with method note",
+      "Source URL": "https://cloud.google.com/customers/mayo-clinic"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic",
+      "Product": "Google MedLM",
+      "Use Case": "Radiology triage",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Mix of time savings and throughput gains",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://cloud.google.com/customers/mayo-clinic"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Klarna",
+      "Product": "AI Customer Assistant",
+      "Use Case": "Customer support copilot",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Always-on assistant handling large chat volumes",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, guardrail incidents)",
+      "Source URL": "https://www.klarna.com/international/press/klarna-reveals-impact-of-its-ai-assistant-one-year-on/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Klarna",
+      "Product": "AI Customer Assistant",
+      "Use Case": "Customer support copilot",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "2/3 of chats handled by AI",
+      "Commentary (explain what the number means in context)": "High sustained deflection shows product-market fit",
+      "Proof Artefact (type of evidence)": "Contact center export (AI vs. human)",
+      "Source URL": "https://www.klarna.com/international/press/klarna-s-ai-assistant-handled-two-thirds-of-customer-service-chats/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Klarna",
+      "Product": "AI Customer Assistant",
+      "Use Case": "Customer support copilot",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "25–50% faster resolution time",
+      "Commentary (explain what the number means in context)": "Pair with CSAT/NPS neutrality",
+      "Proof Artefact (type of evidence)": "Before/after service metrics, QA sampling",
+      "Source URL": "https://www.klarna.com/international/press/klarna-reveals-impact-of-its-ai-assistant-one-year-on/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Klarna",
+      "Product": "AI Customer Assistant",
+      "Use Case": "Customer support copilot",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "<6-month payback",
+      "Commentary (explain what the number means in context)": "Scale + deflection produce rapid ROI; stress test FCR",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://www.klarna.com/international/press/klarna-reveals-impact-of-its-ai-assistant-one-year-on/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk",
+      "Product": "GenAI Supply Chain Optimisation",
+      "Use Case": "Route optimisation & customs docs",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99.6% uptime",
+      "Commentary (explain what the number means in context)": "SLA met across multiple trade lanes",
+      "Proof Artefact (type of evidence)": "Ops dashboard: uptime, latency, incidents",
+      "Source URL": "https://www.bcg.com/publications/2024/genai-reimagines-supply-chain"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk",
+      "Product": "GenAI Supply Chain Optimisation",
+      "Use Case": "Route optimisation & customs docs",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "28% QoQ growth in active trade lanes",
+      "Commentary (explain what the number means in context)": "Expansion from 50 to 64 lanes",
+      "Proof Artefact (type of evidence)": "Billing/usage export",
+      "Source URL": "https://www.bcg.com/publications/2024/genai-reimagines-supply-chain"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk",
+      "Product": "GenAI Supply Chain Optimisation",
+      "Use Case": "Route optimisation & customs docs",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20% reduction in customs delays",
+      "Commentary (explain what the number means in context)": "Replicated across 3 ports",
+      "Proof Artefact (type of evidence)": "Audited before/after clearance times",
+      "Source URL": "https://www.bcg.com/publications/2024/genai-reimagines-supply-chain"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk",
+      "Product": "GenAI Supply Chain Optimisation",
+      "Use Case": "Route optimisation & customs docs",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "5-month payback",
+      "Commentary (explain what the number means in context)": "Savings from reduced demurrage",
+      "Proof Artefact (type of evidence)": "Cost/benefit one-pager",
+      "Source URL": "https://www.bcg.com/publications/2024/genai-reimagines-supply-chain"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "DHL Supply Chain",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for ops, planning, and knowledge",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ service availability",
+      "Commentary (explain what the number means in context)": "Deployed across sites with Duet/Vertex integrations",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents, guardrail events)",
+      "Source URL": "https://www.dhl.com/global-en/home/press/press-archive/2023/dhl-supply-chain-and-google-cloud-to-bring-next-generation-of-warehouse-productivity.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "DHL Supply Chain",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for ops, planning, and knowledge",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Multi-site rollout confirmed",
+      "Commentary (explain what the number means in context)": "Rollouts beyond pilot warehouses show fit",
+      "Proof Artefact (type of evidence)": "Rollout tracker (sites, go-live dates)",
+      "Source URL": "https://www.dhl.com/global-en/home/press/press-archive/2023/dhl-supply-chain-and-google-cloud-to-bring-next-generation-of-warehouse-productivity.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "DHL Supply Chain",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for ops, planning, and knowledge",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "10–20% efficiency uplift on target tasks",
+      "Commentary (explain what the number means in context)": "Use WMS metrics; validate beyond first month",
+      "Proof Artefact (type of evidence)": "WMS analytics export + method note",
+      "Source URL": "https://www.dhl.com/global-en/home/press/press-archive/2023/dhl-supply-chain-and-google-cloud-to-bring-next-generation-of-warehouse-productivity.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "DHL Supply Chain",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for ops, planning, and knowledge",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Labour/time savings and quality improvements",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://www.dhl.com/global-en/home/press/press-archive/2023/dhl-supply-chain-and-google-cloud-to-bring-next-generation-of-warehouse-productivity.html"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Flexport",
+      "Product": "Copilot",
+      "Use Case": "AI copilot for logistics ops",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ uptime",
+      "Commentary (explain what the number means in context)": "Customer-facing assistant integrated into workflows",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, latency, incidents)",
+      "Source URL": "https://www.flexport.com/blog/introducing-flexport-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Flexport",
+      "Product": "Copilot",
+      "Use Case": "AI copilot for logistics ops",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Steady QoQ growth in users",
+      "Commentary (explain what the number means in context)": "Expansion across shippers and teams",
+      "Proof Artefact (type of evidence)": "Usage export (active users, cohorts)",
+      "Source URL": "https://www.flexport.com/blog/introducing-flexport-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Flexport",
+      "Product": "Copilot",
+      "Use Case": "AI copilot for logistics ops",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20%+ faster exception handling",
+      "Commentary (explain what the number means in context)": "Time-to-resolution vs. baseline; replicated",
+      "Proof Artefact (type of evidence)": "Audited before/after with method note",
+      "Source URL": "https://www.flexport.com/blog/introducing-flexport-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Supply Chain",
+      "Organisation": "Flexport",
+      "Product": "Copilot",
+      "Use Case": "AI copilot for logistics ops",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "<12-month payback",
+      "Commentary (explain what the number means in context)": "Penalties/expedites avoided + staff efficiency",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://www.flexport.com/blog/introducing-flexport-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Manufacturing",
+      "Organisation": "Siemens",
+      "Product": "Industrial Copilot",
+      "Use Case": "Human-in-the-loop automation/engineering",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ SLA targets met",
+      "Commentary (explain what the number means in context)": "Industrial safety, provenance, and code-gen governance",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents, guardrails)",
+      "Source URL": "https://blogs.microsoft.com/blog/2023/11/14/siemens-and-microsoft-introduce-siemens-industrial-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Manufacturing",
+      "Organisation": "Siemens",
+      "Product": "Industrial Copilot",
+      "Use Case": "Human-in-the-loop automation/engineering",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Multi-customer deployments announced",
+      "Commentary (explain what the number means in context)": "Signals platform maturity beyond single logo",
+      "Proof Artefact (type of evidence)": "Deployment tracker (customers, sites)",
+      "Source URL": "https://blogs.microsoft.com/blog/2023/11/14/siemens-and-microsoft-introduce-siemens-industrial-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Manufacturing",
+      "Organisation": "Siemens",
+      "Product": "Industrial Copilot",
+      "Use Case": "Human-in-the-loop automation/engineering",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20–30% time saved on PLC/robotics tasks",
+      "Commentary (explain what the number means in context)": "Measured on code/test cycles; replicated",
+      "Proof Artefact (type of evidence)": "Controlled time study + QA review",
+      "Source URL": "https://blogs.microsoft.com/blog/2023/11/14/siemens-and-microsoft-introduce-siemens-industrial-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Manufacturing",
+      "Organisation": "Siemens",
+      "Product": "Industrial Copilot",
+      "Use Case": "Human-in-the-loop automation/engineering",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Labour/time saved; reduced downtime",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://blogs.microsoft.com/blog/2023/11/14/siemens-and-microsoft-introduce-siemens-industrial-copilot/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Retail",
+      "Organisation": "Walmart",
+      "Product": "GenAI for associates",
+      "Use Case": "Internal associate copilot",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Retail-scale, safety and latency critical",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, guardrail events)",
+      "Source URL": "https://corporate.walmart.com/news/2023/08/08/introducing-walmarts-new-generative-ai-powered-tool-for-our-associates"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Retail",
+      "Organisation": "Walmart",
+      "Product": "GenAI for associates",
+      "Use Case": "Internal associate copilot",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Rapid opt-in across stores",
+      "Commentary (explain what the number means in context)": "Early scale suggests utility for front-line tasks",
+      "Proof Artefact (type of evidence)": "Adoption/usage export by store",
+      "Source URL": "https://corporate.walmart.com/news/2023/08/08/introducing-walmarts-new-generative-ai-powered-tool-for-our-associates"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Retail",
+      "Organisation": "Walmart",
+      "Product": "GenAI for associates",
+      "Use Case": "Internal associate copilot",
+      "Index": "Impact Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "15–25% time saved on routine tasks",
+      "Commentary (explain what the number means in context)": "Measure across scheduling, knowledge lookup",
+      "Proof Artefact (type of evidence)": "Before/after time studies",
+      "Source URL": "https://corporate.walmart.com/news/2023/08/08/introducing-walmarts-new-generative-ai-powered-tool-for-our-associates"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Retail",
+      "Organisation": "Walmart",
+      "Product": "GenAI for associates",
+      "Use Case": "Internal associate copilot",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Time savings at scale offset enablement costs",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://corporate.walmart.com/news/2023/08/08/introducing-walmarts-new-generative-ai-powered-tool-for-our-associates"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "Singapore GovTech",
+      "Product": "Ask Jamie GPT",
+      "Use Case": "Multilingual citizen services",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ service availability",
+      "Commentary (explain what the number means in context)": "Whole-of-gov context with sensitive content filters",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, guardrail events)",
+      "Source URL": "https://www.tech.gov.sg/media/technews/ask-jamie-gpt/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "Singapore GovTech",
+      "Product": "Ask Jamie GPT",
+      "Use Case": "Multilingual citizen services",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Dozens of agencies integrated",
+      "Commentary (explain what the number means in context)": "Breadth of integration shows institutional uptake",
+      "Proof Artefact (type of evidence)": "Integration tracker by agency",
+      "Source URL": "https://www.tech.gov.sg/media/technews/ask-jamie-gpt/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "Singapore GovTech",
+      "Product": "Ask Jamie GPT",
+      "Use Case": "Multilingual citizen services",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20–40% faster resolution/form completion",
+      "Commentary (explain what the number means in context)": "Evaluate abandonment and escalations by language",
+      "Proof Artefact (type of evidence)": "Before/after analytics + QA sampling",
+      "Source URL": "https://www.tech.gov.sg/media/technews/ask-jamie-gpt/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "Singapore GovTech",
+      "Product": "Ask Jamie GPT",
+      "Use Case": "Multilingual citizen services",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "<12-month payback",
+      "Commentary (explain what the number means in context)": "Cost-to-serve reduction across channels",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://www.tech.gov.sg/media/technews/ask-jamie-gpt/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "City of Helsinki",
+      "Product": "Azure OpenAI",
+      "Use Case": "doc and policy synthesis",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "95%+ SLA targets met",
+      "Commentary (explain what the number means in context)": "Long-doc handling; provenance in public workflows",
+      "Proof Artefact (type of evidence)": "Ops snapshot + provenance/audit trail",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1673496624946803302-helsinki-public-sector-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "City of Helsinki",
+      "Product": "Azure OpenAI",
+      "Use Case": "doc and policy synthesis",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "Multi-project use",
+      "Commentary (explain what the number means in context)": "Uptake across departments suggests maturity",
+      "Proof Artefact (type of evidence)": "Project tracker; go-live dates",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1673496624946803302-helsinki-public-sector-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "City of Helsinki",
+      "Product": "Azure OpenAI",
+      "Use Case": "doc and policy synthesis",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "30–60% time saved on briefs",
+      "Commentary (explain what the number means in context)": "Quality review and public feedback as guardrails",
+      "Proof Artefact (type of evidence)": "Time study + quality rubric",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1673496624946803302-helsinki-public-sector-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Public Sector",
+      "Organisation": "City of Helsinki",
+      "Product": "Azure OpenAI",
+      "Use Case": "doc and policy synthesis",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Cycle-time savings outweigh enablement costs",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1673496624946803302-helsinki-public-sector-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Morgan Stanley",
+      "Product": "Advisor Assistant (OpenAI)",
+      "Use Case": "Advisor research and drafting",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "99%+ SLA targets met",
+      "Commentary (explain what the number means in context)": "Regulated comms require strict controls",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, latency, incidents)",
+      "Source URL": "https://www.morganstanley.com/press-releases/morgan-stanley-wealth-management-rolls-out-generative-ai-assistant"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Morgan Stanley",
+      "Product": "Advisor Assistant (OpenAI)",
+      "Use Case": "Advisor research and drafting",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Enterprise-wide rollout",
+      "Commentary (explain what the number means in context)": "Indicates crossing from pilot to platform",
+      "Proof Artefact (type of evidence)": "Seat/usage export, cohort retention",
+      "Source URL": "https://www.morganstanley.com/press-releases/morgan-stanley-wealth-management-rolls-out-generative-ai-assistant"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Morgan Stanley",
+      "Product": "Advisor Assistant (OpenAI)",
+      "Use Case": "Advisor research and drafting",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20–30% faster memo/brief generation",
+      "Commentary (explain what the number means in context)": "Time-to-first draft and revision cycle reductions",
+      "Proof Artefact (type of evidence)": "Time-and-motion audit, reviewer rubric",
+      "Source URL": "https://www.morganstanley.com/press-releases/morgan-stanley-wealth-management-rolls-out-generative-ai-assistant"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Finance",
+      "Organisation": "Morgan Stanley",
+      "Product": "Advisor Assistant (OpenAI)",
+      "Use Case": "Advisor research and drafting",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Depends on adoption density per desk",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://www.morganstanley.com/press-releases/morgan-stanley-wealth-management-rolls-out-generative-ai-assistant"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Developer Tools",
+      "Organisation": "GitHub",
+      "Product": "Copilot",
+      "Use Case": "Code generation and review",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99.9%+ availability",
+      "Commentary (explain what the number means in context)": "Mature SaaS with enterprise SLAs",
+      "Proof Artefact (type of evidence)": "Status/ops + incident report",
+      "Source URL": "https://github.blog/2023-07-20-research-github-copilot-increases-developer-productivity-and-happiness/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Developer Tools",
+      "Organisation": "GitHub",
+      "Product": "Copilot",
+      "Use Case": "Code generation and review",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "Strong QoQ seat growth, high retention",
+      "Commentary (explain what the number means in context)": "Daily active usage signals durable value",
+      "Proof Artefact (type of evidence)": "Seat growth + WAU/DAU retention",
+      "Source URL": "https://github.blog/2023-07-20-research-github-copilot-increases-developer-productivity-and-happiness/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Developer Tools",
+      "Organisation": "GitHub",
+      "Product": "Copilot",
+      "Use Case": "Code generation and review",
+      "Index": "Impact Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "55% faster task completion",
+      "Commentary (explain what the number means in context)": "Controlled study; multi-org replication",
+      "Proof Artefact (type of evidence)": "Study write-up (methods/results)",
+      "Source URL": "https://github.blog/2023-07-20-research-github-copilot-increases-developer-productivity-and-happiness/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Developer Tools",
+      "Organisation": "GitHub",
+      "Product": "Copilot",
+      "Use Case": "Code generation and review",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "<6-month payback",
+      "Commentary (explain what the number means in context)": "Robust even in conservative scenarios",
+      "Proof Artefact (type of evidence)": "ROI summary (two scenarios)",
+      "Source URL": "https://github.blog/2023-07-20-research-github-copilot-increases-developer-productivity-and-happiness/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Professional Services",
+      "Organisation": "PwC",
+      "Product": "ChatGPT Enterprise rollout",
+      "Use Case": "Firmwide AI assistant",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Global deployment with enterprise controls",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents)",
+      "Source URL": "https://openai.com/customers/pwc"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Professional Services",
+      "Organisation": "PwC",
+      "Product": "ChatGPT Enterprise rollout",
+      "Use Case": "Firmwide AI assistant",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "100k+ users enabled",
+      "Commentary (explain what the number means in context)": "Rapid global enablement indicates platform readiness",
+      "Proof Artefact (type of evidence)": "License/usage export, cohort retention",
+      "Source URL": "https://openai.com/customers/pwc"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Professional Services",
+      "Organisation": "PwC",
+      "Product": "ChatGPT Enterprise rollout",
+      "Use Case": "Firmwide AI assistant",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20–40% time saved in target tasks",
+      "Commentary (explain what the number means in context)": "Replicated across tax, audit, advisory workflows",
+      "Proof Artefact (type of evidence)": "Function audits with method notes",
+      "Source URL": "https://openai.com/customers/pwc"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Professional Services",
+      "Organisation": "PwC",
+      "Product": "ChatGPT Enterprise rollout",
+      "Use Case": "Firmwide AI assistant",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Portfolio view across practices",
+      "Proof Artefact (type of evidence)": "ROI summary (base/downside)",
+      "Source URL": "https://openai.com/customers/pwc"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Nestlé",
+      "Product": "Microsoft 365 Copilot pilots",
+      "Use Case": "Internal productivity and R&D support",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "99%+ service availability",
+      "Commentary (explain what the number means in context)": "Enterprise pilots with Microsoft governance",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents)",
+      "Source URL": "https://www.nestle.com/media/pressreleases/allpressreleases/nestle-pilots-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Nestlé",
+      "Product": "Microsoft 365 Copilot pilots",
+      "Use Case": "Internal productivity and R&D support",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "Phased pilot → multi-function expansion",
+      "Commentary (explain what the number means in context)": "Pilot expansion indicates fit beyond single team",
+      "Proof Artefact (type of evidence)": "Rollout tracker (functions, sites)",
+      "Source URL": "https://www.nestle.com/media/pressreleases/allpressreleases/nestle-pilots-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Nestlé",
+      "Product": "Microsoft 365 Copilot pilots",
+      "Use Case": "Internal productivity and R&D support",
+      "Index": "Impact Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "15–25% time saved on drafting/summarisation",
+      "Commentary (explain what the number means in context)": "Early time savings; validate quality guardrails",
+      "Proof Artefact (type of evidence)": "Before/after time study with QA sampling",
+      "Source URL": "https://www.nestle.com/media/pressreleases/allpressreleases/nestle-pilots-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Nestlé",
+      "Product": "Microsoft 365 Copilot pilots",
+      "Use Case": "Internal productivity and R&D support",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "12–18-month payback",
+      "Commentary (explain what the number means in context)": "ROI improves as adoption density increases",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://www.nestle.com/media/pressreleases/allpressreleases/nestle-pilots-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "BBVA",
+      "Product": "Enterprise GenAI rollout",
+      "Use Case": "Internal copilots across functions",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ uptime across services",
+      "Commentary (explain what the number means in context)": "Central guardrails and lifecycle governance",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, model update logs)",
+      "Source URL": "https://www.bbva.com/en/innovation/bbva-rolls-out-generative-ai-tools-across-its-global-workforce/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "BBVA",
+      "Product": "Enterprise GenAI rollout",
+      "Use Case": "Internal copilots across functions",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "100k+ employees enabled",
+      "Commentary (explain what the number means in context)": "Breadth of enablement shows platformization",
+      "Proof Artefact (type of evidence)": "License/usage export by function",
+      "Source URL": "https://www.bbva.com/en/innovation/bbva-rolls-out-generative-ai-tools-across-its-global-workforce/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "BBVA",
+      "Product": "Enterprise GenAI rollout",
+      "Use Case": "Internal copilots across functions",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20%+ productivity in target tasks",
+      "Commentary (explain what the number means in context)": "Replicated across functions (ops, risk, support)",
+      "Proof Artefact (type of evidence)": "Function-level audits with method notes",
+      "Source URL": "https://www.bbva.com/en/innovation/bbva-rolls-out-generative-ai-tools-across-its-global-workforce/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "BBVA",
+      "Product": "Enterprise GenAI rollout",
+      "Use Case": "Internal copilots across functions",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Portfolio-level efficiency vs. enablement costs",
+      "Proof Artefact (type of evidence)": "Portfolio ROI summary (base/downside)",
+      "Source URL": "https://www.bbva.com/en/innovation/bbva-rolls-out-generative-ai-tools-across-its-global-workforce/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "DBS",
+      "Product": "GenAI tools across the bank",
+      "Use Case": "Internal assistants and copilots",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Bank-wide deployment with guardrails",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents, guardrails)",
+      "Source URL": "https://www.dbs.com/newsroom/DBS_rolls_out_Generative_AI_tools_across_the_bank"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "DBS",
+      "Product": "GenAI tools across the bank",
+      "Use Case": "Internal assistants and copilots",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "Bank-wide rollout",
+      "Commentary (explain what the number means in context)": "From pilots to enterprise scale",
+      "Proof Artefact (type of evidence)": "License/usage export by department",
+      "Source URL": "https://www.dbs.com/newsroom/DBS_rolls_out_Generative_AI_tools_across_the_bank"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "DBS",
+      "Product": "GenAI tools across the bank",
+      "Use Case": "Internal assistants and copilots",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "20–30% time saved in target tasks",
+      "Commentary (explain what the number means in context)": "Replicated across functions; validated by audit",
+      "Proof Artefact (type of evidence)": "Controlled time studies with method notes",
+      "Source URL": "https://www.dbs.com/newsroom/DBS_rolls_out_Generative_AI_tools_across_the_bank"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "DBS",
+      "Product": "GenAI tools across the bank",
+      "Use Case": "Internal assistants and copilots",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Efficiency gains offset enablement costs",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://www.dbs.com/newsroom/DBS_rolls_out_Generative_AI_tools_across_the_bank"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "ING",
+      "Product": "Azure OpenAI assistant",
+      "Use Case": "Customer service and ops knowledge",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Focus on hallucination controls and access governance",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, guardrail events, access logs)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1676236590362330792-ing-banking-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "ING",
+      "Product": "Azure OpenAI assistant",
+      "Use Case": "Customer service and ops knowledge",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Enterprise deployment across teams",
+      "Commentary (explain what the number means in context)": "Usage growth and cross-function uptake",
+      "Proof Artefact (type of evidence)": "Usage export (active users, retention)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1676236590362330792-ing-banking-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "ING",
+      "Product": "Azure OpenAI assistant",
+      "Use Case": "Customer service and ops knowledge",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Reduced handle time and faster retrieval",
+      "Commentary (explain what the number means in context)": "Measure AHT and first-contact resolution",
+      "Proof Artefact (type of evidence)": "Time-and-motion with QA sampling",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1676236590362330792-ing-banking-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Banking",
+      "Organisation": "ING",
+      "Product": "Azure OpenAI assistant",
+      "Use Case": "Customer service and ops knowledge",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Contact deflection and AHT gains drive ROI",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1676236590362330792-ing-banking-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "HCA Healthcare",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for caregiver workflows",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Clinical-grade reliability for documentation and support",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents)",
+      "Source URL": "https://cloud.google.com/blog/products/ai-machine-learning/hca-healthcare-and-google-cloud-collaborate-on-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "HCA Healthcare",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for caregiver workflows",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "Multi-site pilots to scale",
+      "Commentary (explain what the number means in context)": "Progression from pilots to broader rollout",
+      "Proof Artefact (type of evidence)": "Site rollout tracker",
+      "Source URL": "https://cloud.google.com/blog/products/ai-machine-learning/hca-healthcare-and-google-cloud-collaborate-on-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "HCA Healthcare",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for caregiver workflows",
+      "Index": "Impact Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "Meaningful time saved on notes/handoffs",
+      "Commentary (explain what the number means in context)": "Evaluate TTR and quality outcomes",
+      "Proof Artefact (type of evidence)": "Before/after studies with QA review",
+      "Source URL": "https://cloud.google.com/blog/products/ai-machine-learning/hca-healthcare-and-google-cloud-collaborate-on-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Healthcare",
+      "Organisation": "HCA Healthcare",
+      "Product": "with Google Cloud",
+      "Use Case": "GenAI for caregiver workflows",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "12–18-month payback",
+      "Commentary (explain what the number means in context)": "ROI depends on adoption density and QA effort",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://cloud.google.com/blog/products/ai-machine-learning/hca-healthcare-and-google-cloud-collaborate-on-generative-ai"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Telecom",
+      "Organisation": "Vodafone",
+      "Product": "Azure OpenAI customer care",
+      "Use Case": "GenAI for digital assistants and care",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Global carrier-scale reliability required",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents)",
+      "Source URL": "https://news.microsoft.com/europe/2023/11/14/vodafone-and-microsoft-announce-10-year-strategic-partnership/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Telecom",
+      "Organisation": "Vodafone",
+      "Product": "Azure OpenAI customer care",
+      "Use Case": "GenAI for digital assistants and care",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Multi-market rollout planned → underway",
+      "Commentary (explain what the number means in context)": "Scale across markets indicates maturity",
+      "Proof Artefact (type of evidence)": "Rollout tracker (markets, channels)",
+      "Source URL": "https://news.microsoft.com/europe/2023/11/14/vodafone-and-microsoft-announce-10-year-strategic-partnership/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Telecom",
+      "Organisation": "Vodafone",
+      "Product": "Azure OpenAI customer care",
+      "Use Case": "GenAI for digital assistants and care",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Reduced handling time and higher containment",
+      "Commentary (explain what the number means in context)": "Track AHT, containment, CSAT",
+      "Proof Artefact (type of evidence)": "Audited contact center metrics",
+      "Source URL": "https://news.microsoft.com/europe/2023/11/14/vodafone-and-microsoft-announce-10-year-strategic-partnership/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "Telecom",
+      "Organisation": "Vodafone",
+      "Product": "Azure OpenAI customer care",
+      "Use Case": "GenAI for digital assistants and care",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Deflection + speed at scale yield savings",
+      "Proof Artefact (type of evidence)": "ROI one-pager (base/downside)",
+      "Source URL": "https://news.microsoft.com/europe/2023/11/14/vodafone-and-microsoft-announce-10-year-strategic-partnership/"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Kraft Heinz",
+      "Product": "Azure OpenAI in supply chain",
+      "Use Case": "S&OP and planning copilot",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "99%+ availability",
+      "Commentary (explain what the number means in context)": "Enterprise integration with Supply Chain Center",
+      "Proof Artefact (type of evidence)": "Ops snapshot (uptime, incidents)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1670706944684630404-kraft-heinz-consumer-goods-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Kraft Heinz",
+      "Product": "Azure OpenAI in supply chain",
+      "Use Case": "S&OP and planning copilot",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "Phased rollout across functions",
+      "Commentary (explain what the number means in context)": "Scale from pilot to planners & procurement",
+      "Proof Artefact (type of evidence)": "Rollout tracker (functions, users)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1670706944684630404-kraft-heinz-consumer-goods-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Kraft Heinz",
+      "Product": "Azure OpenAI in supply chain",
+      "Use Case": "S&OP and planning copilot",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "Faster planning cycles; fewer stockouts",
+      "Commentary (explain what the number means in context)": "Measure cycle time and service level",
+      "Proof Artefact (type of evidence)": "Audited before/after with method note",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1670706944684630404-kraft-heinz-consumer-goods-azure-openai-service"
+    },
+    {
+      "Innovation": "GenAI",
+      "Sector": "CPG",
+      "Organisation": "Kraft Heinz",
+      "Product": "Azure OpenAI in supply chain",
+      "Use Case": "S&OP and planning copilot",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6–12-month payback",
+      "Commentary (explain what the number means in context)": "Working capital + labour time savings",
+      "Proof Artefact (type of evidence)": "ROI one-pager (two scenarios)",
+      "Source URL": "https://customers.microsoft.com/en-us/story/1670706944684630404-kraft-heinz-consumer-goods-azure-openai-service"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Legal",
+      "Organisation": "Harvey AI + Allen & Overy",
+      "Product": "",
+      "Use Case": "Contract review and drafting automation using GPT‑4 via LangChain orchestration",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "99.2% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Uptime across multiple global offices with no major outages",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.allenovery.com/en-gb/global/news-and-insights/news/allen-overy-and-harvey-partner-to-transform-legal-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Legal",
+      "Organisation": "Harvey AI + Allen & Overy",
+      "Product": "",
+      "Use Case": "Contract review and drafting automation using GPT‑4 via LangChain orchestration",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+42% QoQ active lawyer seats",
+      "Commentary (explain what the number means in context)": "Strong quarter-on-quarter growth in active usage across practice groups",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.allenovery.com/en-gb/global/news-and-insights/news/allen-overy-and-harvey-partner-to-transform-legal-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Legal",
+      "Organisation": "Harvey AI + Allen & Overy",
+      "Product": "",
+      "Use Case": "Contract review and drafting automation using GPT‑4 via LangChain orchestration",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-28% average drafting time",
+      "Commentary (explain what the number means in context)": "Measured reduction in time to draft standard contracts across replicated offices",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.allenovery.com/en-gb/global/news-and-insights/news/allen-overy-and-harvey-partner-to-transform-legal-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Legal",
+      "Organisation": "Harvey AI + Allen & Overy",
+      "Product": "",
+      "Use Case": "Contract review and drafting automation using GPT‑4 via LangChain orchestration",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "8-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced billable hours exceeded implementation cost in under a year",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.allenovery.com/en-gb/global/news-and-insights/news/allen-overy-and-harvey-partner-to-transform-legal-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Microsoft Azure AI Agent Service",
+      "Product": "",
+      "Use Case": "Clinical trial patient matching",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "97.5% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "High reliability in production across multiple trial programs",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://news.microsoft.com/2023/07/18/mayo-clinic-uses-azure-ai-to-accelerate-clinical-trials"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Microsoft Azure AI Agent Service",
+      "Product": "",
+      "Use Case": "Clinical trial patient matching",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+55% QoQ matched patient cases",
+      "Commentary (explain what the number means in context)": "Rapid uptake among trial coordinators with high retention",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://news.microsoft.com/2023/07/18/mayo-clinic-uses-azure-ai-to-accelerate-clinical-trials"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Microsoft Azure AI Agent Service",
+      "Product": "",
+      "Use Case": "Clinical trial patient matching",
+      "Index": "Impact Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+32% enrollment speed",
+      "Commentary (explain what the number means in context)": "Third-party verified improvement in trial enrollment timelines",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://news.microsoft.com/2023/07/18/mayo-clinic-uses-azure-ai-to-accelerate-clinical-trials"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Microsoft Azure AI Agent Service",
+      "Product": "",
+      "Use Case": "Clinical trial patient matching",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "5.5-month payback",
+      "Commentary (explain what the number means in context)": "ROI achieved in under six months due to faster trial starts",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://news.microsoft.com/2023/07/18/mayo-clinic-uses-azure-ai-to-accelerate-clinical-trials"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Financial Services",
+      "Organisation": "JPMorgan Chase + IBM watsonx Orchestrate",
+      "Product": "",
+      "Use Case": "Automated KYC and onboarding",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.8% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Consistent SLA compliance across multiple regions",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://newsroom.ibm.com/2024-03-12-JPMorgan-Chase-Deploys-IBM-watsonx-Orchestrate-for-KYC"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Financial Services",
+      "Organisation": "JPMorgan Chase + IBM watsonx Orchestrate",
+      "Product": "",
+      "Use Case": "Automated KYC and onboarding",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+27% QoQ processed applications",
+      "Commentary (explain what the number means in context)": "Steady growth in automated onboarding volume",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://newsroom.ibm.com/2024-03-12-JPMorgan-Chase-Deploys-IBM-watsonx-Orchestrate-for-KYC"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Financial Services",
+      "Organisation": "JPMorgan Chase + IBM watsonx Orchestrate",
+      "Product": "",
+      "Use Case": "Automated KYC and onboarding",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-22% processing time",
+      "Commentary (explain what the number means in context)": "Measured reduction in average onboarding time across branches",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://newsroom.ibm.com/2024-03-12-JPMorgan-Chase-Deploys-IBM-watsonx-Orchestrate-for-KYC"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Financial Services",
+      "Organisation": "JPMorgan Chase + IBM watsonx Orchestrate",
+      "Product": "",
+      "Use Case": "Automated KYC and onboarding",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "7-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced manual processing offset deployment cost within 7 months",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://newsroom.ibm.com/2024-03-12-JPMorgan-Chase-Deploys-IBM-watsonx-Orchestrate-for-KYC"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk + LangChain Agents",
+      "Product": "",
+      "Use Case": "Dynamic shipment rerouting based on port congestion",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "96.4% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance across global logistics network",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.maersk.com/news/articles/2024/05/14/maersk-ai-agents-for-shipment-routing"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk + LangChain Agents",
+      "Product": "",
+      "Use Case": "Dynamic shipment rerouting based on port congestion",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+31% QoQ active routes managed",
+      "Commentary (explain what the number means in context)": "Increased adoption by regional logistics teams",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.maersk.com/news/articles/2024/05/14/maersk-ai-agents-for-shipment-routing"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk + LangChain Agents",
+      "Product": "",
+      "Use Case": "Dynamic shipment rerouting based on port congestion",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-25% average delay time",
+      "Commentary (explain what the number means in context)": "Replicated improvement in shipment timeliness",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.maersk.com/news/articles/2024/05/14/maersk-ai-agents-for-shipment-routing"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Maersk + LangChain Agents",
+      "Product": "",
+      "Use Case": "Dynamic shipment rerouting based on port congestion",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6.5-month payback",
+      "Commentary (explain what the number means in context)": "Operational savings from reduced demurrage and idle time",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.maersk.com/news/articles/2024/05/14/maersk-ai-agents-for-shipment-routing"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian GovTech + ReAct Agents",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility checks",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "94.7% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Minor outages but overall stable across multiple agencies",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://e-estonia.com/ai-agents-in-public-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian GovTech + ReAct Agents",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility checks",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+48% QoQ processed cases",
+      "Commentary (explain what the number means in context)": "Strong uptake across municipalities",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://e-estonia.com/ai-agents-in-public-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian GovTech + ReAct Agents",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility checks",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-21% processing time",
+      "Commentary (explain what the number means in context)": "Replicated improvement in case handling speed",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://e-estonia.com/ai-agents-in-public-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian GovTech + ReAct Agents",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility checks",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "6-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced manual verification",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://e-estonia.com/ai-agents-in-public-services"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mount Sinai + Hugging Face Transformers Agents",
+      "Product": "",
+      "Use Case": "Medical imaging triage",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.1% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in radiology workflow",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.mountsinai.org/about/newsroom/2024/mount-sinai-ai-imaging-agents"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mount Sinai + Hugging Face Transformers Agents",
+      "Product": "",
+      "Use Case": "Medical imaging triage",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+29% QoQ scans triaged",
+      "Commentary (explain what the number means in context)": "Steady growth in automated triage volume",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.mountsinai.org/about/newsroom/2024/mount-sinai-ai-imaging-agents"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mount Sinai + Hugging Face Transformers Agents",
+      "Product": "",
+      "Use Case": "Medical imaging triage",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-18% average report turnaround",
+      "Commentary (explain what the number means in context)": "Improved speed of radiology reporting",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.mountsinai.org/about/newsroom/2024/mount-sinai-ai-imaging-agents"
+    },
+    {
+      "Innovation": "Agentic AI",
+      "Sector": "Healthcare",
+      "Organisation": "Mount Sinai + Hugging Face Transformers Agents",
+      "Product": "",
+      "Use Case": "Medical imaging triage",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "7-month payback",
+      "Commentary (explain what the number means in context)": "ROI achieved within 7 months due to faster throughput",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.mountsinai.org/about/newsroom/2024/mount-sinai-ai-imaging-agents"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Legal",
+      "Organisation": "Universidad Panamericana LegalTech Lab + CausaLens",
+      "Product": "",
+      "Use Case": "Legal language processing with causal reasoning for case analysis",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "93.5% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in pilot courts with minimal downtime",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.mdpi.com/1099-4300/27/4/351"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Legal",
+      "Organisation": "Universidad Panamericana LegalTech Lab + CausaLens",
+      "Product": "",
+      "Use Case": "Legal language processing with causal reasoning for case analysis",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "+18% QoQ active legal analysts",
+      "Commentary (explain what the number means in context)": "Gradual uptake among legal researchers and practitioners",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.mdpi.com/1099-4300/27/4/351"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Legal",
+      "Organisation": "Universidad Panamericana LegalTech Lab + CausaLens",
+      "Product": "",
+      "Use Case": "Legal language processing with causal reasoning for case analysis",
+      "Index": "Impact Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "+12% accuracy in precedent matching",
+      "Commentary (explain what the number means in context)": "Measured improvement in identifying relevant precedents",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.mdpi.com/1099-4300/27/4/351"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Legal",
+      "Organisation": "Universidad Panamericana LegalTech Lab + CausaLens",
+      "Product": "",
+      "Use Case": "Legal language processing with causal reasoning for case analysis",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 3,
+      "One Number to Check": "14-month payback",
+      "Commentary (explain what the number means in context)": "Moderate ROI due to research-focused deployment",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.mdpi.com/1099-4300/27/4/351"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian Social Insurance Board + Causal AI Eligibility Engine",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility with causal inference",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.2% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Consistent SLA compliance across multiple agencies",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://oecd.ai/en/gov/issues/public-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian Social Insurance Board + Causal AI Eligibility Engine",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility with causal inference",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+44% QoQ processed cases",
+      "Commentary (explain what the number means in context)": "Strong uptake across municipalities",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://oecd.ai/en/gov/issues/public-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian Social Insurance Board + Causal AI Eligibility Engine",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility with causal inference",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-23% processing time",
+      "Commentary (explain what the number means in context)": "Replicated improvement in case handling speed",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://oecd.ai/en/gov/issues/public-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Public Sector",
+      "Organisation": "Estonian Social Insurance Board + Causal AI Eligibility Engine",
+      "Product": "",
+      "Use Case": "Automated benefits eligibility with causal inference",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "6.5-month payback",
+      "Commentary (explain what the number means in context)": "Operational savings from reduced manual verification",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://oecd.ai/en/gov/issues/public-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Retail Bank + CausaLens",
+      "Product": "",
+      "Use Case": "Customer retention and pricing optimisation",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "96.1% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in production across multiple regions",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://causalai.causalens.com/industry/financial-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Retail Bank + CausaLens",
+      "Product": "",
+      "Use Case": "Customer retention and pricing optimisation",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+26% QoQ campaigns using causal insights",
+      "Commentary (explain what the number means in context)": "Steady growth in marketing and pricing teams adoption",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://causalai.causalens.com/industry/financial-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Retail Bank + CausaLens",
+      "Product": "",
+      "Use Case": "Customer retention and pricing optimisation",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+21% retention rate improvement",
+      "Commentary (explain what the number means in context)": "Replicated uplift in customer loyalty across segments",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://causalai.causalens.com/industry/financial-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Retail Bank + CausaLens",
+      "Product": "",
+      "Use Case": "Customer retention and pricing optimisation",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "7-month payback",
+      "Commentary (explain what the number means in context)": "ROI achieved within 7 months due to reduced churn",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://causalai.causalens.com/industry/financial-services"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Healthcare",
+      "Organisation": "Atidia Health",
+      "Product": "",
+      "Use Case": "Clinical decision support with causal ML",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "94.8% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in hospital deployments",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://atidia.health/causal-ml-in-healthcare"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Healthcare",
+      "Organisation": "Atidia Health",
+      "Product": "",
+      "Use Case": "Clinical decision support with causal ML",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+33% QoQ departments onboarded",
+      "Commentary (explain what the number means in context)": "Rapid uptake across surgical and oncology units",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://atidia.health/causal-ml-in-healthcare"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Healthcare",
+      "Organisation": "Atidia Health",
+      "Product": "",
+      "Use Case": "Clinical decision support with causal ML",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-19% adverse event rate",
+      "Commentary (explain what the number means in context)": "Replicated reduction in complications across sites",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://atidia.health/causal-ml-in-healthcare"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Healthcare",
+      "Organisation": "Atidia Health",
+      "Product": "",
+      "Use Case": "Clinical decision support with causal ML",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "8-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced complications offset deployment cost",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://atidia.health/causal-ml-in-healthcare"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Supply Chain",
+      "Organisation": "CausaDB + Global Retailer",
+      "Product": "",
+      "Use Case": "Seasonal demand forecasting with causal AI",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.5% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Consistent performance during seasonal peaks",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.causa.tech/post/what-is-causal-ai-a-guide-with-business-use-cases"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Supply Chain",
+      "Organisation": "CausaDB + Global Retailer",
+      "Product": "",
+      "Use Case": "Seasonal demand forecasting with causal AI",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+29% QoQ SKUs forecasted with causal models",
+      "Commentary (explain what the number means in context)": "Steady expansion of product coverage",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.causa.tech/post/what-is-causal-ai-a-guide-with-business-use-cases"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Supply Chain",
+      "Organisation": "CausaDB + Global Retailer",
+      "Product": "",
+      "Use Case": "Seasonal demand forecasting with causal AI",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-24% stockouts during peak season",
+      "Commentary (explain what the number means in context)": "Replicated improvement in inventory availability",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.causa.tech/post/what-is-causal-ai-a-guide-with-business-use-cases"
+    },
+    {
+      "Innovation": "Causal AI",
+      "Sector": "Supply Chain",
+      "Organisation": "CausaDB + Global Retailer",
+      "Product": "",
+      "Use Case": "Seasonal demand forecasting with causal AI",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "6-month payback",
+      "Commentary (explain what the number means in context)": "Operational savings from reduced lost sales",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.causa.tech/post/what-is-causal-ai-a-guide-with-business-use-cases"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Legal",
+      "Organisation": "LexisNexis + Decision Intelligence Platform",
+      "Product": "",
+      "Use Case": "AI‑driven legal research prioritisation",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "96.8% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Consistent SLA compliance across multiple jurisdictions",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.pinsentmasons.com/out-law/analysis/artificial-intelligence-growing-role-legal-sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Legal",
+      "Organisation": "LexisNexis + Decision Intelligence Platform",
+      "Product": "",
+      "Use Case": "AI‑driven legal research prioritisation",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+38% QoQ active firm accounts",
+      "Commentary (explain what the number means in context)": "Strong growth in law firm adoption",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.pinsentmasons.com/out-law/analysis/artificial-intelligence-growing-role-legal-sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Legal",
+      "Organisation": "LexisNexis + Decision Intelligence Platform",
+      "Product": "",
+      "Use Case": "AI‑driven legal research prioritisation",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-26% average research time",
+      "Commentary (explain what the number means in context)": "Measured reduction in time to locate relevant precedents",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.pinsentmasons.com/out-law/analysis/artificial-intelligence-growing-role-legal-sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Legal",
+      "Organisation": "LexisNexis + Decision Intelligence Platform",
+      "Product": "",
+      "Use Case": "AI‑driven legal research prioritisation",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "7-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced billable research hours",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.pinsentmasons.com/out-law/analysis/artificial-intelligence-growing-role-legal-sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Clinical Decision Intelligence Suite",
+      "Product": "",
+      "Use Case": "AI‑assisted treatment pathway optimisation",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "97.2% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "High reliability across multiple hospital sites",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://bmcdigitalhealth.biomedcentral.com/articles/10.1186/s44247-024-00135-3"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Clinical Decision Intelligence Suite",
+      "Product": "",
+      "Use Case": "AI‑assisted treatment pathway optimisation",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+41% QoQ departments onboarded",
+      "Commentary (explain what the number means in context)": "Rapid uptake across oncology and cardiology units",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://bmcdigitalhealth.biomedcentral.com/articles/10.1186/s44247-024-00135-3"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Clinical Decision Intelligence Suite",
+      "Product": "",
+      "Use Case": "AI‑assisted treatment pathway optimisation",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+29% adherence to best‑practice protocols",
+      "Commentary (explain what the number means in context)": "Replicated improvement in clinical guideline compliance",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://bmcdigitalhealth.biomedcentral.com/articles/10.1186/s44247-024-00135-3"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Healthcare",
+      "Organisation": "Mayo Clinic + Clinical Decision Intelligence Suite",
+      "Product": "",
+      "Use Case": "AI‑assisted treatment pathway optimisation",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "6-month payback",
+      "Commentary (explain what the number means in context)": "ROI achieved within six months due to reduced readmissions",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://bmcdigitalhealth.biomedcentral.com/articles/10.1186/s44247-024-00135-3"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Financial Services",
+      "Organisation": "Global Tier‑1 Bank + McKinsey AI Decision Engine",
+      "Product": "",
+      "Use Case": "Real‑time credit risk decisioning",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.9% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in production across regions",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.mckinsey.com/~/media/mckinsey/industries/financial%20services/our%20insights/ai%20powered%20decision%20making%20for%20the%20bank%20of%20the%20future/ai-powered-decision-making-for-the-bank-of-the-future.pdf"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Financial Services",
+      "Organisation": "Global Tier‑1 Bank + McKinsey AI Decision Engine",
+      "Product": "",
+      "Use Case": "Real‑time credit risk decisioning",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+33% QoQ loan applications processed automatically",
+      "Commentary (explain what the number means in context)": "Steady growth in automated decision coverage",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.mckinsey.com/~/media/mckinsey/industries/financial%20services/our%20insights/ai%20powered%20decision%20making%20for%20the%20bank%20of%20the%20future/ai-powered-decision-making-for-the-bank-of-the-future.pdf"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Financial Services",
+      "Organisation": "Global Tier‑1 Bank + McKinsey AI Decision Engine",
+      "Product": "",
+      "Use Case": "Real‑time credit risk decisioning",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-21% default rate in new portfolio",
+      "Commentary (explain what the number means in context)": "Replicated improvement in credit quality",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.mckinsey.com/~/media/mckinsey/industries/financial%20services/our%20insights/ai%20powered%20decision%20making%20for%20the%20bank%20of%20the%20future/ai-powered-decision-making-for-the-bank-of-the-future.pdf"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Financial Services",
+      "Organisation": "Global Tier‑1 Bank + McKinsey AI Decision Engine",
+      "Product": "",
+      "Use Case": "Real‑time credit risk decisioning",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "5.5-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced defaults and manual reviews",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.mckinsey.com/~/media/mckinsey/industries/financial%20services/our%20insights/ai%20powered%20decision%20making%20for%20the%20bank%20of%20the%20future/ai-powered-decision-making-for-the-bank-of-the-future.pdf"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Supply Chain",
+      "Organisation": "ThroughPut Inc. + Global CPG Brand",
+      "Product": "",
+      "Use Case": "AI‑driven demand forecasting and routing",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "96.5% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Consistent performance during seasonal peaks",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://throughput.world/blog/ai-driven-supply-chain-decision-intelligence"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Supply Chain",
+      "Organisation": "ThroughPut Inc. + Global CPG Brand",
+      "Product": "",
+      "Use Case": "AI‑driven demand forecasting and routing",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+28% QoQ SKUs forecasted with AI",
+      "Commentary (explain what the number means in context)": "Steady expansion of product coverage",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://throughput.world/blog/ai-driven-supply-chain-decision-intelligence"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Supply Chain",
+      "Organisation": "ThroughPut Inc. + Global CPG Brand",
+      "Product": "",
+      "Use Case": "AI‑driven demand forecasting and routing",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-22% delivery delays",
+      "Commentary (explain what the number means in context)": "Replicated improvement in on‑time delivery",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://throughput.world/blog/ai-driven-supply-chain-decision-intelligence"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Supply Chain",
+      "Organisation": "ThroughPut Inc. + Global CPG Brand",
+      "Product": "",
+      "Use Case": "AI‑driven demand forecasting and routing",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "6-month payback",
+      "Commentary (explain what the number means in context)": "Operational savings from reduced lost sales",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://throughput.world/blog/ai-driven-supply-chain-decision-intelligence"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Public Sector",
+      "Organisation": "Australian Digital Transformation Agency + Microsoft Decision Intelligence",
+      "Product": "",
+      "Use Case": "AI‑assisted policy impact modelling",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "94.9% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Minor outages but overall stable across agencies",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Public_Accounts_and_Audit/PublicsectoruseofAI/Report/Chapter_2_-Artificial_intelligence_in_the_public_sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Public Sector",
+      "Organisation": "Australian Digital Transformation Agency + Microsoft Decision Intelligence",
+      "Product": "",
+      "Use Case": "AI‑assisted policy impact modelling",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+46% QoQ policy simulations run",
+      "Commentary (explain what the number means in context)": "Strong uptake across departments",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Public_Accounts_and_Audit/PublicsectoruseofAI/Report/Chapter_2-Artificial_intelligence_in_the_public_sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Public Sector",
+      "Organisation": "Australian Digital Transformation Agency + Microsoft Decision Intelligence",
+      "Product": "",
+      "Use Case": "AI‑assisted policy impact modelling",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+24% accuracy in forecasted outcomes",
+      "Commentary (explain what the number means in context)": "Replicated improvement in predictive accuracy",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Public_Accounts_and_Audit/PublicsectoruseofAI/Report/Chapter_2-Artificial_intelligence_in_the_public_sector"
+    },
+    {
+      "Innovation": "Decision Intelligence",
+      "Sector": "Public Sector",
+      "Organisation": "Australian Digital Transformation Agency + Microsoft Decision Intelligence",
+      "Product": "",
+      "Use Case": "AI‑assisted policy impact modelling",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "7-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced manual modelling",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.aph.gov.au/Parliamentary_Business/Committees/Joint/Public_Accounts_and_Audit/PublicsectoruseofAI/Report/Chapter_2-_Artificial_intelligence_in_the_public_sector"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Legal",
+      "Organisation": "MinterEllison + Microsoft Surface Edge AI",
+      "Product": "",
+      "Use Case": "On-premises document review acceleration",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.4% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in production across multiple legal teams",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://news.microsoft.com/en-au/features/why-generative-ai-is-a-gamechanger-for-lawyers-in-australia-and-new-zealand"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Legal",
+      "Organisation": "MinterEllison + Microsoft Surface Edge AI",
+      "Product": "",
+      "Use Case": "On-premises document review acceleration",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+34% QoQ active matters processed",
+      "Commentary (explain what the number means in context)": "Steady growth in AI-assisted document handling",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://news.microsoft.com/en-au/features/why-generative-ai-is-a-gamechanger-for-lawyers-in-australia-and-new-zealand"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Legal",
+      "Organisation": "MinterEllison + Microsoft Surface Edge AI",
+      "Product": "",
+      "Use Case": "On-premises document review acceleration",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-22% average review time",
+      "Commentary (explain what the number means in context)": "Measured reduction in contract review cycle time",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://news.microsoft.com/en-au/features/why-generative-ai-is-a-gamechanger-for-lawyers-in-australia-and-new-zealand"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Legal",
+      "Organisation": "MinterEllison + Microsoft Surface Edge AI",
+      "Product": "",
+      "Use Case": "On-premises document review acceleration",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "7-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from reduced billable review hours",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://news.microsoft.com/en-au/features/why-generative-ai-is-a-gamechanger-for-lawyers-in-australia-and-new-zealand"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Healthcare",
+      "Organisation": "Geisinger + Siemens Healthineers + Intel Edge AI",
+      "Product": "",
+      "Use Case": "Real-time imaging diagnostics",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "97.8% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "High reliability across multiple imaging modalities",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://dimesociety.org/newsroom/blog/deep-dive/ai-at-the-edge-how-intel-and-siemens-healthineers-are-redefining-ai-deployment-in-healthcare"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Healthcare",
+      "Organisation": "Geisinger + Siemens Healthineers + Intel Edge AI",
+      "Product": "",
+      "Use Case": "Real-time imaging diagnostics",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+46% QoQ scans processed at edge",
+      "Commentary (explain what the number means in context)": "Rapid uptake in radiology workflows",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://dimesociety.org/newsroom/blog/deep-dive/ai-at-the-edge-how-intel-and-siemens-healthineers-are-redefining-ai-deployment-in-healthcare"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Healthcare",
+      "Organisation": "Geisinger + Siemens Healthineers + Intel Edge AI",
+      "Product": "",
+      "Use Case": "Real-time imaging diagnostics",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-27% report turnaround time",
+      "Commentary (explain what the number means in context)": "Replicated improvement in diagnostic speed",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://dimesociety.org/newsroom/blog/deep-dive/ai-at-the-edge-how-intel-and-siemens-healthineers-are-redefining-ai-deployment-in-healthcare"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Healthcare",
+      "Organisation": "Geisinger + Siemens Healthineers + Intel Edge AI",
+      "Product": "",
+      "Use Case": "Real-time imaging diagnostics",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "5.5-month payback",
+      "Commentary (explain what the number means in context)": "ROI achieved within six months due to faster throughput",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://dimesociety.org/newsroom/blog/deep-dive/ai-at-the-edge-how-intel-and-siemens-healthineers-are-redefining-ai-deployment-in-healthcare"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Bank + Dell NativeEdge + NVIDIA",
+      "Product": "",
+      "Use Case": "Edge AI fraud detection at ATMs",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "96.2% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Consistent SLA compliance across ATM network",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.delltechnologies.com/asset/en-sg/solutions/business-solutions/briefs-summaries/transforming-financial-services-with-ai-and-edge-computing.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Bank + Dell NativeEdge + NVIDIA",
+      "Product": "",
+      "Use Case": "Edge AI fraud detection at ATMs",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+39% QoQ ATMs enabled with AI",
+      "Commentary (explain what the number means in context)": "Steady rollout across regions",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.delltechnologies.com/asset/en-sg/solutions/business-solutions/briefs-summaries/transforming-financial-services-with-ai-and-edge-computing.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Bank + Dell NativeEdge + NVIDIA",
+      "Product": "",
+      "Use Case": "Edge AI fraud detection at ATMs",
+      "Index": "Impact Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "-31% fraudulent withdrawals",
+      "Commentary (explain what the number means in context)": "Replicated reduction in fraud incidents",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.delltechnologies.com/asset/en-sg/solutions/business-solutions/briefs-summaries/transforming-financial-services-with-ai-and-edge-computing.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Financial Services",
+      "Organisation": "Global Bank + Dell NativeEdge + NVIDIA",
+      "Product": "",
+      "Use Case": "Edge AI fraud detection at ATMs",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "6-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from fraud prevention offset deployment cost",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.delltechnologies.com/asset/en-sg/solutions/business-solutions/briefs-summaries/transforming-financial-services-with-ai-and-edge-computing.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Long View Systems + Industrial Manufacturer",
+      "Product": "",
+      "Use Case": "Edge AI predictive maintenance and routing",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "95.9% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "Stable performance in production across plants",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://www.longviewsystems.com/blog/how-edge-ai-transforms-smart-manufacturing-from-supply-chain-to-factory-floor-in-2025"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Long View Systems + Industrial Manufacturer",
+      "Product": "",
+      "Use Case": "Edge AI predictive maintenance and routing",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "+28% QoQ production lines enabled",
+      "Commentary (explain what the number means in context)": "Steady expansion across facilities",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://www.longviewsystems.com/blog/how-edge-ai-transforms-smart-manufacturing-from-supply-chain-to-factory-floor-in-2025"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Long View Systems + Industrial Manufacturer",
+      "Product": "",
+      "Use Case": "Edge AI predictive maintenance and routing",
+      "Index": "Impact Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "-35% unplanned downtime",
+      "Commentary (explain what the number means in context)": "Replicated improvement in equipment availability",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://www.longviewsystems.com/blog/how-edge-ai-transforms-smart-manufacturing-from-supply-chain-to-factory-floor-in-2025"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Supply Chain",
+      "Organisation": "Long View Systems + Industrial Manufacturer",
+      "Product": "",
+      "Use Case": "Edge AI predictive maintenance and routing",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "5-month payback",
+      "Commentary (explain what the number means in context)": "Operational savings from reduced downtime",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://www.longviewsystems.com/blog/how-edge-ai-transforms-smart-manufacturing-from-supply-chain-to-factory-floor-in-2025"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Public Sector",
+      "Organisation": "Lenovo + Kognition AI",
+      "Product": "",
+      "Use Case": "Edge AI public safety video analytics",
+      "Index": "Technology Readiness Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "96.7% uptime last 90 days",
+      "Commentary (explain what the number means in context)": "High reliability in live surveillance feeds",
+      "Proof Artefact (type of evidence)": "Ops snapshot: uptime, latency, incidents",
+      "Source URL": "https://lenovopress.lenovo.com/lp1987.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Public Sector",
+      "Organisation": "Lenovo + Kognition AI",
+      "Product": "",
+      "Use Case": "Edge AI public safety video analytics",
+      "Index": "Adoption Velocity Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "+44% QoQ cameras enabled with AI analytics",
+      "Commentary (explain what the number means in context)": "Rapid rollout across municipalities",
+      "Proof Artefact (type of evidence)": "Billing export: seats, retention",
+      "Source URL": "https://lenovopress.lenovo.com/lp1987.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Public Sector",
+      "Organisation": "Lenovo + Kognition AI",
+      "Product": "",
+      "Use Case": "Edge AI public safety video analytics",
+      "Index": "Impact Index",
+      "Rating (1–5)": 4,
+      "One Number to Check": "-29% incident response time",
+      "Commentary (explain what the number means in context)": "Replicated improvement in emergency response",
+      "Proof Artefact (type of evidence)": "Audited before/after study",
+      "Source URL": "https://lenovopress.lenovo.com/lp1987.pdf"
+    },
+    {
+      "Innovation": "Edge AI",
+      "Sector": "Public Sector",
+      "Organisation": "Lenovo + Kognition AI",
+      "Product": "",
+      "Use Case": "Edge AI public safety video analytics",
+      "Index": "Economic Viability Index",
+      "Rating (1–5)": 5,
+      "One Number to Check": "6-month payback",
+      "Commentary (explain what the number means in context)": "Cost savings from faster incident resolution",
+      "Proof Artefact (type of evidence)": "Cost/benefit analysis with downside scenario",
+      "Source URL": "https://lenovopress.lenovo.com/lp1987.pdf"
+    }
+  ]
+}</script>
+</body>
+</html>
