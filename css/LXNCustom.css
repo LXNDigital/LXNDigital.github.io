@@ -472,6 +472,22 @@ header.masthead {
 #scoreTable thead th:nth-child(10), #scoreTable tbody td:nth-child(10) { width: 200px; } /* Proof */
 #scoreTable thead th:nth-child(11), #scoreTable tbody td:nth-child(11) { width: 120px; } /* Source */
 
+/* Allow the accordion header to wrap neatly */
+.guidance-btn { 
+  flex-wrap: wrap; 
+  white-space: normal;         /* let long text wrap */
+}
+
+/* Title takes available space on desktop; full-width on mobile */
+.guidance-btn .title { 
+  flex: 1 1 auto; 
+}
+
+/* Keep badges in a row on desktop */
+.guidance-btn .badge-wrap { 
+  display: flex; 
+  gap: .5rem; 
+}
 
 /* Responsive downshifts: keep the table usable on smaller screens while remaining horizontally scrollable */
 @media (max-width: 992px) {   /* tablets and small laptops */
@@ -489,5 +505,22 @@ header.masthead {
   #scoreTable thead th:nth-child(10),
   #scoreTable tbody td:nth-child(10) { display: none; }
   */
+  .guidance-btn .title {
+    flex: 1 1 100%;
+    text-align: center;
+    margin-bottom: .25rem;
+  }
+  .guidance-btn .badge-wrap {
+    flex: 1 1 100%;
+    margin-left: 0 !important; /* override .ms-auto if applied */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+  }
+  .guidance-btn .badge-wrap .badge {
+    width: 100%;             /* full width for easy tapping */
+    text-align: center;
+  }
 }
 
