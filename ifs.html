@@ -160,7 +160,7 @@
 
     <section class="container px-4 px-lg-5 my-4">
   <div class="row g-4 align-items-stretch">
-    <!-- Scoring Guidance -->
+    <!-- gi -->
     <div class="col-12 col-lg-6">
       <div class="card card-elevate bg-dark text-white h-100">
         <div class="card-body">
@@ -171,12 +171,19 @@
             <!-- TRI -->
             <div class="accordion-item bg-dark text-white border-secondary">
               <h2 class="accordion-header" id="triHead">
-                <button class="accordion-button collapsed bg-dark text-white" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#triBody" aria-expanded="false" aria-controls="triBody">
-                  <span class="mb-3 text-white">Technology Readiness Index (TRI)</span>
-                  <span class="badge bg-secondary ms-auto me-2">One number: % targets met (90d)</span>
-                  <span class="badge bg-secondary">Proof: ops snapshot</span>
-                </button>
+                <button class="accordion-button collapsed bg-dark text-white py-3 d-flex flex-column flex-sm-row align-items-start"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#triBody" aria-expanded="false" aria-controls="triBody">
+                  <!-- Left column: title -->
+                  <span class="text-white me-sm-3 flex-grow-1 text-center text-sm-start text-wrap text-break">
+                    Technology Readiness Index (TRI)
+                  </span>
+                  <!-- Right column: badges stacked vertically -->
+                    <span class="d-flex flex-column align-items-center align-items-sm-end ms-sm-2 mt-2 mt-sm-0 w-90 w-sm-auto gap-2">
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">One number: % targets met (90d)</span>
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">Proof: ops snapshot
+                    </span>
+                  </span>
+                  </button>
               </h2>
               <div id="triBody" class="accordion-collapse collapse" aria-labelledby="triHead" data-bs-parent="#guidanceAccordion">
                 <div class="accordion-body pt-2">
@@ -194,12 +201,19 @@
             <!-- AVI -->
             <div class="accordion-item bg-dark text-white border-secondary">
               <h2 class="accordion-header" id="aviHead">
-                <button class="accordion-button collapsed bg-dark text-white" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#aviBody" aria-expanded="false" aria-controls="aviBody">
-                  <span class="mb-3 text-white">Adoption Velocity Index (AVI)</span>
-                  <span class="badge bg-secondary ms-auto me-2">One number: QoQ growth</span>
-                  <span class="badge bg-secondary">Proof: billing/usage export</span>
-                </button>
+                <button class="accordion-button collapsed bg-dark text-white py-3 d-flex flex-column flex-sm-row align-items-start"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#aviBody" aria-expanded="false" aria-controls="aviBody">
+                  <!-- Left column: title -->
+                  <span class="text-white me-sm-3 flex-grow-1 text-center text-sm-start text-wrap text-break">
+                    Adoption Velocity Index (AVI)
+                  </span>
+                  <!-- Right column: badges stacked vertically -->
+                    <span class="d-flex flex-column align-items-center align-items-sm-end ms-sm-2 mt-2 mt-sm-0 w-90 w-sm-auto gap-2">
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">One number: QoQ growth</span>
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">Proof: billing/usage export
+                    </span>
+                  </span>
+                  </button>
               </h2>
               <div id="aviBody" class="accordion-collapse collapse" aria-labelledby="aviHead" data-bs-parent="#guidanceAccordion">
                 <div class="accordion-body pt-2">
@@ -217,12 +231,19 @@
             <!-- II -->
             <div class="accordion-item bg-dark text-white border-secondary">
               <h2 class="accordion-header" id="iiHead">
-                <button class="accordion-button collapsed bg-dark text-white" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#iiBody" aria-expanded="false" aria-controls="iiBody">
-                  <span class="mb-3 text-white">Impact Index (II)</span>
-                  <span class="badge bg-secondary ms-auto me-2">One number: % improvement</span>
-                  <span class="badge bg-secondary">Proof: audited study</span>
-                </button>
+                <button class="accordion-button collapsed bg-dark text-white py-3 d-flex flex-column flex-sm-row align-items-start"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#iiBody" aria-expanded="false" aria-controls="iiBody">
+                  <!-- Left column: title -->
+                  <span class="text-white me-sm-3 flex-grow-1 text-center text-sm-start text-wrap text-break">
+                    Impact Index (II)
+                  </span>
+                  <!-- Right column: badges stacked vertically -->
+                    <span class="d-flex flex-column align-items-center align-items-sm-end ms-sm-2 mt-2 mt-sm-0 w-90 w-sm-auto gap-2">
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">One number: % improvement</span>
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">Proof: audited study
+                    </span>
+                  </span>
+                  </button>
               </h2>
               <div id="iiBody" class="accordion-collapse collapse" aria-labelledby="iiHead" data-bs-parent="#guidanceAccordion">
                 <div class="accordion-body pt-2">
@@ -240,12 +261,19 @@
             <!-- EVI -->
             <div class="accordion-item bg-dark text-white border-secondary">
               <h2 class="accordion-header" id="eviHead">
-                <button class="accordion-button collapsed bg-dark text-white" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#eviBody" aria-expanded="false" aria-controls="eviBody">
-                  <span class="mb-3 text-white">Economic Viability Index (EVI)</span>
-                  <span class="badge bg-secondary ms-auto me-2">One number: payback (months)</span>
-                  <span class="badge bg-secondary">Proof: cost/benefit (base &amp; downside)</span>
-                </button>
+                <button class="accordion-button collapsed bg-dark text-white py-3 d-flex flex-column flex-sm-row align-items-start"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#eviBody" aria-expanded="false" aria-controls="eviBody">
+                  <!-- Left column: title -->
+                  <span class="text-white me-sm-3 flex-grow-1 text-center text-sm-start text-wrap text-break">
+                    Economic Viability Index (EVI)
+                  </span>
+                  <!-- Right column: badges stacked vertically -->
+                    <span class="d-flex flex-column align-items-center align-items-sm-end ms-sm-2 mt-2 mt-sm-0 w-90 w-sm-auto gap-2">
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">One number: payback (months)</span>
+                      <span class="badge bg-secondary w-90 w-sm-auto text-center text-break">Proof: cost/benefit (base &amp; downside)
+                    </span>
+                  </span>
+                  </button>
               </h2>
               <div id="eviBody" class="accordion-collapse collapse" aria-labelledby="eviHead" data-bs-parent="#guidanceAccordion">
                 <div class="accordion-body pt-2">
