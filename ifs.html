@@ -419,7 +419,7 @@ function mkCard3(title, triples) {
       <span>Innovation</span>
       <div class="d-flex" style="gap:1rem;">
         <span class="text-end" style="min-width:6ch;">Median</span>
-        <span class="text-end" style="min-width:9ch;">Solutions</span>
+        <span class="text-end" style="min-width:9ch;">#Solutions</span>
       </div>
     </div>`;
   const rowsHtml = (triples || []).map(([k,v,n]) => `
@@ -505,7 +505,7 @@ function renderSummaryCards(summary) {
           </div>
         </div>`;
     }
-    wrap.innerHTML = mkIndicesCard()+ mkCard3("Median Fitness by Innovation", summary.byInnovationTriples);
+    wrap.innerHTML = mkIndicesCard()+ mkCard3("Median Fitness by Innovation: Score 1-5", summary.byInnovationTriples);
   }
 
   async function loadJSON() {
