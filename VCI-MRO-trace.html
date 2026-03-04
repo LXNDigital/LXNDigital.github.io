@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VCI Traceability : v2.2.14 (D3 Renderer)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root{
+      --fg:#111; --bg:#fff; --muted:#666; --grid:#e9ecef; --edge:#9aa0a6;
+      --fade:0.3; --node-radius:8; --lane-gap:80; --same-time-step:4;
+      --banner-err:#b00020; --banner-ok:#1b5e20; --panel:#f8f9fa; --panel-border:#dfe2e5;
+      --lineage:#64748b;
+
+    /* MRO time classification */
+    .node.va circle{ stroke:#16a34a; stroke-width:1px; }
+    .node.nva circle{ stroke:#f97316; stroke-width:1px; }
+    .node.unknownva circle{ stroke:#6b7280; stroke-width:1px; }
+    .legend-times{ margin-top:6px; font-size:11px; color:var(--muted); display:flex; gap:6px; flex-wrap:wrap; }
+    .legend-timechip{ display:inline-flex; gap:4px; align-items:baseline; padding:2px 6px; border:1px solid var(--panel-border); border-radius:999px; background:#fff; }
+    .legend-timechip .k{ font-weight:600; color:#111; }
+    .legend-timechip .v{ color:#111; }
+    .legend-timechip .u{ color:var(--muted); }
+
+
+      /* NEW: layout variables */
+      --header-h:58px;
+      --ribbon-h:74px; /* updated at runtime */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans','Liberation Sans',sans-serif;color:var(--fg);background:var(--bg)}
+    header{
+      display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;
+      padding:10px 14px;border-bottom:1px solid var(--panel-border);background:var(--panel);
+      position:sticky;top:0;z-index:10
+    }
+    h1{font-size:16px;margin:0;font-weight:600}
+    #seedTag{color:var(--muted);font-size:12px;margin-left:8px}
+    #controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .btn{border:1px solid var(--panel-border);background:#fff;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+    .btn:hover{filter:brightness(0.98)}
+    #banner{width:100%;padding:8px 12px;font-size:13px;color:#fff;display:none;border-bottom:1px solid #0001}
+    #banner.ok{background:var(--banner-ok);display:block}
+    #banner.err{background:var(--banner-err);display:block}
+
+    /* KPI strip */
+    #kpiBar{
+      display:grid;
+      /* +1 card for Seed emissions */
+      grid-template-columns: repeat(6, minmax(120px,1fr)) minmax(240px, 2fr);
+      gap:8px; align-items:stretch;
+      padding:8px 14px;
+      border-bottom:1px solid var(--panel-border);
+      background:#fff; position:sticky; top:var(--header-h); z-index:9;
+    }
+    .kpi{
+      border:1px solid var(--panel-border); border-radius:10px; background:#fff;
+      padding:8px 10px; display:flex; flex-direction:column; gap:2px;
+      min-height:56px;
+    }
+    .kpi .label{font-size:11px;color:#6b7280}
+    .kpi .value{font-size:16px;font-weight:700}
+    #kpiTemp{
+      display:flex; flex-direction:column; gap:4px; padding:8px 10px;
+      border:1px solid var(--panel-border); border-radius:10px; background:#fff;
+      min-height:56px;
+    }
+    #kpiTemp .label{font-size:11px;color:#6b7280}
+    #kpiTemp svg{width:100%; height:26px; display:block}
+
+    /* NEW: main area now uses CSS vars for heights */
+    #main{display:grid;grid-template-columns:1fr 280px;gap:0;height:calc(100vh - var(--header-h) - var(--ribbon-h))}
+    #stage{position:relative;height:100%;width:100%}
+    #legendPane{border-left:1px solid var(--panel-border);background:#fff;padding:12px;overflow:auto}
+    #legendPane h2{margin:8px 0 10px 0;font-size:13px;font-weight:700;color:#111}
+    #legend{display:flex;flex-direction:column;gap:10px}
+    .legend-item{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:center;font-size:12px;color:#222;line-height:1.25;cursor:pointer;border-radius:8px;padding:4px 6px}
+    .legend-item:hover{background:#f3f4f6}
+    .legend-item.active{outline:2px solid #111; background:#f0f9ff}
+    .legend-swatch{width:14px;height:14px;border:1px solid #cfd3d7;border-radius:3px}
+    .legend-key{color:var(--muted);font-size:11px}
+
+    /* Legend emissions mini-chips */
+    .legend-emissions{margin-top:4px; font-size:11px; color:#334155}
+    .legend-emissions .row{display:flex; flex-wrap:wrap; gap:6px}
+    .legend-chip{display:inline-flex; align-items:center; gap:4px; padding:2px 6px;
+      border:1px solid #e2e8f0; border-radius:6px; background:#f8fafc}
+    .legend-chip .k{color:#64748b}
+    .legend-chip .v{font-variant-numeric:tabular-nums; font-weight:600}
+    .legend-chip .u{color:#64748b}
+
+    svg{
+      width:100%;height:100%;display:block;
+      background:
+        linear-gradient(to right, transparent 0 20px, var(--grid) 20px 21px) repeat-x,
+        linear-gradient(to bottom, transparent calc(var(--lane-gap) - 1px), var(--grid) var(--lane-gap)) repeat-y;
+      background-size:40px 100%, 100% var(--lane-gap)
+    }
+    .axis path,.axis line{stroke:var(--muted)}
+    .axis text{fill:var(--muted);font-size:12px}
+    .axis.hidden{display:none}
+    .edge{stroke:var(--edge);color:var(--edge);stroke-width:2;fill:none;opacity:0.9;pointer-events:none}
+    .lineage-edge{
+      stroke:var(--lineage);
+      color:var(--lineage);
+      stroke-width:2;
+      fill:none;opacity:0.95;
+      stroke-dasharray:6 6;
+      pointer-events:none
+    }
+    .lineage-hidden{display:none !important}
+    .node circle{fill:transparent;stroke:transparent;}
+    .node text{font-size:12px;dominant-baseline:middle;pointer-events:none;fill:#000;paint-order:stroke;stroke:#fff;stroke-width:3px}
+    .node .badge{font-size:11px;font-weight:700;fill:#fff;stroke:none;paint-order:stroke;dominant-baseline:middle;text-anchor:middle}
+    .faded{opacity:var(--fade)}
+    .active-node circle{stroke:#111;stroke-width:3}
+    .group-selected circle{stroke:#111;stroke-width:3}
+    .active-lineage{stroke-dasharray:0;stroke-width:2.4;opacity:1}
+    .hidden-shiprecv{display:none}
+    .tooltip{
+      position:absolute;display:none;min-width:300px;max-width:520px;padding:10px 12px;border-radius:10px;background:#111;color:#fff;
+      box-shadow:0 8px 24px #0006;font-size:12px;line-height:1.35;z-index:20;white-space:pre-wrap; pointer-events:none;
+    }
+    .tooltip h3{margin:0 0 6px 0;font-size:13px;font-weight:600}
+    .tooltip .kv{color:#cbd5e1}
+    .tooltip code{display:block;white-space:pre-wrap;background:#0b0b0b;border:1px solid #222;border-radius:6px;padding:8px;margin-top:6px;color:#e2e8f0;overflow-x:auto}
+  
+.node path.marker{opacity:1;}
+</style>
+</head>
+<body>
+<header>
+  <h1>VCI Traceability <span id="seedTag"></span></h1>
+  <div id="controls">
+    <input type="file" id="fileInput" accept=".json,application/json" class="btn" />
+    <button id="toggleAxis" class="btn" title="Show/Hide time axis">Toggle X-Axis</button>
+    <button id="toggleLineage" class="btn" title="Show/Hide lineage links">Toggle Lineage</button>
+    <button id="toggleSpread" class="btn" title="Spread or compact nodes">Spread</button>
+    <button id="resetZoom" class="btn" title="Reset zoom/pan">Reset view</button>
+    <button id="unpinAll" class="btn" title="Clear all pinned nodes">Unpin all</button>
+    <button id="toggleShipRecvPaths" class="btn" title="Hide/Show nodes & links strictly between Shipping → nearest Receiving">
+      Hide Ship→Recv Paths
+    </button>
+    <!-- NEW: ribbon toggle -->
+    <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+  </div>
+  <div id="banner"></div>
+</header>
+
+<!-- KPI STRIP -->
+<section id="kpiBar">
+  <div class="kpi" id="kpiLeadTime"
+       title="Value-added time is the sum of intervals explicitly tagged as value-added in ILMD.">
+    <div class="label">Value-added time (Σ VA intervals)</div>
+    <div class="value">N/A</div>
+  </div>
+  <div class="kpi" id="kpiTransitTime"
+       title="Non-value-added time is the sum of intervals explicitly tagged as non-value-added in ILMD.">
+    <div class="label">Non-value-added time (Σ NVA intervals)</div>
+    <div class="value">N/A</div>
+  </div>
+  <div class="kpi" id="kpiDwell"
+       title="Total elapsed time is the sum of all successive event intervals in the scenario window.">
+    <div class="label">Total elapsed time (Σ all intervals)</div>
+    <div class="value">N/A</div>
+  </div>
+  <div class="kpi" id="kpiPctNva">
+  <div class="label">% Non-Maintenance time</div>
+  <div class="value">0%</div>
+  <div class="sub"></div>
+</div>
+  <div class="kpi" id="kpiHandoffs"
+       title="Handoffs: AssociationEvents whose bizStep ends with loading or unloading.">
+    <div class="label">Handoffs</div>
+    <div class="value">N/A</div>
+  </div>
+  <div class="kpi" id="kpiSensors"
+       title="Sensor pings: events whose bizStep ends with sensor_reporting.">
+    <div class="label">Sensor pings</div>
+    <div class="value">N/A</div>
+  </div>
+
+  <!-- Seed emissions card -->
+  <div class="kpi" id="kpiSeedEmissions" title="Declared emissions totals for the seed EPC">
+    <div class="label">Seed emissions</div>
+    <div class="legend-emissions">
+      <div class="row" id="kpiSeedEmissionsRow"></div>
+    </div>
+  </div>
+
+</section>
+
+<div id="main">
+  <div id="stage">
+    <svg id="svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 12 10" markerUnits="userSpaceOnUse" refX="22" refY="5" markerWidth="8" markerHeight="6" orient="auto">
+          <path d="M0,0 L12,5 L0,10 Z" fill="currentColor"></path>
+        </marker>
+      </defs>
+      <g id="viewport">
+        <g class="axis" id="timeAxis"></g>
+        <g id="edges"></g>
+        <g id="lineage"></g>
+        <g id="nodes"></g>
+      </g>
+    </svg>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <aside id="legendPane">
+    <h2>Legend : Ultimate Parent</h2>
+    <div id="legend"></div>
+  </aside>
+</div>
+
+<script>
+/* -------------------- Utilities -------------------- */
+function fnv1a(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193);h>>>=0}return h>>>0}
+function hslToHex(h,s,l){const a=s*Math.min(l,1-l);const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(Math.min(k-3,9-k,1),-1);return Math.round(255*c)};return "#"+[f(0),f(8),f(4)].map(x=>x.toString(16)).map(s=>s.padStart(2,'0')).join('')}
+function shortBizStep(uri){ if(!uri || typeof uri!=='string') return ""; const i=uri.lastIndexOf(":"); return i>=0?uri.slice(i+1):uri; }
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function pretty(obj){ try{return JSON.stringify(obj,null,2)}catch{return String(obj)} }
+function orgKeyFromSGLN(sgln){ if(!sgln||typeof sgln!=='string')return null; const m=sgln.match(/^urn:epc:id:sgln:([0-9]+)\./); return m?`urn:epc:id:sgln:${m[1]}.0.0`:null; }
+function hashColorForKey(key){ const h=fnv1a(key)%360; return hslToHex(h,0.55,0.52); }
+
+
+
+/* ---------------- Preferred palette (stable, high-contrast) ---------------- */
+const PREFERRED_PALETTE = [
+  "#2F5597", // blue
+  "#FF9300", // orange
+  "#70AD47", // green
+  "#9D90A0", // purple
+  "#B71E42", // red
+  "#14B8A6", // teal
+  "#Ed7D31", // amber
+  "#EB91BB", // pink
+  "#64748B", // slate
+  "#84CC16", // lime
+  "#5B9BD5", // light blue
+  "#F43F5E"  // rose
+];
+
+const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v1";
+let orgColorAllocMap = new Map();
+
+function loadOrgColorAlloc(){
+  try{
+    const raw = localStorage.getItem(ORG_COLOR_STORAGE_KEY);
+    if(!raw) return;
+    const obj = JSON.parse(raw);
+    if(obj && typeof obj === "object"){
+      orgColorAllocMap = new Map(Object.entries(obj));
+    }
+  }catch(e){ /* ignore */ }
+}
+function saveOrgColorAlloc(){
+  try{
+    const obj = Object.fromEntries(orgColorAllocMap.entries());
+    localStorage.setItem(ORG_COLOR_STORAGE_KEY, JSON.stringify(obj));
+  }catch(e){ /* ignore */ }
+}
+
+function allocateColorForOrgKey(orgKey, used){
+  const n = PREFERRED_PALETTE.length;
+  const start = fnv1a(orgKey) % n;
+  const step = 5; // spreads choices across the palette
+  let idx = start;
+  for(let tries=0; tries<n; tries++){
+    if(!used.has(idx)){
+      used.add(idx);
+      return PREFERRED_PALETTE[idx];
+    }
+    idx = (idx + step) % n;
+  }
+  return PREFERRED_PALETTE[start];
+}
+
+function ensureOrgColors(orgKeys){
+  if(!orgKeys || !orgKeys.length) return;
+  const used = new Set();
+  for(const col of orgColorAllocMap.values()){
+    const ix = PREFERRED_PALETTE.indexOf(col);
+    if(ix >= 0) used.add(ix);
+  }
+  for(const k of orgKeys){
+    if(!k || typeof k !== "string") continue;
+    if(orgColorAllocMap.has(k)) continue;
+    const col = allocateColorForOrgKey(k, used);
+    orgColorAllocMap.set(k, col);
+  }
+  saveOrgColorAlloc();
+}
+
+function getOrgColor(orgKey){
+  if(!orgKey) return "#94a3b8";
+  // Respect masterData-provided org colours if present
+  if(orgColorByKey && orgColorByKey.has(orgKey)) return orgColorByKey.get(orgKey);
+  if(orgColorAllocMap && orgColorAllocMap.has(orgKey)) return orgColorAllocMap.get(orgKey);
+
+  // lazy allocation
+  const used = new Set();
+  for(const col of orgColorAllocMap.values()){
+    const ix = PREFERRED_PALETTE.indexOf(col);
+    if(ix >= 0) used.add(ix);
+  }
+  const col = allocateColorForOrgKey(orgKey, used);
+  orgColorAllocMap.set(orgKey, col);
+  saveOrgColorAlloc();
+  return col;
+}
+
+loadOrgColorAlloc();
+/* Numeric helpers (deterministic formatting) */
+function num2(n){ return (typeof n === "number" && isFinite(n)) ? n : 0; }
+function fmt2(n){ return (n == null || !isFinite(n)) ? ":" : n.toFixed(2); }
+
+/* Preferred palette allocator (no per-org hardcoding) */
+/* ------------ masterData lookups (legend names & sensor vehicle info) --------- */
+function buildOrgLookups(masterData){
+  const nameByKey = new Map();
+  const colorByKey = new Map();
+  if(!masterData || typeof masterData !== "object") return { nameByKey, colorByKey };
+
+  const looksLikeUrn = v => typeof v === "string" && v.startsWith("urn:");
+  const pickName = (attrs) => {
+    if (!attrs || typeof attrs !== "object") return null;
+    const candidates = [
+      "urn:epcglobal:cbv:mda#name",
+      "urn:epcglobal:cbv:mda:name",
+      "urn:epcglobal:cbv:mda#partyName",
+      "urn:epcglobal:cbv:mda#siteName",
+      "urn:epcglobal:cbv:mda:description",
+      "cbv:mda:name",
+      "name"
+    ];
+    for (const k of candidates) {
+      const v = attrs[k];
+      if (v != null) return Array.isArray(v) ? String(v[0]) : String(v);
+    }
+    return null;
+  };
+
+  if (Array.isArray(masterData.orgs)) {
+    for (const o of masterData.orgs) {
+      const key = o?.key || (o?.sgln ? orgKeyFromSGLN(o.sgln) : null);
+      if (!key) continue;
+      if (o?.displayName && !looksLikeUrn(o.displayName)) nameByKey.set(key, String(o.displayName));
+      if (o?.color) colorByKey.set(key, String(o.color));
+    }
+  }
+
+  if (Array.isArray(masterData.raw)) {
+    for (const vocab of masterData.raw) {
+      if (!String(vocab?.type || "").endsWith(":Location")) continue;
+      const key = orgKeyFromSGLN(vocab?.id);
+      if (!key) continue;
+      const nm = pickName(vocab.attributes);
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, nm);
+    }
+  }
+
+  const locs = masterData.locations;
+  if (Array.isArray(locs)) {
+    for (const loc of locs) {
+      const key = loc?.orgKey || (loc?.sgln ? orgKeyFromSGLN(loc.sgln) : null);
+      if (!key) continue;
+      const attrs = loc.attributes || {};
+      const nm = pickName(attrs) || loc.name;
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, String(nm));
+    }
+  } else if (locs && typeof locs === "object") {
+    for (const [sgln, attrs] of Object.entries(locs)) {
+      const key = orgKeyFromSGLN(sgln);
+      if (!key) continue;
+      const nm = pickName(attrs);
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, String(nm));
+    }
+  }
+
+  return { nameByKey, colorByKey };
+}
+
+let orgNameByKey=new Map(), orgColorByKey=new Map();
+
+/* ---------- Sensor vehicle helpers (label, color from owner, badge) ---------- */
+function lookupMasterDataDescription(epc){
+  const md = current.masterData || {};
+  const assets = md.returnableAssets;
+  if (assets && typeof assets === "object"){
+    const rec = assets[epc];
+    if (rec && typeof rec === "object"){
+      const desc = rec["urn:epcglobal:cbv:mda#description"];
+      const op   = rec["urn:epcglobal:cbv:mda#operator"];
+      const t    = rec["urn:epcglobal:cbv:mda#tmType"] || rec["urn:epcglobal:cbv:mda#type"];
+      if (desc) return String(desc);
+      if (op && t) return `${t} : ${op}`;
+      if (op) return String(op);
+      if (t) return String(t);
+    }
+  }
+  return null;
+}
+function findVehicleEpcForNode(d){
+  if (!d || typeof d !== "object") return null;
+  const ilmd = d.ilmd || {};
+  const keys = ["cbvmda:transportVehicle", "cbvmda:vehicleID", "cbvmda:vehicle"];
+  for (const k of keys){
+    const v = ilmd[k];
+    if (typeof v === "string" && v.startsWith("urn:epc:id:")) return v;
+  }
+  const assets = (current.masterData && current.masterData.returnableAssets) || {};
+  if (Array.isArray(d.epcs) && assets && typeof assets === "object"){
+    for (const epc of d.epcs){
+      if (assets[epc]) return epc;
+    }
+  }
+  return null;
+}
+function vehicleOwnerOrgKey(vehEpc){
+  const rec = current.masterData?.returnableAssets?.[vehEpc];
+  const owner = rec && typeof rec === "object" ? rec["urn:epcglobal:cbv:mda#owner"] : null;
+  if (owner && typeof owner === "string") return orgKeyFromSGLN(owner);
+  return null;
+}
+function isSensorVehicleNode(d){
+  return shortBizStep(d.bizStep)==="sensor_reporting" && !!findVehicleEpcForNode(d);
+}
+function labelForNode(d){
+  const step = shortBizStep(d.bizStep);
+  if (step === "sensor_reporting"){
+    const vehEpc = findVehicleEpcForNode(d);
+    const desc = vehEpc ? lookupMasterDataDescription(vehEpc) : null;
+    return desc ? `sensor_reporting : ${desc}` : "sensor_reporting";
+  }
+  return step || (d.eventId || "");
+}
+
+/* -------------------- Node color -------------------- */
+function colorForNode(d){
+  if (isSensorVehicleNode(d)){
+    const vehEpc = findVehicleEpcForNode(d);
+    const key = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
+    if (key){
+      return getOrgColor(key);
+    }
+  }
+  const key=orgKeyFromSGLN(d.bizLocation);
+  if(key){
+    return getOrgColor(key);
+  }
+  const pal=["#2563eb","#059669","#dc2626","#7c3aed","#ea580c","#16a34a","#0ea5e9","#ca8a04","#db2777","#4b5563"];
+  const ix=Math.abs(fnv1a(d.bizStep||"unknown"))%pal.length;
+  return pal[ix];
+}
+
+/* -------------------- Sorting (canonical) -------------------- */
+const bizRank=new Map([
+  ["commissioning",0],["packing",1],["shipping",2],["loading",3],
+  ["departing",4],["arriving",5],["unloading",6],["receiving",7],
+  ["unpacking",8],["transforming",9],["sensor_reporting",5.5]
+]);
+function sortNodesDeterministically(nodes){
+  return nodes.slice().sort((a,b)=>{
+    const ta=new Date(a.eventTime||a.recordTime||0).getTime();
+    const tb=new Date(b.eventTime||b.recordTime||0).getTime();
+    if(ta!==tb) return ta-tb;
+    const ra=a.recordTime?new Date(a.recordTime).getTime():-Infinity;
+    const rb=b.recordTime?new Date(b.recordTime).getTime():-Infinity;
+    if(ra!==rb) return ra-rb;
+    const idCmp=(a.eventId||"").localeCompare(b.eventId||"");
+    if(idCmp!==0) return idCmp;
+    const ba=bizRank.get(shortBizStep(a.bizStep)) ?? 999;
+    const bb=bizRank.get(shortBizStep(b.bizStep)) ?? 999;
+    if(ba!==bb) return ba-bb;
+    return (a.id||"").localeCompare(b.id||"");
+  });
+}
+
+/* -------------------- Layout & spread -------------------- */
+function baseLayout(nodes,width,height){
+  const margin={top:40,right:40,bottom:60,left:40};
+  const innerW=width - margin.left - margin.right;
+  const innerH=height - margin.top - margin.bottom;
+
+  const times=nodes.map(n=>new Date(n.eventTime).getTime());
+  const tMin=d3.min(times), tMax=d3.max(times);
+  const pad=(tMax-tMin)*0.04 || 6e5;
+  const x=d3.scaleTime().domain([new Date(tMin-pad), new Date(tMax+pad)]).range([margin.left, margin.left+innerW]);
+
+  const laneKeys=Array.from(new Set(nodes.map(n=>n.lane||"lane0")));
+  const yBase=d3.scalePoint().domain(laneKeys).range([margin.top, margin.top+innerH]).padding(0.5);
+
+  const groups=new Map();
+  nodes.forEach(n=>{
+    const lane=n.lane||"lane0";
+    const key=`${lane}|${new Date(n.eventTime).toISOString()}`;
+    if(!groups.has(key)) groups.set(key,[]);
+    groups.get(key).push(n);
+  });
+  for(const arr of groups.values()){
+    arr.sort((a,b)=>(a.eventId||"").localeCompare(b.eventId||""));
+    arr.forEach((n,i)=>n._sameTimeIndex=i);
+  }
+
+  nodes.forEach(n=>{
+    n.x=x(new Date(n.eventTime));
+    n.y=yBase(n.lane||"lane0");
+    if(n._sameTimeIndex){
+      n.x += n._sameTimeIndex * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--same-time-step'));
+    }
+    delete n.fx; delete n.fy;
+  });
+
+  return {x,yBase,margin,width,height};
+}
+function applySpreadOffsets(nodes, params={maxDX:22,maxDY:70}){
+  const {maxDX,maxDY}=params;
+  for(const n of nodes){
+    const h=fnv1a(n.eventId||n.id||"");
+    const sdx=((h%17)-8)/8;
+    const sdy=(((Math.floor(h/17)%19)-9)/9);
+    const dx=Math.round(sdx*maxDX);
+    const dy=Math.round(sdy*maxDY);
+    n.x_spread=n.x+dx;
+    n.y_spread=n.y+dy;
+  }
+}
+function applyRadialGroupLayout(nodes, params={radiusBase:10, radiusScale:1}) {
+  const groups = new Map();
+  for (const n of nodes) {
+    const key = orgKeyFromSGLN(n.bizLocation) || "__nogroup__";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(n);
+  }
+  for (const [key, arr] of groups.entries()) {
+    if (arr.length === 1) {
+      const a = arr[0];
+      a.x_spread = a.x_spread ?? a.x;
+      a.y_spread = a.y_spread ?? a.y;
+      continue;
+    }
+    const cx = d3.mean(arr, d => d.x);
+    const cy = d3.mean(arr, d => d.y);
+    const R = params.radiusBase + (arr.length * 10) * (params.radiusScale || 1);
+    const sorted = arr.slice().sort((a,b)=> (a.eventTime||"").localeCompare(b.eventTime||"") || (a.eventId||"").localeCompare(b.eventId||""));
+    const nudge = (fnv1a(key) % 360) * (Math.PI/180);
+    const step  = (2*Math.PI) / sorted.length;
+    sorted.forEach((node, i) => {
+      const ang = nudge + i*step;
+      node.x_spread = cx + R * Math.cos(ang);
+      node.y_spread = cy + R * Math.sin(ang);
+    });
+  }
+}
+function usePositions(nodes,spreadMode){
+  nodes.forEach(n=>{
+    const X=spreadMode ? (n.x_spread ?? n.x) : n.x;
+    const Y=spreadMode ? (n.y_spread ?? n.y) : n.y;
+    n.fx = n.fx ?? X; n.fy = n.fy ?? Y;
+  });
+}
+
+/* -------------------- Rendering -------------------- */
+const svg=d3.select("#svg");
+const viewport=d3.select("#viewport");
+const gEdges=d3.select("#edges");
+const gLineage=d3.select("#lineage");
+const gNodes=d3.select("#nodes");
+const gAxis=d3.select("#timeAxis");
+const tooltip=d3.select("#tooltip");
+const banner=d3.select("#banner");
+const seedTag=d3.select("#seedTag");
+const legendDiv=document.getElementById("legend");
+
+/* Selection / group-drag state */
+let selectedGroupKey=null;
+let selectedGroupSet=new Set();
+
+/* Data state */
+let current={ nodes:[], links:[], lineageLinks:[], byId:new Map(), layout:null, masterData:null, coverage:null, indices:null, emissionsData:null };
+/* Emissions (optional) */
+let emissionsByOrg = new Map();
+let emissionsUnit = "kgCO2e";
+let emissionsSeedTotals = null;
+
+/* NEW: ribbon visibility state */
+let showRibbon = true;
+
+let showAxis=true;
+let showLineage=true;
+let spreadMode=false;
+
+const SPREAD_LEVELS = [
+  { label: "Spread",      params: { maxDX: 0,  maxDY: 0  } },
+  { label: "Spread +",    params: { maxDX: 4,  maxDY: 12 } },
+  { label: "Spread ++",   params: { maxDX: 7,  maxDY: 18 } },
+  { label: "Spread +++",  params: { maxDX: 10, maxDY: 26 } },
+];
+let spreadIndex=0;
+
+/* NEW: Hide paths state + helpers */
+let hideShipRecvPaths = false;
+
+function showTooltip(html, clientX, clientY){
+  tooltip.html(html).style("display","block");
+  const bbox = tooltip.node().getBoundingClientRect();
+  const left = Math.min(clientX + 14, window.innerWidth  - bbox.width  - 10);
+  const top  = Math.min(clientY + 14, window.innerHeight - bbox.height - 10);
+  tooltip.style("left", left + "px").style("top", top + "px");
+}
+function hideTooltip(){ tooltip.style("display","none"); }
+
+/* Ship→Recv computations */
+function computeShipRecvHideSets(){
+  const hiddenNodeIds = new Set();
+  const hiddenEdgeKeys = new Set();
+  const keyEdge = (u, v) => `${u}->${v}`;
+
+  const adj = new Map();
+  current.links.forEach(e => {
+    if (!adj.has(e.source)) adj.set(e.source, []);
+    adj.get(e.source).push(e.target);
+  });
+
+  const shippingNodes = current.nodes.filter(n => shortBizStep(n.bizStep) === "shipping");
+  const idToNode = current.byId;
+
+  for (const ship of shippingNodes){
+    const q = [ship.id];
+    const prev = new Map();
+    const seen = new Set([ship.id]);
+    let recvId = null;
+
+    while (q.length){
+      const u = q.shift();
+      const nbrs = adj.get(u) || [];
+      for (const v of nbrs){
+        if (seen.has(v)) continue;
+        seen.add(v);
+        prev.set(v, u);
+        const vNode = idToNode.get(v);
+        if (shortBizStep(vNode?.bizStep) === "receiving"){
+          recvId = v; q.length = 0; break;
+        }
+        q.push(v);
+      }
+    }
+
+    if (!recvId) continue;
+
+    const path = [];
+    let cur = recvId;
+    while (cur){
+      path.push(cur);
+      if (cur === ship.id) break;
+      cur = prev.get(cur);
+    }
+    path.reverse();
+
+    if (path.length <= 2) continue;
+
+    for (let i = 1; i < path.length - 1; i++){ hiddenNodeIds.add(path[i]); }
+    for (let i = 0; i < path.length - 1; i++){ hiddenEdgeKeys.add(keyEdge(path[i], path[i+1])); }
+  }
+
+  return { hiddenNodeIds, hiddenEdgeKeys };
+}
+function applyShipRecvHiding(){
+  if (!hideShipRecvPaths){
+    gNodes.selectAll("g.node").classed("hidden-shiprecv", false);
+    gEdges.selectAll("path.edge").classed("hidden-shiprecv", false);
+    return;
+  }
+  const { hiddenNodeIds, hiddenEdgeKeys } = computeShipRecvHideSets();
+  gNodes.selectAll("g.node").classed("hidden-shiprecv", d => hiddenNodeIds.has(d.id));
+  gEdges.selectAll("path.edge").classed("hidden-shiprecv", d => hiddenEdgeKeys.has(`${d.source}->${d.target}`));
+}
+
+/* Banner helpers */
+function setBanner(msg, ok=false){ banner.attr("class", ok?"ok":"err").text(msg).style("display","block"); }
+function clearBanner(){ banner.attr("class","").style("display","none").text(""); }
+
+/* -------------------- Validation -------------------- */
+function isSgln(x){
+  return typeof x === 'string'
+    && /^urn:epc:id:sgln:[0-9]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(x);
+}
+function isEpc(x){ return typeof x==='string' && /^urn:epc:id:/.test(x); }
+
+function validate2_2_13(json){
+  const errors=[];
+  const need=["seedEpc","masterData","nodes","links","indices","lineageLinks","coverage"];
+  for(const k of need) if(!(k in json)) errors.push(`Missing top-level '${k}'`);
+
+  if(!Array.isArray(json.nodes)||json.nodes.length<2) errors.push("At least 2 nodes required");
+  if(!Array.isArray(json.links)||json.links.length<1) errors.push("At least 1 link required");
+
+  for(const n of (json.nodes||[])){
+    if(!n.id) errors.push("node.id missing");
+    if(!n.eventTime) errors.push(`node.eventTime missing for ${n.id||'?'}`);
+    if(Number.isNaN(Date.parse(n.eventTime))) errors.push(`node.eventTime not ISO date for ${n.id}`);
+    if(!n.type) errors.push(`node.type missing for ${n.id||'?'}`);
+    if(n.bizStep && !/^urn:epcglobal:cbv:bizstep:/.test(n.bizStep)) errors.push(`bizStep must be a CBV URI (${n.id})`);
+    if(n.disposition && !/^urn:epcglobal:cbv:disp:/.test(n.disposition)) errors.push(`disposition must be a CBV URI (${n.id})`);
+    if(n.bizLocation && !isSgln(n.bizLocation)) errors.push(`bizLocation must be an SGLN URN (${n.id})`);
+    ["epcs","parentIds","childIds","inputs","outputs"].forEach(f=>{
+      if(Array.isArray(n[f]) && !n[f].every(isEpc)) errors.push(`${f} contains non-EPC URNs (${n.id})`);
+    });
+  }
+
+  const byId=new Map((json.nodes||[]).map(n=>[n.id,n]));
+  for(const e of (json.links||[])){
+    const u=byId.get(e.source), v=byId.get(e.target);
+    if(!u||!v){ errors.push(`link references unknown node: ${e.source}->${e.target}`); continue; }
+    if(new Date(u.eventTime)>new Date(v.eventTime)) errors.push(`Back-in-time edge ${u.id} -> ${v.id}`);
+  }
+
+  for(const ll of (json.lineageLinks||[])){
+    if(!ll || (ll.role!=="xform-input" && ll.role!=="xform-output")) errors.push("lineageLinks.role must be 'xform-input' or 'xform-output'");
+    if(!isEpc(ll.epc)) errors.push("lineageLinks.epc must be an EPC URN");
+    if(!(byId.has(ll.source) && byId.has(ll.target))) errors.push(`lineage link refs unknown node ${ll.source} -> ${ll.target}`);
+  }
+
+  if(!(json.indices && json.indices.byEpc)) errors.push("indices.byEpc missing");
+  else {
+    for(const [epc,arr] of Object.entries(json.indices.byEpc)){
+      if(!isEpc(epc) || !Array.isArray(arr) || !arr.every(id=>typeof id==="string")){
+        errors.push(`indices.byEpc['${epc}'] must be array of node IDs`); continue;
+      }
+      for(const id of arr){ if(!byId.has(id)) errors.push(`indices.byEpc['${epc}'] has unknown node ID ${id}`); }
+    }
+  }
+
+  if(!(json.coverage && Array.isArray(json.coverage.transformations) && json.coverage.unresolved))
+    errors.push("coverage must include 'transformations' array and 'unresolved' object");
+
+  /* Optional emissions soft validation */
+  if (json.emissions && typeof json.emissions === "object"){
+    const e = json.emissions;
+    if (e.byOrg && typeof e.byOrg !== "object") errors.push("emissions.byOrg must be an object");
+    if (e.byLocation && typeof e.byLocation !== "object") errors.push("emissions.byLocation must be an object");
+  }
+
+  const allEpcs=new Set(Object.keys(json.indices?.byEpc||{}));
+  for(const t of (json.coverage?.transformations||[])){
+    if(!t?.eventId || !byId.has(t.eventId)) errors.push(`coverage transformation.eventId not found: ${t?.eventId}`);
+    (t.inputs||[]).forEach(i=>{ if(!isEpc(i.epc) || !allEpcs.has(i.epc)) errors.push(`coverage.inputs EPC not indexed: ${i.epc}`); });
+    (t.outputs||[]).forEach(o=>{ if(!isEpc(o.epc) || !allEpcs.has(o.epc)) errors.push(`coverage.outputs EPC not indexed: ${o.epc}`); });
+  }
+
+  return errors;
+}
+
+/* Screen → SVG "world" coords */
+function pointerToWorld(nativeEvent){
+  const [sx, sy] = d3.pointer(nativeEvent, svg.node());
+  const z = d3.zoomTransform(svg.node());
+  return [(sx - z.x) / z.k, (sy - z.y) / z.k];
+}
+
+function getLocRecord(sgln){
+  const L = current.masterData?.locations;
+  if (!L || !sgln) return null;
+  if (Array.isArray(L)) return L.find(l => l.sgln === sgln) || null;
+  if (typeof L === "object" && L[sgln]) return { attributes: L[sgln] };
+  return null;
+}
+
+/* Tooltip (XSS safe) */
+function nodeTooltip(n){
+  const key=orgKeyFromSGLN(n.bizLocation);
+  const mdLoc = getLocRecord(n.bizLocation);
+  const orgLabel = key ? (orgNameByKey.get(key) || key) : null;
+
+  let lines=[];
+  lines.push(`<h3>${esc(shortBizStep(n.bizStep))} <span class="kv">(${esc(n.type||"")})</span></h3>`);
+  lines.push(`<div class="kv"><b>eventId</b>: ${esc(n.eventId||"")}</div>`);
+  lines.push(`<div class="kv"><b>eventTime</b>: ${esc(n.eventTime||"")}</div>`);
+  if(n.recordTime) lines.push(`<div class="kv"><b>recordTime</b>: ${esc(n.recordTime)}</div>`);
+  if(n.bizLocation) lines.push(`<div class="kv"><b>bizLocation</b>: ${esc(n.bizLocation)}${orgLabel?` : <i>${esc(orgLabel)}</i>`:""}</div>`);
+  if(mdLoc){
+    const attrs = mdLoc.attributes||{};
+    const nm = attrs["urn:epcglobal:cbv:mda#name"] || mdLoc.name;
+    const city = attrs["urn:epcglobal:cbv:mda#city"] || mdLoc.city;
+    const region = attrs["urn:epcglobal:cbv:mda#state"] || mdLoc.region;
+    const cc = attrs["urn:epcglobal:cbv:mda#countryCode"] || mdLoc.countryCode;
+    const addr = [nm, city, region, cc].filter(Boolean).map(esc).join(", ");
+    if(addr) lines.push(`<div class="kv"><b>location</b>: ${addr}</div>`);
+  }
+  if(n.readPoint) lines.push(`<div class="kv"><b>readPoint</b>: ${esc(n.readPoint)}</div>`);
+  if(n.disposition) lines.push(`<div class="kv"><b>disposition</b>: ${esc(n.disposition)}</div>`);
+  if(Array.isArray(n.epcs)) lines.push(`<div class="kv"><b>epcs</b>: ${esc(n.epcs.join(", "))}</div>`);
+  if(Array.isArray(n.parentIds)) lines.push(`<div class="kv"><b>parentIds</b>: ${esc(n.parentIds.join(", "))}</div>`);
+  if(Array.isArray(n.childIds) && n.childIds.length) lines.push(`<div class="kv"><b>childIds</b>: ${esc(n.childIds.join(", "))}</div>`);
+  if(n.action) lines.push(`<div class="kv"><b>action</b>: ${esc(n.action)}</div>`);
+  if(Array.isArray(n.inputs)) lines.push(`<div class="kv"><b>inputs</b>: ${esc(n.inputs.join(", "))}</div>`);
+  if(Array.isArray(n.outputs)) lines.push(`<div class="kv"><b>outputs</b>: ${esc(n.outputs.join(", "))}</div>`);
+
+  if(n.type==="TransformationEvent" && current.coverage){
+    const entry = (current.coverage.transformations||[]).find(t => t.eventId===n.id || t.eventId===n.eventId);
+    if(entry){
+      const inSumm = (entry.inputs||[]).map(i => `${i.epc} [commissioned:${i.hasCommissioning?'yes':'no'}; lastPre:${i.lastEventBeforeT||':'}]`).join("\n");
+      const outSumm = (entry.outputs||[]).map(o => `${o.epc} [firstPost:${o.firstEventAfterT||':'}]`).join("\n");
+      if(inSumm) lines.push(`<div class="kv"><b>coverage.inputs</b>:\n${esc(inSumm)}</div>`);
+      if(outSumm) lines.push(`<div class="kv"><b>coverage.outputs</b>:\n${esc(outSumm)}</div>`);
+    }
+  }
+
+  if (n.ilmd && typeof n.ilmd === 'object' && Object.keys(n.ilmd).length) {
+    lines.push(`<div class="kv"><b>ilmd</b>:</div><code>${esc(pretty(n.ilmd))}</code>`);
+  }
+  return lines.join("\n");
+}
+
+/* Path drawing */
+function bezierPath(u,v){
+  const r=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius'))||8;
+  const strokeW=2, pad=r+strokeW*0.5;
+  const ux=(u.fx??u.x), uy=(u.fy??u.y);
+  const vx=(v.fx??v.x), vy=(v.fy??v.y);
+  const dx=vx-ux, dy=vy-uy;
+  const len=Math.hypot(dx,dy)||1;
+  const nx=dx/len, ny=dy/len;
+  const sx=ux+nx*pad, sy=uy+ny*pad;
+  const ex=vx-nx*pad, ey=vy-ny*pad;
+  const t=0.25;
+  const c1x=sx+dx*t, c1y=sy+dy*t;
+  const c2x=ex-dx*t, c2y=ey-dy*t;
+  return `M ${sx},${sy} C ${c1x},${c1y} ${c2x},${c2y} ${ex},${ey}`;
+}
+
+/* Emissions parser/merger (v2.2.14 + legacy) */
+function parseEmissions(json){
+  const byOrg = new Map();
+  const unit = (json?.emissions?.unit && typeof json.emissions.unit === "string")
+    ? json.emissions.unit
+    : "kgCO2e";
+
+  // legacy byOrg
+  const srcOrg = json?.emissions?.byOrg;
+  if (srcOrg && typeof srcOrg === "object"){
+    for (const [orgKey, rec] of Object.entries(srcOrg)){
+      if (typeof orgKey !== "string") continue;
+      const s1 = num2(rec?.scope1);
+      const s2 = num2(rec?.scope2);
+      const s3 = num2(rec?.scope3_declared);
+      const tot = (typeof rec?.total === "number" && isFinite(rec.total)) ? rec.total : (s1+s2+s3);
+      byOrg.set(orgKey, { scope1:s1, scope2:s2, scope3_declared:s3, scope3_cat1:null, scope3_cat4:null, total:tot });
+    }
+  }
+
+  // legacy byLocation
+  const srcLoc = json?.emissions?.byLocation;
+  if (srcLoc && typeof srcLoc === "object"){
+    for (const [sgln, rec] of Object.entries(srcLoc)){
+      const orgKey = orgKeyFromSGLN(sgln);
+      if (!orgKey) continue;
+      const s1 = num2(rec?.scope1), s2 = num2(rec?.scope2), s3 = num2(rec?.scope3_declared);
+      const add = s1 + s2 + s3;
+      if (!byOrg.has(orgKey)) byOrg.set(orgKey, { scope1:0, scope2:0, scope3_declared:0, scope3_cat1:null, scope3_cat4:null, total:0 });
+      const cur = byOrg.get(orgKey);
+      cur.scope1 += s1; cur.scope2 += s2; cur.scope3_declared += s3; cur.total += add;
+    }
+  }
+
+  // v2.2.14 orgs[]
+  const orgs = json?.emissions?.orgs;
+  if (Array.isArray(orgs)){
+    for (const o of orgs){
+      const key = (typeof o?.orgSglnRoot === "string") ? o.orgSglnRoot : null;
+      if (!key) continue;
+
+      const s1 = num2(o?.scope1Total ?? o?.scope1);
+      const s2 = num2(o?.scope2Total ?? o?.scope2);
+      const s3c1 = num2(o?.scope3Cat1Total ?? o?.scope3Cat1);
+      const s3c4 = num2(o?.scope3Cat4Total ?? o?.scope3Cat4);
+      const s3other = num2(o?.scope3OtherTotal ?? o?.scope3Other);
+      const s3decl = num2(o?.scope3Total) + s3c1 + s3c4 + s3other;
+      const tot = num2(o?.total ?? (s1 + s2 + s3decl));
+
+      if (!byOrg.has(key)) byOrg.set(key, { scope1:0, scope2:0, scope3_declared:0, scope3_cat1:0, scope3_cat4:0, total:0 });
+      const cur = byOrg.get(key);
+      cur.scope1 += s1;
+      cur.scope2 += s2;
+      cur.scope3_cat1 += s3c1;
+      cur.scope3_cat4 += s3c4;
+      cur.scope3_declared += s3decl;
+      cur.total += tot;
+
+      if (o?.orgName && !orgNameByKey.has(key)) orgNameByKey.set(key, String(o.orgName));
+    }
+  }
+
+  // seed totals for ribbon
+  const seed = json?.emissions?.seedEpcTotals || json?.emissions?.seedTotals;
+  let seedTotals = null;
+  if (seed && typeof seed === "object"){
+    const s1 = num2(seed.scope1 ?? seed.scope1Total);
+    const s2 = num2(seed.scope2 ?? seed.scope2Total);
+    const s3c1 = num2(seed.scope3Cat1 ?? seed.scope3Cat1Total);
+    const s3c4 = num2(seed.scope3Cat4 ?? seed.scope3Cat4Total);
+    const total = num2(seed.total ?? (s1 + s2 + s3c1 + s3c4));
+    seedTotals = { scope1:s1, scope2:s2, scope3Cat1:s3c1, scope3Cat4:s3c4, total };
+  }
+
+  return { byOrg, unit, seedTotals };
+}
+
+/* Legend */
+function updateLegend(nodes){
+  legendDiv.innerHTML="";
+  const seen=new Set(), entries=[];
+  for(const n of nodes){
+    const key=orgKeyFromSGLN(n.bizLocation);
+    if(!key || seen.has(key)) continue;
+    seen.add(key);
+    const color = getOrgColor(key);
+    const name  = orgNameByKey.get(key) || key;
+    entries.push({key,name,color});
+  }
+  entries.sort((a,b)=>a.name.localeCompare(b.name));
+  for(const e of entries){
+    const item=document.createElement("div");
+    item.className="legend-item";
+    item.dataset.orgkey = e.key;
+
+    const em = emissionsByOrg.get(e.key);
+    const emHtml = em ? `
+      <div class="legend-emissions">
+        <div class="row">
+          <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(em.scope1)}</span></span>
+          <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(em.scope2)}</span></span>
+          ${
+            (em.scope3_cat1 != null || em.scope3_cat4 != null)
+              ? `
+                <span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(em.scope3_cat1)}</span></span>
+                <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(em.scope3_cat4)}</span></span>
+              `
+              : `<span class="legend-chip"><span class="k">S3</span><span class="v">${fmt2(em.scope3_declared)}</span></span>`
+          }
+          <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(em.total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
+        </div>
+      </div>` : "";
+
+    const tm = mroTimeByOrg.get(e.key);
+    const timeHtml = tm ? `
+      <div class="legend-times">
+        <span class="legend-timechip"><span class="k">VA</span><span class="v">${fmt2(tm.vaH)}</span><span class="u">h</span></span>
+        <span class="legend-timechip"><span class="k">NVA</span><span class="v">${fmt2(tm.nvaH)}</span><span class="u">h</span></span>
+        <span class="legend-timechip"><span class="k">Total</span><span class="v">${fmt2(tm.totalH)}</span><span class="u">h</span></span>
+      </div>` : "";
+
+    item.innerHTML = `<span class="legend-swatch" style="background:${e.color}"></span>
+      <div>
+        <div>${esc(e.name)}</div>
+        <div class="legend-key">${esc(e.key)}</div>
+        ${emHtml}
+        ${timeHtml}
+      </div>`;
+
+    item.addEventListener("click", ()=> toggleGroupSelection(e.key));
+    legendDiv.appendChild(item);
+  }
+  if(!entries.length){
+    const empty=document.createElement("div");
+    empty.className="legend-item";
+    empty.innerHTML=`<span class="legend-swatch" style="background:#e5e7eb"></span><div>No bizLocation keys</div>`;
+    legendDiv.appendChild(empty);
+  }
+
+  Array.from(legendDiv.children).forEach(el=>{
+    if(el.dataset.orgkey){
+      el.classList.toggle("active", el.dataset.orgkey===selectedGroupKey);
+    }
+  });
+}
+function toggleGroupSelection(key){
+  if(selectedGroupKey===key){
+    selectedGroupKey=null;
+    selectedGroupSet.clear();
+  } else {
+    selectedGroupKey=key;
+    selectedGroupSet = new Set(current.nodes.filter(n=>orgKeyFromSGLN(n.bizLocation)===key).map(n=>n.id));
+  }
+  gNodes.selectAll("g.node").classed("group-selected", n=> selectedGroupSet.has(n.id));
+  Array.from(legendDiv.children).forEach(el=>{
+    if(el.dataset.orgkey){
+      el.classList.toggle("active", el.dataset.orgkey===selectedGroupKey);
+    }
+  });
+}
+
+/* ---------- SPEC utilities for KPIs ---------- */
+const T = d => new Date(d);
+const hours2 = ms => (ms == null || !isFinite(ms)) ? null : +(ms/36e5).toFixed(2);
+const endsWithStep = (n, suf) => ((n?.bizStep)||"").endsWith(suf);
+
+function firstTransformForSeed(nodes, seedEpc){
+  const transforms = nodes.filter(n => n.type === "TransformationEvent");
+  if (!transforms.length) return null;
+
+  const outputsSeed = n => (n.outputs || []).some(o =>
+    (typeof o === "string") ? (o === seedEpc) : (o && o.epc === seedEpc)
+  );
+
+  const tfsForSeed = transforms.filter(outputsSeed);
+  const pickFrom = (tfsForSeed.length ? tfsForSeed : transforms);
+  return pickFrom.sort((a,b)=> T(a.eventTime) - T(b.eventTime))[0];
+}
+
+
+/* ---------- MRO utilities (time-based control) ---------- */
+/**
+ * How time is calculated:
+ * - Events are sorted by eventTime.
+ * - Each interval is (event[i].time - event[i-1].time) and is attributed to event[i]
+ *   (the activity or wait that occurred "up to" that event).
+ *
+ * How intervals are classified:
+ * - Prefer ILMD key: mro:timeClass in {"VA","NVA"} on event[i]
+ * - Fallback ILMD booleans:
+ *    - mro:valueAdded = true  => VA
+ *    - mro:nonValueAdded = true => NVA
+ * - Otherwise: UNKNOWN
+ */
+let mroTimeByOrg = new Map(); // orgKey -> { vaH, nvaH, totalH }
+
+function getMroTimeClass(n){
+  const ilmd = n?.ilmd || {};
+  const tc = (ilmd["mro:timeClass"] || ilmd["timeClass"] || "").toString().toUpperCase().trim();
+  if (tc === "VA" || tc === "VALUE_ADD" || tc === "VALUEADDED") return "VA";
+  if (tc === "NVA" || tc === "NON_VALUE_ADD" || tc === "NONVALUEADDED") return "NVA";
+  const va = ilmd["mro:valueAdded"];
+  const nva = ilmd["mro:nonValueAdded"];
+  const toBool = v => (v === true || v === "true" || v === 1 || v === "1");
+  if (toBool(va)) return "VA";
+  if (toBool(nva)) return "NVA";
+  return "UNKNOWN";
+}
+
+
+function markerSymbolPathForNode(d, r){
+  const tc = getMroTimeClass(d);
+  const size = Math.PI * r * r; // symbol size is area
+  const sym = d3.symbol().size(size);
+  if (tc === "VA" || tc === "NVA"){
+    sym.type(d3.symbolTriangle);
+  } else {
+    sym.type(d3.symbolCircle);
+  }
+  return sym();
+}
+function markerTransformForNode(d, cx, cy){
+  const tc = getMroTimeClass(d);
+  const rot = (tc === "NVA") ? 180 : 0; // down triangle for NVA
+  return `translate(${cx},${cy}) rotate(${rot})`;
+}
+
+function computeKpis_MRO(){
+  const nodes = (current.nodes || [])
+    .filter(n => n.eventTime)
+    .slice()
+    .sort((a,b)=> T(a.eventTime) - T(b.eventTime));
+
+  // reset org rollups
+  mroTimeByOrg = new Map();
+
+  let vaMs = 0, nvaMs = 0, totalMs = 0;
+
+  for (let i=1; i<nodes.length; i++){
+    const prev = nodes[i-1], cur = nodes[i];
+    const dt = T(cur.eventTime) - T(prev.eventTime);
+    if (!(dt > 0)) continue;
+
+    totalMs += dt;
+
+    const cls = getMroTimeClass(cur);
+    if (cls === "VA") vaMs += dt;
+    else if (cls === "NVA") nvaMs += dt;
+
+    // org attribution: attribute interval to the org where cur occurred
+    const ok = orgKeyFromSGLN(cur.bizLocation) || "UNKNOWN";
+    const agg = mroTimeByOrg.get(ok) || { vaH:0, nvaH:0, totalH:0 };
+    agg.totalH += dt/36e5;
+    if (cls === "VA") agg.vaH += dt/36e5;
+    if (cls === "NVA") agg.nvaH += dt/36e5;
+    mroTimeByOrg.set(ok, agg);
+  }
+
+  return {
+    vaHours: hours2(vaMs),
+    nvaHours: hours2(nvaMs),
+    totalHours: hours2(totalMs)
+  };
+}
+
+function renderKpis_MRO(){
+  const { vaHours, nvaHours, totalHours } = computeKpis_MRO();
+  const setH = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "N/A" : `${v} h`); };
+  setH("#kpiLeadTime .value",    vaHours);
+  setH("#kpiTransitTime .value", nvaHours);
+  setH("#kpiDwell .value",       totalHours);
+
+  // populate%nva
+  const pctNva = (totalHours && totalHours > 0)
+  ? Math.round((nvaHours / totalHours) * 100)
+  : 0;
+
+const pctEl = document.querySelector("#kpiPctNva .value");
+if (pctEl) pctEl.textContent = `${pctNva}%`;
+  // Keep the other cards as-is for now
+  const handoffs = (current.nodes||[]).filter(n =>
+    n.type === "AssociationEvent" &&
+    (endsWithStep(n,"loading") || endsWithStep(n,"unloading"))
+  ).length;
+  const sensorPings = (current.nodes||[]).filter(n => endsWithStep(n,"sensor_reporting")).length;
+  const setI = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "N/A" : String(v)); };
+  setI("#kpiHandoffs .value", handoffs);
+  setI("#kpiSensors .value",  sensorPings);
+}
+
+
+/* Temperature strip */
+function getTempPoints(){
+  return (current.nodes||[])
+    .map(n => {
+      const ilmd = n.ilmd || {};
+      const v = ilmd["cbvmda:productTempC"];
+      let c = (Array.isArray(v) ? v[0] : (v && typeof v==="object" ? v.value : v));
+      return (typeof c === "number" && isFinite(c)) ? { t: new Date(n.eventTime), y: c } : null;
+    })
+    .filter(Boolean)
+    .sort((a,b)=>a.t-b.t);
+}
+function renderTempStrip(){
+  const svg = d3.select("#tempStrip");
+  svg.selectAll("*").remove(); // clear
+  const w = svg.node().clientWidth || 600;
+  const h = svg.node().clientHeight || 26;
+  const pts = getTempPoints();
+  if (!pts.length){
+    svg.append("line").attr("x1",0).attr("x2",w).attr("y1",h-2).attr("y2",h-2)
+       .attr("stroke","currentColor").attr("opacity",0.15).attr("stroke-width",1);
+    return;
+  }
+  const x = d3.scaleTime().domain(d3.extent(pts, d=>d.t)).range([0, w]);
+  const y = d3.scaleLinear().domain(d3.extent(pts, d=>d.y)).nice().range([h-2, 2]);
+  const line = d3.line().x(d=>x(d.t)).y(d=>y(d.y));
+  svg.append("path")
+    .datum(pts)
+    .attr("fill","none")
+    .attr("stroke","currentColor")
+    .attr("stroke-width",1.5)
+    .attr("d", line);
+  svg.selectAll("circle")
+    .data(pts).enter().append("circle")
+    .attr("cx", d=>x(d.t)).attr("cy", d=>y(d.y)).attr("r", 2).attr("fill","currentColor");
+}
+
+/* Seed emissions KPI renderer */
+function renderSeedEmissionsKpi(){
+  const card = document.getElementById("kpiSeedEmissions");
+  const row  = document.getElementById("kpiSeedEmissionsRow");
+  if (!card || !row) return;
+
+  if (!emissionsSeedTotals){
+    card.style.display = "none";
+    return;
+  }
+  card.style.display = "";
+
+  const u = esc(emissionsUnit);
+  const chips = [
+    { k: "S1",   v: emissionsSeedTotals.scope1 },
+    { k: "S2",   v: emissionsSeedTotals.scope2 },
+    { k: "S3.1", v: emissionsSeedTotals.scope3Cat1 },
+    { k: "S3.4", v: emissionsSeedTotals.scope3Cat4 },
+    { k: "Total", v: (emissionsSeedTotals.total ?? (num2(emissionsSeedTotals.scope1) + num2(emissionsSeedTotals.scope2) + num2(emissionsSeedTotals.scope3Cat1) + num2(emissionsSeedTotals.scope3Cat4))) }
+  ];
+
+  row.innerHTML = chips.map(c => `
+    <span class="legend-chip">
+      <span class="k">${c.k}</span>
+      <span class="v">${fmt2(c.v)}</span>${c.k==="Total" ? `<span class="u">${u}</span>`:""}
+    </span>`).join("");
+}
+
+/* NEW: ribbon show/hide + dynamic height */
+const kpiBarEl = document.getElementById("kpiBar");
+function syncRibbonHeight(){
+  if (!kpiBarEl) return;
+  const h = kpiBarEl.offsetHeight || 0;
+  document.documentElement.style.setProperty('--ribbon-h', (showRibbon ? h : 0) + 'px');
+  if (h) kpiBarEl.dataset.h = h + 'px';
+}
+function setRibbonVisible(vis){
+  showRibbon = !!vis;
+  if (showRibbon){
+    kpiBarEl.style.display = "grid";
+    // after showing, measure and set height
+    requestAnimationFrame(syncRibbonHeight);
+  } else {
+    kpiBarEl.style.display = "none";
+    document.documentElement.style.setProperty('--ribbon-h', '0px');
+  }
+  const btn = document.getElementById("toggleRibbon");
+  if (btn) btn.textContent = showRibbon ? "Hide Ribbon" : "Show Ribbon";
+}
+
+/* Render */
+function render(data){
+  clearBanner();
+  seedTag.text(data.seedEpc ? `seedEpc: ${data.seedEpc}` : "");
+
+  const errs=validate2_2_13(data);
+
+  const md = data.masterData ?? current.masterData ?? {};
+  ({nameByKey:orgNameByKey, colorByKey:orgColorByKey} = buildOrgLookups(md));
+
+  const nodes = sortNodesDeterministically(data.nodes);
+  const byId = new Map(nodes.map(n=>[n.id,n]));
+  
+
+// Build a stable palette allocation for org keys present in this dataset
+const orgKeysPresent = new Set();
+for (const n of nodes){
+  const k = orgKeyFromSGLN(n.bizLocation);
+  if (k) orgKeysPresent.add(k);
+  if (isSensorVehicleNode(n)){
+    const vehEpc = findVehicleEpcForNode(n);
+    const vk = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
+    if (vk) orgKeysPresent.add(vk);
+  }
+}
+ensureOrgColors(Array.from(orgKeysPresent));
+
+const links = (data.links||[]).filter(e=>{
+    const u=byId.get(e.source), v=byId.get(e.target);
+    return u && v && new Date(u.eventTime)<=new Date(v.eventTime);
+  });
+
+  current.nodes=nodes;
+  current.links=links;
+  current.byId=byId;
+  current.masterData=md;
+  current.coverage=data.coverage || null;
+  current.indices=data.indices || null;
+
+  /* Emissions (optional) */
+  {
+  // Parse only what came in with *this* data payload
+  const parsed = parseEmissions(data || {});
+  emissionsByOrg       = parsed.byOrg;
+  emissionsUnit        = parsed.unit;
+  emissionsSeedTotals  = parsed.seedTotals;
+
+  // Cache exactly what the current dataset has (or null)
+  current.emissionsData = data?.emissions ?? null;
+  }
+
+  const suppliedLL = Array.isArray(data.lineageLinks) ? data.lineageLinks : [];
+  const lineageDataRaw = suppliedLL.map(ll => ({...ll, u: byId.get(ll.source), v: byId.get(ll.target)}))
+                                   .filter(x=>x.u && x.v);
+  current.lineageLinks = suppliedLL;
+
+  current.layout=baseLayout(nodes, svg.node().clientWidth, svg.node().clientHeight);
+  applySpreadOffsets(nodes, SPREAD_LEVELS[spreadIndex].params);
+  if (spreadIndex > 0) {
+    const scale = spreadIndex * 0.6;
+    applyRadialGroupLayout(nodes, { radiusBase: 12, radiusScale: scale });
+  }
+  usePositions(nodes, spreadMode);
+
+  const axis=d3.axisBottom(current.layout.x).ticks(8).tickSizeOuter(0);
+  gAxis.attr("transform",`translate(0, ${svg.node().clientHeight - current.layout.margin.bottom})`).classed("hidden",!showAxis).call(axis);
+
+  const edgeSel=gEdges.selectAll("path.edge").data(links, d=>d.source+"->"+d.target);
+  edgeSel.exit().remove();
+  edgeSel.enter().append("path").attr("class","edge").attr("marker-end","url(#arrow)")
+    .merge(edgeSel)
+    .attr("d", d=> bezierPath(byId.get(d.source), byId.get(d.target)));
+
+  const linSel=gLineage.selectAll("path.lineage-edge")
+    .data(lineageDataRaw, d=>`${d.source}->${d.target}|${d.role}|${d.epc}`);
+  linSel.exit().remove();
+  linSel.enter().append("path")
+    .attr("class", d=>`lineage-edge ${d.role==="xform-input"?"input":"output"}`)
+    .attr("marker-end","url(#arrow)")
+    .merge(linSel)
+    .classed("lineage-hidden", !showLineage)
+    .attr("d", d=> bezierPath(d.u, d.v))
+    .raise();
+
+  const nodeSel=gNodes.selectAll("g.node").data(nodes, d=>d.id);
+  nodeSel.exit().remove();
+  const nodeEnter=nodeSel.enter().append("g").attr("class","node")
+    .classed("va", d=>getMroTimeClass(d)==="VA")
+    .classed("nva", d=>getMroTimeClass(d)==="NVA")
+    .classed("unknownva", d=>getMroTimeClass(d)==="UNKNOWN")
+    .call(d3.drag()
+      .on("start",(event,d)=>{
+        d3.select(event.sourceEvent.target).style("cursor","grabbing");
+        const cx = +d3.select(d._circle).attr("cx");
+        const cy = +d3.select(d._circle).attr("cy");
+        d.fx = cx; d.fy = cy;
+        const [wx0, wy0] = pointerToWorld(event.sourceEvent);
+        d._grab = { dx: cx - wx0, dy: cy - wy0 };
+
+        const selected = selectedGroupSet.has(d.id);
+        if(selected){
+          const starts = new Map();
+          gNodes.selectAll("g.node").each(n => {
+            if(selectedGroupSet.has(n.id)){
+              const ncx = +d3.select(n._circle).attr("cx");
+              const ncy = +d3.select(n._circle).attr("cy");
+              starts.set(n.id, { fx: n.fx ?? ncx, fy: n.fy ?? ncy });
+            }
+          });
+          d._groupDrag = { wx0, wy0, starts };
+        } else {
+          d._groupDrag = null;
+        }
+      })
+      .on("drag",(event,d)=>{
+        if(d._groupDrag){
+          const [wx, wy] = pointerToWorld(event.sourceEvent);
+          const dx = wx - d._groupDrag.wx0;
+          const dy = wy - d._groupDrag.wy0;
+          d._groupDrag.starts.forEach((st, id)=>{
+            const n = current.byId.get(id);
+            n.fx = st.fx + dx;
+            n.fy = st.fy + dy;
+            d3.select(n._circle).attr("cx", n.fx).attr("cy", n.fy);
+             const rr = +d3.select(n._circle).attr("r");
+             if (n._marker){
+               d3.select(n._marker)
+                 .attr("d", markerSymbolPathForNode(n, rr))
+                 .attr("transform", markerTransformForNode(n, n.fx, n.fy));
+             }
+             d3.select(n._label ).attr("x",  n.fx + 12).attr("y",  n.fy);
+            const b = n._badge; if (b) d3.select(b).attr("x", n.fx).attr("y", n.fy);
+          });
+        } else {
+          const [wx, wy] = pointerToWorld(event.sourceEvent);
+          d.fx = wx + d._grab.dx;
+          d.fy = wy + d._grab.dy;
+          d3.select(d._circle).attr("cx", d.fx).attr("cy", d.fy);
+          const rr = +d3.select(d._circle).attr("r");
+          if (d._marker){
+            d3.select(d._marker)
+              .attr("d", markerSymbolPathForNode(d, rr))
+              .attr("transform", markerTransformForNode(d, d.fx, d.fy));
+          }
+          d3.select(d._label ).attr("x",  d.fx + 12).attr("y",  d.fy);
+          const b = d._badge; if (b) d3.select(b).attr("x", d.fx).attr("y", d.fy);
+        }
+        gEdges.selectAll("path.edge")
+          .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+        gLineage.selectAll("path.lineage-edge")
+          .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      })
+      .on("end",(event,d)=>{
+        d3.select(event.sourceEvent.target).style("cursor","grab");
+        d._grab = null;
+        d._groupDrag = null;
+      })
+    )
+    .on("dblclick",(event,d)=>{
+      delete d.fx; delete d.fy;
+      const cx = spreadMode ? (d.x_spread ?? d.x) : d.x;
+      const cy = spreadMode ? (d.y_spread ?? d.y) : d.y;
+      d3.select(d._circle).attr("cx", cx).attr("cy", cy);
+      const r = +d3.select(d._circle).attr("r");
+      if (d._marker){
+        d3.select(d._marker)
+          .attr("d", markerSymbolPathForNode(d, r))
+          .attr("transform", markerTransformForNode(d, cx, cy));
+      }
+      d3.select(d._label).attr("x", cx+12).attr("y", cy);
+      const b = d._badge; if (b) d3.select(b).attr("x", cx).attr("y", cy);
+      gEdges.selectAll("path.edge")
+        .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      gLineage.selectAll("path.lineage-edge")
+        .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+    })
+    .on("mousemove",(event,d)=> showTooltip(nodeTooltip(d), event.clientX, event.clientY))
+    .on("mouseleave", ()=> hideTooltip())
+    .on("mouseover",(event,d)=>{
+      const nbr=new Set([d.id]);
+      current.links.forEach(e=>{ if(e.source===d.id) nbr.add(e.target); if(e.target===d.id) nbr.add(e.source); });
+      gNodes.selectAll("g.node").classed("faded", n=>!nbr.has(n.id));
+      gEdges.selectAll("path.edge").classed("faded", e=>!(e.source===d.id || e.target===d.id));
+      if(!activeT){ gLineage.selectAll("path.lineage-edge").classed("faded", true); }
+    })
+    .on("mouseout", ()=>{
+      gNodes.selectAll("g.node").classed("faded", false);
+      gEdges.selectAll("path.edge").classed("faded", false);
+      if(!activeT){ gLineage.selectAll("path.lineage-edge").classed("faded", false); }
+    })
+    .on("click",(event,d)=> handleLineageFocus(d));
+
+  nodeEnter.append("circle")
+    .attr("r", parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')))
+    .attr("fill","transparent")
+    .attr("stroke","transparent")
+    .attr("pointer-events","all")
+    .each(function(d){ d._circle=this; });
+
+  // Visual marker: neutral=circle, VA=triangle-up, NVA=triangle-down
+  nodeEnter.append("path")
+    .attr("class","marker")
+    .each(function(d){ d._marker=this; });
+
+  nodeEnter.append("text")
+    .attr("class","badge")
+    .text("T")
+    .style("display","none")
+    .each(function(d){ d._badge=this; });
+
+  nodeEnter.append("text")
+    .attr("dy","0").attr("text-anchor","start")
+    .text(d=> labelForNode(d))
+    .each(function(d){ d._label=this; });
+
+  const nodesAll=nodeEnter.merge(nodeSel);
+
+  const baseR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')) || 8;
+
+  nodesAll.select("circle")
+    .attr("stroke", "none")
+    .attr("fill", "transparent")
+    .style("opacity", 0)  
+    .attr("r", d=> isSensorVehicleNode(d) ? baseR + 3 : baseR)
+    .attr("cx", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("cy", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  // Marker styling + positioning
+  nodesAll.select("path.marker")
+    .attr("fill", d=> colorForNode(d))
+    .attr("stroke","none")
+    .attr("d", d=> markerSymbolPathForNode(d, baseR))
+    .attr("transform", d=> {
+      const cx = d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x);
+      const cy = d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y);
+      return markerTransformForNode(d, cx, cy);
+    });
+
+  nodesAll.select("text.badge")
+    .style("display", d=> isSensorVehicleNode(d) ? "block" : "none")
+    .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  nodesAll.select("text:not(.badge)")
+    .text(d => labelForNode(d))
+    .attr("x", d=> (d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x)) + 12)
+    .attr("y", d=>  d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  gNodes.selectAll("g.node").classed("group-selected", n=> selectedGroupSet.has(n.id));
+
+  /* Render KPIs first so legend can show per-org time rollups */
+  renderKpis_MRO();
+
+  updateLegend(nodes);
+
+  if(errs.length){
+    setBanner("Validation failed: "+errs[0], false);
+  }else{
+    setBanner(`Loaded OK: v2.2.14 checks passed, lineage links: ${lineageDataRaw.length}`, true);
+  }
+
+  applyShipRecvHiding();
+
+  /* KPIs rendered above */
+  renderSeedEmissionsKpi();
+
+  /* After ribbon content changes, sync its height for layout */
+  syncRibbonHeight();
+}
+
+/* Lineage focus/highlight */
+let activeT=null;
+function handleLineageFocus(node){
+  if(node?.type!=="TransformationEvent"){ clearLineageFocus(); return; }
+  activeT = node.id || node.eventId;
+
+  const lin = gLineage.selectAll("path.lineage-edge");
+  lin.classed("active-lineage", false).classed("faded", true);
+  gNodes.selectAll("g.node").classed("active-node", false);
+
+  const inputs = current.lineageLinks.filter(ll => ll.role==="xform-input" && ll.target===activeT);
+  const outputs= current.lineageLinks.filter(ll => ll.role==="xform-output" && ll.source===activeT);
+  const ids = new Set([activeT]);
+  inputs.forEach(ll=>{ ids.add(ll.source); });
+  outputs.forEach(ll=>{ ids.add(ll.target); });
+
+  lin.filter(d => (d.role==="xform-input" && d.target===activeT) || (d.role==="xform-output" && d.source===activeT))
+     .classed("active-lineage", true).classed("faded", false);
+
+  gNodes.selectAll("g.node").classed("active-node", n=> ids.has(n.id));
+}
+function clearLineageFocus(){
+  activeT=null;
+  gLineage.selectAll("path.lineage-edge").classed("active-lineage", false).classed("faded", false);
+  gNodes.selectAll("g.node").classed("active-node", false);
+}
+
+/* -------------------- Zoom/Pan -------------------- */
+const zoom=d3.zoom().scaleExtent([0.5,4]).on("zoom",(event)=>{ viewport.attr("transform",event.transform); });
+const svgNode=document.getElementById("svg");
+svg.call(zoom);
+document.getElementById("resetZoom").addEventListener("click",()=>{ d3.select(svgNode).transition().duration(300).call(zoom.transform,d3.zoomIdentity); });
+
+/* -------------------- Controls -------------------- */
+document.getElementById("unpinAll").addEventListener("click",()=>{
+  current.nodes.forEach(n=>{ delete n.fx; delete n.fy; });
+  usePositions(current.nodes, spreadMode);
+  render({
+    seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
+    nodes: current.nodes,
+    links: current.links,
+    lineageLinks: current.lineageLinks,
+    masterData: current.masterData,
+    indices: current.indices || { byEpc:{} },
+    coverage: current.coverage || {transformations:[], unresolved:{xformInputsWithoutPrehistory:[], xformOutputsWithoutPosthistory:[], danglingParentIds:[]},emissions: current.emissionsData}
+  });
+});
+document.getElementById("toggleAxis").addEventListener("click",()=>{ showAxis=!showAxis; gAxis.classed("hidden",!showAxis); });
+document.getElementById("toggleLineage").addEventListener("click",()=>{ showLineage=!showLineage; gLineage.classed("lineage-hidden",!showLineage); if(!showLineage) clearLineageFocus(); });
+document.getElementById("toggleSpread").addEventListener("click",(e)=>{
+  spreadIndex=(spreadIndex+1)%SPREAD_LEVELS.length;
+  spreadMode=(spreadIndex>0);
+  e.target.textContent=SPREAD_LEVELS[spreadIndex].label;
+  if(current.nodes.length){
+    applySpreadOffsets(current.nodes, SPREAD_LEVELS[spreadIndex].params);
+    if (spreadIndex > 0) {
+      const scale = spreadIndex * 0.6;
+      applyRadialGroupLayout(current.nodes, { radiusBase: 12, radiusScale: scale });
+    }
+    usePositions(current.nodes, spreadMode);
+    render({
+      seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
+      nodes: current.nodes,
+      links: current.links,
+      lineageLinks: current.lineageLinks,
+      masterData: current.masterData,
+      indices: current.indices || { byEpc:{} },
+      coverage: current.coverage || {transformations:[], unresolved:{xformInputsWithoutPrehistory:[], xformOutputsWithoutPosthistory:[], danglingParentIds:[]}}, emissions: current.emissionsData
+    });
+  }
+});
+
+/* NEW: Toggle button for hiding ship→recv paths */
+document.getElementById("toggleShipRecvPaths").addEventListener("click", () => {
+  hideShipRecvPaths = !hideShipRecvPaths;
+  applyShipRecvHiding();
+  document.getElementById("toggleShipRecvPaths").textContent =
+    hideShipRecvPaths ? "Show Ship→Recv Paths" : "Hide Ship→Recv Paths";
+});
+
+/* NEW: Ribbon toggle */
+document.getElementById("toggleRibbon").addEventListener("click", () => {
+  setRibbonVisible(!showRibbon);
+});
+
+/* Update ribbon height on resize (only if visible) */
+window.addEventListener("resize", () => { if (showRibbon) syncRibbonHeight(); });
+
+/* -------------------- File loader -------------------- */
+document.getElementById("fileInput").addEventListener("change", async (e)=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  try{
+    const txt=await f.text();
+    const json=JSON.parse(txt);
+    render(json);
+  }catch(err){
+    setBanner("Failed to load JSON: "+(err?.message||err), false); console.error(err);
+  }
+});
+
+/* -------------------- Initial state -------------------- */
+setBanner("Load a v2.2.14-compliant JSON to render (File ▶︎ choose JSON). Lineage links are ON by default.", true);
+/* Initialize ribbon height based on current content */
+requestAnimationFrame(syncRibbonHeight);
+</script>
+</body>
+</html>
