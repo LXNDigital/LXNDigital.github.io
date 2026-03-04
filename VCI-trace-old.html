@@ -211,98 +211,18 @@ function pretty(obj){ try{return JSON.stringify(obj,null,2)}catch{return String(
 function orgKeyFromSGLN(sgln){ if(!sgln||typeof sgln!=='string')return null; const m=sgln.match(/^urn:epc:id:sgln:([0-9]+)\./); return m?`urn:epc:id:sgln:${m[1]}.0.0`:null; }
 function hashColorForKey(key){ const h=fnv1a(key)%360; return hslToHex(h,0.55,0.52); }
 
-
-
-/* ---------------- Preferred palette (stable, high-contrast) ---------------- */
-const PREFERRED_PALETTE = [
-  "#2F5597", // blue
-  "#FF9300", // orange
-  "#70AD47", // green
-  "#9D90A0", // purple
-  "#B71E42", // red
-  "#14B8A6", // teal
-  "#Ed7D31", // amber
-  "#EB91BB", // pink
-  "#64748B", // slate
-  "#84CC16", // lime
-  "#5B9BD5", // light blue
-  "#F43F5E"  // rose
-];
-
-const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v1";
-let orgColorAllocMap = new Map();
-
-function loadOrgColorAlloc(){
-  try{
-    const raw = localStorage.getItem(ORG_COLOR_STORAGE_KEY);
-    if(!raw) return;
-    const obj = JSON.parse(raw);
-    if(obj && typeof obj === "object"){
-      orgColorAllocMap = new Map(Object.entries(obj));
-    }
-  }catch(e){ /* ignore */ }
-}
-function saveOrgColorAlloc(){
-  try{
-    const obj = Object.fromEntries(orgColorAllocMap.entries());
-    localStorage.setItem(ORG_COLOR_STORAGE_KEY, JSON.stringify(obj));
-  }catch(e){ /* ignore */ }
-}
-
-function allocateColorForOrgKey(orgKey, used){
-  const n = PREFERRED_PALETTE.length;
-  const start = fnv1a(orgKey) % n;
-  const step = 5; // spreads choices across the palette
-  let idx = start;
-  for(let tries=0; tries<n; tries++){
-    if(!used.has(idx)){
-      used.add(idx);
-      return PREFERRED_PALETTE[idx];
-    }
-    idx = (idx + step) % n;
-  }
-  return PREFERRED_PALETTE[start];
-}
-
-function ensureOrgColors(orgKeys){
-  if(!orgKeys || !orgKeys.length) return;
-  const used = new Set();
-  for(const col of orgColorAllocMap.values()){
-    const ix = PREFERRED_PALETTE.indexOf(col);
-    if(ix >= 0) used.add(ix);
-  }
-  for(const k of orgKeys){
-    if(!k || typeof k !== "string") continue;
-    if(orgColorAllocMap.has(k)) continue;
-    const col = allocateColorForOrgKey(k, used);
-    orgColorAllocMap.set(k, col);
-  }
-  saveOrgColorAlloc();
-}
-
-function getOrgColor(orgKey){
-  if(!orgKey) return "#94a3b8";
-  // Respect masterData-provided org colours if present
-  if(orgColorByKey && orgColorByKey.has(orgKey)) return orgColorByKey.get(orgKey);
-  if(orgColorAllocMap && orgColorAllocMap.has(orgKey)) return orgColorAllocMap.get(orgKey);
-
-  // lazy allocation
-  const used = new Set();
-  for(const col of orgColorAllocMap.values()){
-    const ix = PREFERRED_PALETTE.indexOf(col);
-    if(ix >= 0) used.add(ix);
-  }
-  const col = allocateColorForOrgKey(orgKey, used);
-  orgColorAllocMap.set(orgKey, col);
-  saveOrgColorAlloc();
-  return col;
-}
-
-loadOrgColorAlloc();
-
 /* Numeric helpers (deterministic formatting) */
 function num2(n){ return (typeof n === "number" && isFinite(n)) ? n : 0; }
 function fmt2(n){ return (n == null || !isFinite(n)) ? "—" : n.toFixed(2); }
+
+/* Fixed optional overrides (rare) */
+const fixedOrgMap=new Map([
+  ["urn:epc:id:sgln:0455136.0.0","#2d7ff9"],
+  ["urn:epc:id:sgln:08429315.0.0","#10b981"],
+  ["urn:epc:id:sgln:07539426.0.0","#f59e0b"],
+  ["urn:epc:id:sgln:0534245.0.0","#8b5cf6"],
+  ["urn:epc:id:sgln:084436921.0.0","#ef4444"],
+]);
 
 /* ------------ masterData lookups (legend names & sensor vehicle info) --------- */
 function buildOrgLookups(masterData){
@@ -430,13 +350,17 @@ function colorForNode(d){
     const vehEpc = findVehicleEpcForNode(d);
     const key = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
     if (key){
-      return getOrgColor(key);
+      if(orgColorByKey.has(key)) return orgColorByKey.get(key);
+      if(fixedOrgMap.has(key)) return fixedOrgMap.get(key);
+      return hashColorForKey(key);
     }
   }
   const key=orgKeyFromSGLN(d.bizLocation);
-  if (key){
-      return getOrgColor(key);
-    }
+  if(key){
+    if(orgColorByKey.has(key)) return orgColorByKey.get(key);
+    if(fixedOrgMap.has(key)) return fixedOrgMap.get(key);
+    return hashColorForKey(key);
+  }
   const pal=["#2563eb","#059669","#dc2626","#7c3aed","#ea580c","#16a34a","#0ea5e9","#ca8a04","#db2777","#4b5563"];
   const ix=Math.abs(fnv1a(d.bizStep||"unknown"))%pal.length;
   return pal[ix];
@@ -903,7 +827,7 @@ function updateLegend(nodes){
     const key=orgKeyFromSGLN(n.bizLocation);
     if(!key || seen.has(key)) continue;
     seen.add(key);
-    const color = getOrgColor(key);
+    const color = orgColorByKey.get(key) || (fixedOrgMap.get(key) ?? hashColorForKey(key));
     const name  = orgNameByKey.get(key) || key;
     entries.push({key,name,color});
   }
@@ -1154,22 +1078,7 @@ function render(data){
 
   const nodes = sortNodesDeterministically(data.nodes);
   const byId = new Map(nodes.map(n=>[n.id,n]));
-  
-
-// Build a stable palette allocation for org keys present in this dataset (no per-org hardcoding)
-const orgKeysPresent = new Set();
-for (const n of nodes){
-  const k = orgKeyFromSGLN(n.bizLocation);
-  if (k) orgKeysPresent.add(k);
-  if (isSensorVehicleNode(n)){
-    const vehEpc = findVehicleEpcForNode(n);
-    const vk = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
-    if (vk) orgKeysPresent.add(vk);
-  }
-}
-ensureOrgColors(Array.from(orgKeysPresent));
-
-const links = (data.links||[]).filter(e=>{
+  const links = (data.links||[]).filter(e=>{
     const u=byId.get(e.source), v=byId.get(e.target);
     return u && v && new Date(u.eventTime)<=new Date(v.eventTime);
   });
