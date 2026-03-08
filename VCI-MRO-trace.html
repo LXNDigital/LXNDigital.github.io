@@ -229,18 +229,21 @@ function hashColorForKey(key){ const h=fnv1a(key)%360; return hslToHex(h,0.55,0.
 
 /* ---------------- Preferred palette (stable, high-contrast) ---------------- */
 const PREFERRED_PALETTE = [
-  "#2F5597", // blue
-  "#FF9300", // orange
-  "#70AD47", // green
-  "#9D90A0", // purple
-  "#B71E42", // red
-  "#14B8A6", // teal
-  "#Ed7D31", // amber
-  "#EB91BB", // pink
-  "#64748B", // slate
-  "#84CC16", // lime
+  "#2F5597", // deep blue
   "#5B9BD5", // light blue
-  "#F43F5E"  // rose
+  "#7EA2B6", // steel blue
+  "#14B8A6", // teal
+  "#70AD47", // green
+  "#84CC16", // lime
+  "#FF9300", // orange
+  "#ED7D31", // amber
+  "#B89C7B", // muted tan
+  "#CFA9B2", // dusty rose
+  "#EB91BB", // pink
+  "#F43F5E", // rose
+  "#AFA6C9", // lavender
+  "#64748B", // slate
+  "#7FAF9E"  // sea green
 ];
 
 const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v1";
