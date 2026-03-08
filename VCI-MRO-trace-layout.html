@@ -144,6 +144,9 @@
     </button>
     <!-- NEW: ribbon toggle -->
     <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+    <button id="saveLayout" class="btn" title="Save current node layout to a .loc file">Save Layout</button>
+    <button id="restoreLayout" class="btn" title="Restore node layout from a .loc file">Restore Layout</button>
+    <input type="file" id="layoutInput" accept=".loc,application/json" style="display:none" />
   </div>
   <div id="banner"></div>
 </header>
@@ -584,6 +587,120 @@ let selectedGroupSet=new Set();
 
 /* Data state */
 let current={ nodes:[], links:[], lineageLinks:[], byId:new Map(), layout:null, masterData:null, coverage:null, indices:null, emissionsData:null };
+let currentSourceFileName = null;
+
+function getBaseName(filename){
+  if(!filename) return "layout";
+  const i = filename.lastIndexOf(".");
+  return i > 0 ? filename.slice(0, i) : filename;
+}
+function getSuggestedLocName(filename){
+  return `${getBaseName(filename || "layout")}.loc`;
+}
+function buildLayoutPayload(){
+  return {
+    type: "vci-layout",
+    version: 1,
+    sourceFile: currentSourceFileName || null,
+    savedAt: new Date().toISOString(),
+    nodes: (current.nodes || []).map(n => {
+      const x = Number.isFinite(n.fx) ? n.fx : (Number.isFinite(n.x) ? n.x : null);
+      const y = Number.isFinite(n.fy) ? n.fy : (Number.isFinite(n.y) ? n.y : null);
+      return { id: n.id, x, y };
+    }).filter(n => n.id != null && n.x != null && n.y != null)
+  };
+}
+function downloadTextFile(filename, text, mimeType="application/json"){
+  const blob = new Blob([text], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function saveLayoutToLocFile(){
+  if(!current.nodes || !current.nodes.length){
+    setBanner("No graph loaded, nothing to save.", false);
+    return;
+  }
+  const payload = buildLayoutPayload();
+  const filename = getSuggestedLocName(currentSourceFileName || "layout.json");
+  downloadTextFile(filename, JSON.stringify(payload, null, 2), "application/json");
+  setBanner(`Layout saved as ${filename}`, true);
+}
+function normalizeLayoutNodes(layoutObj){
+  if(Array.isArray(layoutObj?.nodes)) return layoutObj.nodes;
+  if(layoutObj?.nodes && typeof layoutObj.nodes === "object") {
+    return Object.entries(layoutObj.nodes).map(([id, p]) => ({ id, x: p?.x, y: p?.y }));
+  }
+  return [];
+}
+function applyRestoredLayout(layoutObj){
+  if(!layoutObj || !current.nodes?.length) return { applied: 0, missing: 0 };
+  const restoredNodes = normalizeLayoutNodes(layoutObj);
+  const byId = new Map(restoredNodes.map(n => [n.id, n]));
+  let applied = 0, missing = 0;
+
+  current.nodes.forEach(n => {
+    const hit = byId.get(n.id);
+    if(hit && Number.isFinite(hit.x) && Number.isFinite(hit.y)){
+      n.fx = hit.x;
+      n.fy = hit.y;
+      applied++;
+    } else {
+      missing++;
+    }
+  });
+
+  gNodes.selectAll("g.node").each(function(d){
+    const x = Number.isFinite(d.fx) ? d.fx : d.x;
+    const y = Number.isFinite(d.fy) ? d.fy : d.y;
+    if (d._circle) d3.select(d._circle).attr("cx", x).attr("cy", y);
+    if (d._marker){
+      const rr = +d3.select(d._circle).attr("r");
+      d3.select(d._marker)
+        .attr("d", markerSymbolPathForNode(d, rr))
+        .attr("transform", markerTransformForNode(d, x, y));
+    }
+    if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
+    if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
+  });
+
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(e.u || current.byId.get(e.source), e.v || current.byId.get(e.target)));
+
+  return { applied, missing };
+}
+async function handleRestoreLayoutFile(file){
+  if(!file) return;
+  try{
+    const txt = await file.text();
+    const layoutObj = JSON.parse(txt);
+    if(layoutObj?.type !== "vci-layout"){
+      setBanner("Selected file is not a valid VCI layout (.loc) file.", false);
+      return;
+    }
+    if(!current.nodes || !current.nodes.length){
+      setBanner("Load a JSON graph before restoring a layout.", false);
+      return;
+    }
+    if(layoutObj.sourceFile && currentSourceFileName && layoutObj.sourceFile !== currentSourceFileName){
+      const proceed = window.confirm(`This layout was saved for "${layoutObj.sourceFile}" but the current graph is "${currentSourceFileName}". Restore anyway?`);
+      if(!proceed) return;
+    }
+    const result = applyRestoredLayout(layoutObj);
+    setBanner(`Layout restored: ${result.applied} node(s) applied.`, true);
+  }catch(err){
+    setBanner("Failed to restore layout: " + (err?.message || err), false);
+    console.error(err);
+  }
+}
 /* Emissions (optional) */
 let emissionsByOrg = new Map();
 let emissionsUnit = "kgCO2e";
@@ -1568,18 +1685,36 @@ document.getElementById("toggleRibbon").addEventListener("click", () => {
   setRibbonVisible(!showRibbon);
 });
 
+document.getElementById("saveLayout").addEventListener("click", () => {
+  saveLayoutToLocFile();
+});
+
+document.getElementById("restoreLayout").addEventListener("click", () => {
+  document.getElementById("layoutInput").value = "";
+  document.getElementById("layoutInput").click();
+});
+
+document.getElementById("layoutInput").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if(!f) return;
+  await handleRestoreLayoutFile(f);
+});
+
 /* Update ribbon height on resize (only if visible) */
 window.addEventListener("resize", () => { if (showRibbon) syncRibbonHeight(); });
 
 /* -------------------- File loader -------------------- */
 document.getElementById("fileInput").addEventListener("change", async (e)=>{
-  const f=e.target.files?.[0]; if(!f) return;
+  const f = e.target.files?.[0];
+  if(!f) return;
   try{
-    const txt=await f.text();
-    const json=JSON.parse(txt);
+    const txt = await f.text();
+    const json = JSON.parse(txt);
+    currentSourceFileName = f.name || null;
     render(json);
+    setBanner(`Loaded JSON: ${currentSourceFileName}`, true);
   }catch(err){
-    setBanner("Failed to load JSON: "+(err?.message||err), false); console.error(err);
+    setBanner("Failed to load JSON: " + (err?.message||err), false); console.error(err);
   }
 });
 

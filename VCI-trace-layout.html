@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>VCI Traceability : v2.2.14 (D3 Renderer)</title>
+  <title>VCI Traceability — v2.2.14 (D3 Renderer)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
@@ -11,17 +11,6 @@
       --fade:0.3; --node-radius:8; --lane-gap:80; --same-time-step:4;
       --banner-err:#b00020; --banner-ok:#1b5e20; --panel:#f8f9fa; --panel-border:#dfe2e5;
       --lineage:#64748b;
-
-    /* MRO time classification */
-    .node.va circle{ stroke:#16a34a; stroke-width:1px; }
-    .node.nva circle{ stroke:#f97316; stroke-width:1px; }
-    .node.unknownva circle{ stroke:#6b7280; stroke-width:1px; }
-    .legend-times{ margin-top:6px; font-size:11px; color:var(--muted); display:flex; gap:6px; flex-wrap:wrap; }
-    .legend-timechip{ display:inline-flex; gap:4px; align-items:baseline; padding:2px 6px; border:1px solid var(--panel-border); border-radius:999px; background:#fff; }
-    .legend-timechip .k{ font-weight:600; color:#111; }
-    .legend-timechip .v{ color:#111; }
-    .legend-timechip .u{ color:var(--muted); }
-
 
       /* NEW: layout variables */
       --header-h:58px;
@@ -110,7 +99,7 @@
       pointer-events:none
     }
     .lineage-hidden{display:none !important}
-    .node circle{fill:transparent;stroke:transparent;}
+    .node circle{stroke-width:2;cursor:grab;filter:drop-shadow(0 1px 1px #0002)}
     .node text{font-size:12px;dominant-baseline:middle;pointer-events:none;fill:#000;paint-order:stroke;stroke:#fff;stroke-width:3px}
     .node .badge{font-size:11px;font-weight:700;fill:#fff;stroke:none;paint-order:stroke;dominant-baseline:middle;text-anchor:middle}
     .faded{opacity:var(--fade)}
@@ -125,9 +114,7 @@
     .tooltip h3{margin:0 0 6px 0;font-size:13px;font-weight:600}
     .tooltip .kv{color:#cbd5e1}
     .tooltip code{display:block;white-space:pre-wrap;background:#0b0b0b;border:1px solid #222;border-radius:6px;padding:8px;margin-top:6px;color:#e2e8f0;overflow-x:auto}
-  
-.node path.marker{opacity:1;}
-</style>
+  </style>
 </head>
 <body>
 <header>
@@ -144,6 +131,9 @@
     </button>
     <!-- NEW: ribbon toggle -->
     <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+    <button id="saveLayout" class="btn" title="Save current node layout to a .loc file">Save Layout</button>
+    <button id="restoreLayout" class="btn" title="Restore node layout from a .loc file">Restore Layout</button>
+    <input type="file" id="layoutInput" accept=".loc,application/json" style="display:none" />
   </div>
   <div id="banner"></div>
 </header>
@@ -151,34 +141,29 @@
 <!-- KPI STRIP -->
 <section id="kpiBar">
   <div class="kpi" id="kpiLeadTime"
-       title="Value-added time is the sum of intervals explicitly tagged as value-added in ILMD.">
-    <div class="label">Value-added time (Σ VA intervals)</div>
-    <div class="value">N/A</div>
+       title="Lead time: from the earliest TransformationEvent (preferring one that outputs the seed EPC) to the last Receiving event at or after that time.">
+    <div class="label">Lead time (Transform→Receive)</div>
+    <div class="value">—</div>
   </div>
   <div class="kpi" id="kpiTransitTime"
-       title="Non-value-added time is the sum of intervals explicitly tagged as non-value-added in ILMD.">
-    <div class="label">Non-value-added time (Σ NVA intervals)</div>
-    <div class="value">N/A</div>
+       title="Total transit: sum of all legs pairing Departing→next Arriving, considering only events at or after the first transform.">
+    <div class="label">Transit time (Σ Depart→Arrive)</div>
+    <div class="value">—</div>
   </div>
   <div class="kpi" id="kpiDwell"
-       title="Total elapsed time is the sum of all successive event intervals in the scenario window.">
-    <div class="label">Total elapsed time (Σ all intervals)</div>
-    <div class="value">N/A</div>
+       title="Total dwell (non-transit) = Lead − Transit, floored at 0.">
+    <div class="label">Dwell (Lead − Transit)</div>
+    <div class="value">—</div>
   </div>
-  <div class="kpi" id="kpiPctNva">
-  <div class="label">% Non-Value-Add time</div>
-  <div class="value">0%</div>
-  <div class="sub"></div>
-</div>
   <div class="kpi" id="kpiHandoffs"
        title="Handoffs: AssociationEvents whose bizStep ends with loading or unloading.">
     <div class="label">Handoffs</div>
-    <div class="value">N/A</div>
+    <div class="value">—</div>
   </div>
   <div class="kpi" id="kpiSensors"
        title="Sensor pings: events whose bizStep ends with sensor_reporting.">
     <div class="label">Sensor pings</div>
-    <div class="value">N/A</div>
+    <div class="value">—</div>
   </div>
 
   <!-- Seed emissions card -->
@@ -189,6 +174,10 @@
     </div>
   </div>
 
+  <div id="kpiTemp" title="Cold-chain: product temperature over time from ilmd.cbvmda:productTempC.">
+    <div class="label">Temperature strip</div>
+    <svg id="tempStrip" viewBox="0 0 600 26" preserveAspectRatio="none"></svg>
+  </div>
 </section>
 
 <div id="main">
@@ -210,7 +199,7 @@
   </div>
 
   <aside id="legendPane">
-    <h2>Legend : Ultimate Parent</h2>
+    <h2>Legend — Ultimate Parent</h2>
     <div id="legend"></div>
   </aside>
 </div>
@@ -229,24 +218,21 @@ function hashColorForKey(key){ const h=fnv1a(key)%360; return hslToHex(h,0.55,0.
 
 /* ---------------- Preferred palette (stable, high-contrast) ---------------- */
 const PREFERRED_PALETTE = [
-  "#2F5597", // deep blue
-  "#5B9BD5", // light blue
-  "#7EA2B6", // steel blue
-  "#14B8A6", // teal
-  "#70AD47", // green
-  "#84CC16", // lime
+  "#2F5597", // blue
   "#FF9300", // orange
-  "#ED7D31", // amber
-  "#B89C7B", // muted tan
-  "#CFA9B2", // dusty rose
+  "#70AD47", // green
+  "#9D90A0", // purple
+  "#B71E42", // red
+  "#14B8A6", // teal
+  "#Ed7D31", // amber
   "#EB91BB", // pink
-  "#F43F5E", // rose
-  "#AFA6C9", // lavender
   "#64748B", // slate
-  "#7FAF9E"  // sea green
+  "#84CC16", // lime
+  "#5B9BD5", // light blue
+  "#F43F5E"  // rose
 ];
 
-const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_MRO_v1";
+const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v1";
 let orgColorAllocMap = new Map();
 
 function loadOrgColorAlloc(){
@@ -316,11 +302,11 @@ function getOrgColor(orgKey){
 }
 
 loadOrgColorAlloc();
+
 /* Numeric helpers (deterministic formatting) */
 function num2(n){ return (typeof n === "number" && isFinite(n)) ? n : 0; }
-function fmt2(n){ return (n == null || !isFinite(n)) ? ":" : n.toFixed(2); }
+function fmt2(n){ return (n == null || !isFinite(n)) ? "—" : n.toFixed(2); }
 
-/* Preferred palette allocator (no per-org hardcoding) */
 /* ------------ masterData lookups (legend names & sensor vehicle info) --------- */
 function buildOrgLookups(masterData){
   const nameByKey = new Map();
@@ -399,7 +385,7 @@ function lookupMasterDataDescription(epc){
       const op   = rec["urn:epcglobal:cbv:mda#operator"];
       const t    = rec["urn:epcglobal:cbv:mda#tmType"] || rec["urn:epcglobal:cbv:mda#type"];
       if (desc) return String(desc);
-      if (op && t) return `${t} : ${op}`;
+      if (op && t) return `${t} — ${op}`;
       if (op) return String(op);
       if (t) return String(t);
     }
@@ -436,7 +422,7 @@ function labelForNode(d){
   if (step === "sensor_reporting"){
     const vehEpc = findVehicleEpcForNode(d);
     const desc = vehEpc ? lookupMasterDataDescription(vehEpc) : null;
-    return desc ? `sensor_reporting : ${desc}` : "sensor_reporting";
+    return desc ? `sensor_reporting — ${desc}` : "sensor_reporting";
   }
   return step || (d.eventId || "");
 }
@@ -451,9 +437,9 @@ function colorForNode(d){
     }
   }
   const key=orgKeyFromSGLN(d.bizLocation);
-  if(key){
-    return getOrgColor(key);
-  }
+  if (key){
+      return getOrgColor(key);
+    }
   const pal=["#2563eb","#059669","#dc2626","#7c3aed","#ea580c","#16a34a","#0ea5e9","#ca8a04","#db2777","#4b5563"];
   const ix=Math.abs(fnv1a(d.bizStep||"unknown"))%pal.length;
   return pal[ix];
@@ -584,6 +570,120 @@ let selectedGroupSet=new Set();
 
 /* Data state */
 let current={ nodes:[], links:[], lineageLinks:[], byId:new Map(), layout:null, masterData:null, coverage:null, indices:null, emissionsData:null };
+let currentSourceFileName = null;
+
+function getBaseName(filename){
+  if(!filename) return "layout";
+  const i = filename.lastIndexOf(".");
+  return i > 0 ? filename.slice(0, i) : filename;
+}
+function getSuggestedLocName(filename){
+  return `${getBaseName(filename || "layout")}.loc`;
+}
+function buildLayoutPayload(){
+  return {
+    type: "vci-layout",
+    version: 1,
+    sourceFile: currentSourceFileName || null,
+    savedAt: new Date().toISOString(),
+    nodes: (current.nodes || []).map(n => {
+      const x = Number.isFinite(n.fx) ? n.fx : (Number.isFinite(n.x) ? n.x : null);
+      const y = Number.isFinite(n.fy) ? n.fy : (Number.isFinite(n.y) ? n.y : null);
+      return { id: n.id, x, y };
+    }).filter(n => n.id != null && n.x != null && n.y != null)
+  };
+}
+function downloadTextFile(filename, text, mimeType="application/json"){
+  const blob = new Blob([text], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function saveLayoutToLocFile(){
+  if(!current.nodes || !current.nodes.length){
+    setBanner("No graph loaded, nothing to save.", false);
+    return;
+  }
+  const payload = buildLayoutPayload();
+  const filename = getSuggestedLocName(currentSourceFileName || "layout.json");
+  downloadTextFile(filename, JSON.stringify(payload, null, 2), "application/json");
+  setBanner(`Layout saved as ${filename}`, true);
+}
+function normalizeLayoutNodes(layoutObj){
+  if(Array.isArray(layoutObj?.nodes)) return layoutObj.nodes;
+  if(layoutObj?.nodes && typeof layoutObj.nodes === "object") {
+    return Object.entries(layoutObj.nodes).map(([id, p]) => ({ id, x: p?.x, y: p?.y }));
+  }
+  return [];
+}
+function applyRestoredLayout(layoutObj){
+  if(!layoutObj || !current.nodes?.length) return { applied: 0, missing: 0 };
+  const restoredNodes = normalizeLayoutNodes(layoutObj);
+  const byId = new Map(restoredNodes.map(n => [n.id, n]));
+  let applied = 0, missing = 0;
+
+  current.nodes.forEach(n => {
+    const hit = byId.get(n.id);
+    if(hit && Number.isFinite(hit.x) && Number.isFinite(hit.y)){
+      n.fx = hit.x;
+      n.fy = hit.y;
+      applied++;
+    } else {
+      missing++;
+    }
+  });
+
+  gNodes.selectAll("g.node").each(function(d){
+    const x = Number.isFinite(d.fx) ? d.fx : d.x;
+    const y = Number.isFinite(d.fy) ? d.fy : d.y;
+    if (d._circle) d3.select(d._circle).attr("cx", x).attr("cy", y);
+    if (d._marker){
+      const rr = +d3.select(d._circle).attr("r");
+      d3.select(d._marker)
+        .attr("d", markerSymbolPathForNode(d, rr))
+        .attr("transform", markerTransformForNode(d, x, y));
+    }
+    if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
+    if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
+  });
+
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(e.u || current.byId.get(e.source), e.v || current.byId.get(e.target)));
+
+  return { applied, missing };
+}
+async function handleRestoreLayoutFile(file){
+  if(!file) return;
+  try{
+    const txt = await file.text();
+    const layoutObj = JSON.parse(txt);
+    if(layoutObj?.type !== "vci-layout"){
+      setBanner("Selected file is not a valid VCI layout (.loc) file.", false);
+      return;
+    }
+    if(!current.nodes || !current.nodes.length){
+      setBanner("Load a JSON graph before restoring a layout.", false);
+      return;
+    }
+    if(layoutObj.sourceFile && currentSourceFileName && layoutObj.sourceFile !== currentSourceFileName){
+      const proceed = window.confirm(`This layout was saved for "${layoutObj.sourceFile}" but the current graph is "${currentSourceFileName}". Restore anyway?`);
+      if(!proceed) return;
+    }
+    const result = applyRestoredLayout(layoutObj);
+    setBanner(`Layout restored: ${result.applied} node(s) applied.`, true);
+  }catch(err){
+    setBanner("Failed to restore layout: " + (err?.message || err), false);
+    console.error(err);
+  }
+}
 /* Emissions (optional) */
 let emissionsByOrg = new Map();
 let emissionsUnit = "kgCO2e";
@@ -783,7 +883,7 @@ function nodeTooltip(n){
   lines.push(`<div class="kv"><b>eventId</b>: ${esc(n.eventId||"")}</div>`);
   lines.push(`<div class="kv"><b>eventTime</b>: ${esc(n.eventTime||"")}</div>`);
   if(n.recordTime) lines.push(`<div class="kv"><b>recordTime</b>: ${esc(n.recordTime)}</div>`);
-  if(n.bizLocation) lines.push(`<div class="kv"><b>bizLocation</b>: ${esc(n.bizLocation)}${orgLabel?` : <i>${esc(orgLabel)}</i>`:""}</div>`);
+  if(n.bizLocation) lines.push(`<div class="kv"><b>bizLocation</b>: ${esc(n.bizLocation)}${orgLabel?` — <i>${esc(orgLabel)}</i>`:""}</div>`);
   if(mdLoc){
     const attrs = mdLoc.attributes||{};
     const nm = attrs["urn:epcglobal:cbv:mda#name"] || mdLoc.name;
@@ -805,8 +905,8 @@ function nodeTooltip(n){
   if(n.type==="TransformationEvent" && current.coverage){
     const entry = (current.coverage.transformations||[]).find(t => t.eventId===n.id || t.eventId===n.eventId);
     if(entry){
-      const inSumm = (entry.inputs||[]).map(i => `${i.epc} [commissioned:${i.hasCommissioning?'yes':'no'}; lastPre:${i.lastEventBeforeT||':'}]`).join("\n");
-      const outSumm = (entry.outputs||[]).map(o => `${o.epc} [firstPost:${o.firstEventAfterT||':'}]`).join("\n");
+      const inSumm = (entry.inputs||[]).map(i => `${i.epc} [commissioned:${i.hasCommissioning?'yes':'no'}; lastPre:${i.lastEventBeforeT||'—'}]`).join("\n");
+      const outSumm = (entry.outputs||[]).map(o => `${o.epc} [firstPost:${o.firstEventAfterT||'—'}]`).join("\n");
       if(inSumm) lines.push(`<div class="kv"><b>coverage.inputs</b>:\n${esc(inSumm)}</div>`);
       if(outSumm) lines.push(`<div class="kv"><b>coverage.outputs</b>:\n${esc(outSumm)}</div>`);
     }
@@ -948,20 +1048,11 @@ function updateLegend(nodes){
         </div>
       </div>` : "";
 
-    const tm = mroTimeByOrg.get(e.key);
-    const timeHtml = tm ? `
-      <div class="legend-times">
-        <span class="legend-timechip"><span class="k">VA</span><span class="v">${fmt2(tm.vaH)}</span><span class="u">h</span></span>
-        <span class="legend-timechip"><span class="k">NVA</span><span class="v">${fmt2(tm.nvaH)}</span><span class="u">h</span></span>
-        <span class="legend-timechip"><span class="k">Total</span><span class="v">${fmt2(tm.totalH)}</span><span class="u">h</span></span>
-      </div>` : "";
-
     item.innerHTML = `<span class="legend-swatch" style="background:${e.color}"></span>
       <div>
         <div>${esc(e.name)}</div>
         <div class="legend-key">${esc(e.key)}</div>
         ${emHtml}
-        ${timeHtml}
       </div>`;
 
     item.addEventListener("click", ()=> toggleGroupSelection(e.key));
@@ -1014,117 +1105,72 @@ function firstTransformForSeed(nodes, seedEpc){
   return pickFrom.sort((a,b)=> T(a.eventTime) - T(b.eventTime))[0];
 }
 
+/** Compute KPIs per spec */
+function computeKpis_SPEC(){
+  const nodes = current.nodes || [];
+  const seedEpc = (document.getElementById("seedTag").textContent || "").replace("seedEpc: ","").trim();
 
-/* ---------- MRO utilities (time-based control) ---------- */
-/**
- * How time is calculated:
- * - Events are sorted by eventTime.
- * - Each interval is (event[i].time - event[i-1].time) and is attributed to event[i]
- *   (the activity or wait that occurred "up to" that event).
- *
- * How intervals are classified:
- * - Prefer ILMD key: mro:timeClass in {"VA","NVA"} on event[i]
- * - Fallback ILMD booleans:
- *    - mro:valueAdded = true  => VA
- *    - mro:nonValueAdded = true => NVA
- * - Otherwise: UNKNOWN
- */
-let mroTimeByOrg = new Map(); // orgKey -> { vaH, nvaH, totalH }
+  const firstTf = firstTransformForSeed(nodes, seedEpc);
 
-function getMroTimeClass(n){
-  const ilmd = n?.ilmd || {};
-  const tc = (ilmd["mro:timeClass"] || ilmd["timeClass"] || "").toString().toUpperCase().trim();
-  if (tc === "VA" || tc === "VALUE_ADD" || tc === "VALUEADDED") return "VA";
-  if (tc === "NVA" || tc === "NON_VALUE_ADD" || tc === "NONVALUEADDED") return "NVA";
-  const va = ilmd["mro:valueAdded"];
-  const nva = ilmd["mro:nonValueAdded"];
-  const toBool = v => (v === true || v === "true" || v === 1 || v === "1");
-  if (toBool(va)) return "VA";
-  if (toBool(nva)) return "NVA";
-  return "UNKNOWN";
-}
-
-
-function markerSymbolPathForNode(d, r){
-  const tc = getMroTimeClass(d);
-  const size = Math.PI * r * r; // symbol size is area
-  const sym = d3.symbol().size(size);
-  if (tc === "VA" || tc === "NVA"){
-    sym.type(d3.symbolTriangle);
-  } else {
-    sym.type(d3.symbolCircle);
-  }
-  return sym();
-}
-function markerTransformForNode(d, cx, cy){
-  const tc = getMroTimeClass(d);
-  const rot = (tc === "NVA") ? 180 : 0; // down triangle for NVA
-  return `translate(${cx},${cy}) rotate(${rot})`;
-}
-
-function computeKpis_MRO(){
-  const nodes = (current.nodes || [])
-    .filter(n => n.eventTime)
-    .slice()
-    .sort((a,b)=> T(a.eventTime) - T(b.eventTime));
-
-  // reset org rollups
-  mroTimeByOrg = new Map();
-
-  let vaMs = 0, nvaMs = 0, totalMs = 0;
-
-  for (let i=1; i<nodes.length; i++){
-    const prev = nodes[i-1], cur = nodes[i];
-    const dt = T(cur.eventTime) - T(prev.eventTime);
-    if (!(dt > 0)) continue;
-
-    totalMs += dt;
-
-    const cls = getMroTimeClass(cur);
-    if (cls === "VA") vaMs += dt;
-    else if (cls === "NVA") nvaMs += dt;
-
-    // org attribution: attribute interval to the org where cur occurred
-    const ok = orgKeyFromSGLN(cur.bizLocation) || "UNKNOWN";
-    const agg = mroTimeByOrg.get(ok) || { vaH:0, nvaH:0, totalH:0 };
-    agg.totalH += dt/36e5;
-    if (cls === "VA") agg.vaH += dt/36e5;
-    if (cls === "NVA") agg.nvaH += dt/36e5;
-    mroTimeByOrg.set(ok, agg);
+  // 1) Lead: first Transform → last Receiving >= transform
+  let leadHours = null;
+  if (firstTf){
+    const lastRecv = nodes
+      .filter(n => endsWithStep(n,"receiving") && T(n.eventTime) >= T(firstTf.eventTime))
+      .sort((a,b)=> T(b.eventTime) - T(a.eventTime))[0];
+    if (lastRecv){
+      leadHours = hours2(T(lastRecv.eventTime) - T(firstTf.eventTime));
+    }
   }
 
-  return {
-    vaHours: hours2(vaMs),
-    nvaHours: hours2(nvaMs),
-    totalHours: hours2(totalMs)
-  };
-}
+  // 2) Transit: Σ departing→arriving after first transform
+  let transitHours = null;
+  if (firstTf){
+    const post = nodes
+      .filter(n => T(n.eventTime) >= T(firstTf.eventTime))
+      .sort((a,b)=> T(a.eventTime) - T(b.eventTime));
 
-function renderKpis_MRO(){
-  const { vaHours, nvaHours, totalHours } = computeKpis_MRO();
-  const setH = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "N/A" : `${v} h`); };
-  setH("#kpiLeadTime .value",    vaHours);
-  setH("#kpiTransitTime .value", nvaHours);
-  setH("#kpiDwell .value",       totalHours);
+    let sec = 0, pendingDepart = null;
+    for (const e of post){
+      if (endsWithStep(e,"departing")) pendingDepart = e;
+      else if (endsWithStep(e,"arriving") && pendingDepart){
+        sec += (T(e.eventTime) - T(pendingDepart.eventTime)) / 1000;
+        pendingDepart = null;
+      }
+    }
+    transitHours = +(sec/3600).toFixed(2);
+  }
 
-  // populate%nva
-  const pctNva = (totalHours && totalHours > 0)
-  ? Math.round((nvaHours / totalHours) * 100)
-  : 0;
+  // 3) Dwell = max(0, lead - transit)
+  let dwellHours = null;
+  if (leadHours != null && transitHours != null){
+    dwellHours = Math.max(0, +(leadHours - transitHours).toFixed(2));
+  } else if (leadHours != null){
+    dwellHours = leadHours;
+  }
 
-const pctEl = document.querySelector("#kpiPctNva .value");
-if (pctEl) pctEl.textContent = `${pctNva}%`;
-  // Keep the other cards as-is for now
-  const handoffs = (current.nodes||[]).filter(n =>
+  // 4) Handoffs
+  const handoffs = nodes.filter(n =>
     n.type === "AssociationEvent" &&
     (endsWithStep(n,"loading") || endsWithStep(n,"unloading"))
   ).length;
-  const sensorPings = (current.nodes||[]).filter(n => endsWithStep(n,"sensor_reporting")).length;
-  const setI = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "N/A" : String(v)); };
-  setI("#kpiHandoffs .value", handoffs);
-  setI("#kpiSensors .value",  sensorPings);
+
+  // 5) Sensor pings
+  const sensorPings = nodes.filter(n => endsWithStep(n,"sensor_reporting")).length;
+
+  return { leadHours, transitHours, dwellHours, handoffs, sensorPings };
 }
 
+function renderKpis_SPEC(){
+  const { leadHours, transitHours, dwellHours, handoffs, sensorPings } = computeKpis_SPEC();
+  const setH = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "—" : `${v} h`); };
+  const setI = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "—" : String(v)); };
+  setH("#kpiLeadTime .value",    leadHours);
+  setH("#kpiTransitTime .value", transitHours);
+  setH("#kpiDwell .value",       dwellHours);
+  setI("#kpiHandoffs .value",    handoffs);
+  setI("#kpiSensors .value",     sensorPings);
+}
 
 /* Temperature strip */
 function getTempPoints(){
@@ -1227,7 +1273,7 @@ function render(data){
   const byId = new Map(nodes.map(n=>[n.id,n]));
   
 
-// Build a stable palette allocation for org keys present in this dataset
+// Build a stable palette allocation for org keys present in this dataset (no per-org hardcoding)
 const orgKeysPresent = new Set();
 for (const n of nodes){
   const k = orgKeyFromSGLN(n.bizLocation);
@@ -1300,9 +1346,6 @@ const links = (data.links||[]).filter(e=>{
   const nodeSel=gNodes.selectAll("g.node").data(nodes, d=>d.id);
   nodeSel.exit().remove();
   const nodeEnter=nodeSel.enter().append("g").attr("class","node")
-    .classed("va", d=>getMroTimeClass(d)==="VA")
-    .classed("nva", d=>getMroTimeClass(d)==="NVA")
-    .classed("unknownva", d=>getMroTimeClass(d)==="UNKNOWN")
     .call(d3.drag()
       .on("start",(event,d)=>{
         d3.select(event.sourceEvent.target).style("cursor","grabbing");
@@ -1337,13 +1380,7 @@ const links = (data.links||[]).filter(e=>{
             n.fx = st.fx + dx;
             n.fy = st.fy + dy;
             d3.select(n._circle).attr("cx", n.fx).attr("cy", n.fy);
-             const rr = +d3.select(n._circle).attr("r");
-             if (n._marker){
-               d3.select(n._marker)
-                 .attr("d", markerSymbolPathForNode(n, rr))
-                 .attr("transform", markerTransformForNode(n, n.fx, n.fy));
-             }
-             d3.select(n._label ).attr("x",  n.fx + 12).attr("y",  n.fy);
+            d3.select(n._label ).attr("x",  n.fx + 12).attr("y",  n.fy);
             const b = n._badge; if (b) d3.select(b).attr("x", n.fx).attr("y", n.fy);
           });
         } else {
@@ -1351,12 +1388,6 @@ const links = (data.links||[]).filter(e=>{
           d.fx = wx + d._grab.dx;
           d.fy = wy + d._grab.dy;
           d3.select(d._circle).attr("cx", d.fx).attr("cy", d.fy);
-          const rr = +d3.select(d._circle).attr("r");
-          if (d._marker){
-            d3.select(d._marker)
-              .attr("d", markerSymbolPathForNode(d, rr))
-              .attr("transform", markerTransformForNode(d, d.fx, d.fy));
-          }
           d3.select(d._label ).attr("x",  d.fx + 12).attr("y",  d.fy);
           const b = d._badge; if (b) d3.select(b).attr("x", d.fx).attr("y", d.fy);
         }
@@ -1376,12 +1407,6 @@ const links = (data.links||[]).filter(e=>{
       const cx = spreadMode ? (d.x_spread ?? d.x) : d.x;
       const cy = spreadMode ? (d.y_spread ?? d.y) : d.y;
       d3.select(d._circle).attr("cx", cx).attr("cy", cy);
-      const r = +d3.select(d._circle).attr("r");
-      if (d._marker){
-        d3.select(d._marker)
-          .attr("d", markerSymbolPathForNode(d, r))
-          .attr("transform", markerTransformForNode(d, cx, cy));
-      }
       d3.select(d._label).attr("x", cx+12).attr("y", cy);
       const b = d._badge; if (b) d3.select(b).attr("x", cx).attr("y", cy);
       gEdges.selectAll("path.edge")
@@ -1407,15 +1432,7 @@ const links = (data.links||[]).filter(e=>{
 
   nodeEnter.append("circle")
     .attr("r", parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')))
-    .attr("fill","transparent")
-    .attr("stroke","transparent")
-    .attr("pointer-events","all")
     .each(function(d){ d._circle=this; });
-
-  // Visual marker: neutral=circle, VA=triangle-up, NVA=triangle-down
-  nodeEnter.append("path")
-    .attr("class","marker")
-    .each(function(d){ d._marker=this; });
 
   nodeEnter.append("text")
     .attr("class","badge")
@@ -1433,23 +1450,12 @@ const links = (data.links||[]).filter(e=>{
   const baseR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')) || 8;
 
   nodesAll.select("circle")
-    .attr("stroke", "none")
-    .attr("fill", "transparent")
-    .style("opacity", 0)  
+    .attr("fill", d=> colorForNode(d))
+    .attr("stroke", d=> isSensorVehicleNode(d) ? "#ef4444" : "#ffffff")
+    .attr("stroke-width", d=> isSensorVehicleNode(d) ? 3 : 2)
     .attr("r", d=> isSensorVehicleNode(d) ? baseR + 3 : baseR)
     .attr("cx", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
     .attr("cy", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
-
-  // Marker styling + positioning
-  nodesAll.select("path.marker")
-    .attr("fill", d=> colorForNode(d))
-    .attr("stroke","none")
-    .attr("d", d=> markerSymbolPathForNode(d, baseR))
-    .attr("transform", d=> {
-      const cx = d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x);
-      const cy = d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y);
-      return markerTransformForNode(d, cx, cy);
-    });
 
   nodesAll.select("text.badge")
     .style("display", d=> isSensorVehicleNode(d) ? "block" : "none")
@@ -1462,21 +1468,19 @@ const links = (data.links||[]).filter(e=>{
     .attr("y", d=>  d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
 
   gNodes.selectAll("g.node").classed("group-selected", n=> selectedGroupSet.has(n.id));
-
-  /* Render KPIs first so legend can show per-org time rollups */
-  renderKpis_MRO();
-
   updateLegend(nodes);
 
   if(errs.length){
     setBanner("Validation failed: "+errs[0], false);
   }else{
-    setBanner(`Loaded OK: v2.2.14 checks passed, lineage links: ${lineageDataRaw.length}`, true);
+    setBanner(`Loaded OK — v2.2.14 checks passed · lineage links: ${lineageDataRaw.length}`, true);
   }
 
   applyShipRecvHiding();
 
-  /* KPIs rendered above */
+  /* Render KPIs + temp + seed emissions */
+  renderKpis_SPEC();
+  renderTempStrip();
   renderSeedEmissionsKpi();
 
   /* After ribbon content changes, sync its height for layout */
@@ -1568,18 +1572,36 @@ document.getElementById("toggleRibbon").addEventListener("click", () => {
   setRibbonVisible(!showRibbon);
 });
 
+document.getElementById("saveLayout").addEventListener("click", () => {
+  saveLayoutToLocFile();
+});
+
+document.getElementById("restoreLayout").addEventListener("click", () => {
+  document.getElementById("layoutInput").value = "";
+  document.getElementById("layoutInput").click();
+});
+
+document.getElementById("layoutInput").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if(!f) return;
+  await handleRestoreLayoutFile(f);
+});
+
 /* Update ribbon height on resize (only if visible) */
 window.addEventListener("resize", () => { if (showRibbon) syncRibbonHeight(); });
 
 /* -------------------- File loader -------------------- */
 document.getElementById("fileInput").addEventListener("change", async (e)=>{
-  const f=e.target.files?.[0]; if(!f) return;
+  const f = e.target.files?.[0];
+  if(!f) return;
   try{
-    const txt=await f.text();
-    const json=JSON.parse(txt);
+    const txt = await f.text();
+    const json = JSON.parse(txt);
+    currentSourceFileName = f.name || null;
     render(json);
+    setBanner(`Loaded JSON: ${currentSourceFileName}`, true);
   }catch(err){
-    setBanner("Failed to load JSON: "+(err?.message||err), false); console.error(err);
+    setBanner("Failed to load JSON: " + (err?.message||err), false); console.error(err);
   }
 });
 
