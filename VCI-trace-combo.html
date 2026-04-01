@@ -158,6 +158,7 @@
     </button>
     <!-- NEW: ribbon toggle -->
     <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+    <button id="toggleEventTooltip" class="btn" title="Show/Hide the event data hover panel">Hide Hover Panel</button>
     <button id="saveLayout" class="btn" title="Save current node layout to a .loc file">Save Layout</button>
     <button id="restoreLayout" class="btn" title="Restore node layout from a .loc file">Restore Layout</button>
     <button id="toggleMode" class="btn" title="Switch legend and ribbon between sustainability and time views">Mode: Sustainability</button>
@@ -691,6 +692,7 @@ function applyRestoredLayout(layoutObj){
     }
     if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
     if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
+    if (d._timeBadge) d3.select(d._timeBadge).attr("x", x).attr("y", y);
   });
 
   gEdges.selectAll("path.edge")
@@ -736,6 +738,7 @@ let timeByOrg = new Map();
 /* View state */
 let rendererMode = "sustainability"; // "sustainability" | "time"
 let showRibbon = true;
+let showEventTooltip = true;
 
 let showAxis=true;
 let showLineage=true;
@@ -754,6 +757,7 @@ let spreadIndex=0;
 let hideShipRecvPaths = false;
 
 function showTooltip(html, clientX, clientY){
+  if (!showEventTooltip) return;
   tooltip.html(html).style("display","block");
   const bbox = tooltip.node().getBoundingClientRect();
   const left = Math.min(clientX + 14, window.innerWidth  - bbox.width  - 10);
@@ -1995,6 +1999,14 @@ document.getElementById("toggleRibbon").addEventListener("click", () => {
   setRibbonVisible(!showRibbon);
 });
 
+/* NEW: Hover panel toggle */
+document.getElementById("toggleEventTooltip").addEventListener("click", () => {
+  showEventTooltip = !showEventTooltip;
+  hideTooltip();
+  document.getElementById("toggleEventTooltip").textContent =
+    showEventTooltip ? "Hide Hover Panel" : "Show Hover Panel";
+});
+
 document.getElementById("toggleMode").addEventListener("click", () => {
   rendererMode = rendererMode === "sustainability" ? "time" : "sustainability";
   document.getElementById("toggleMode").textContent = rendererMode === "sustainability" ? "Mode: Sustainability" : "Mode: Time";
@@ -2019,7 +2031,9 @@ document.getElementById("toggleMode").addEventListener("click", () => {
       if (rendererMode !== "time") return "time-badge hidden";
       const cls = classifyNodeTime(d);
       return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
-    });
+    })
+    .attr("x", d => d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d => d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
 
   if (rendererMode === "sustainability") renderTempStrip();
   updateSpreadButtonLabel();
