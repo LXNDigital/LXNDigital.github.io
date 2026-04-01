@@ -117,7 +117,7 @@
       color:var(--lineage);
       stroke-width:2;
       fill:none;opacity:0.95;
-      stroke-dasharray:6 6;
+      stroke-dasharray:none;
       pointer-events:none
     }
     .lineage-hidden{display:none !important}
@@ -149,11 +149,11 @@
   <div id="controls">
     <input type="file" id="fileInput" accept=".json,application/json" class="btn" />
     <button id="toggleAxis" class="btn" title="Show/Hide time axis">Toggle X-Axis</button>
-    <button id="toggleLineage" class="btn" title="Show/Hide lineage links">Toggle Lineage</button>
+    <button id="toggleLineage" class="btn" title="Alternate lineage relationships between dotted and solid">Lineage: Dotted</button>
     <button id="toggleSpread" class="btn" title="Spread or compact nodes">Spread</button>
     <button id="resetZoom" class="btn" title="Reset zoom/pan">Reset view</button>
     <button id="unpinAll" class="btn" title="Clear all pinned nodes">Unpin all</button>
-    <button id="toggleShipRecvPaths" class="btn" title="Hide/Show nodes & links strictly between Shipping → nearest Receiving">
+    <button id="toggleShipRecvPaths" class="btn" title="Hide/Show Ship→Recv paths and cross-parent links">
       Hide Ship→Recv Paths
     </button>
     <!-- NEW: ribbon toggle -->
@@ -568,7 +568,12 @@ function applyRadialGroupLayout(nodes, params={radiusBase:10, radiusScale:1}) {
     const denom = Math.max(sorted.length - 1, 1);
 
     sorted.forEach((node, i) => {
-      const t = denom === 0 ? 0.5 : (i / denom);
+      const tBase = denom === 0 ? 0.5 : (i / denom);
+
+      // Alternate rotational direction across the virtual centre line:
+      // clusters above keep the base order, clusters below reverse it.
+      const t = direction < 0 ? tBase : (1 - tBase);
+
       const ang = start + (end - start) * t;
       node.x_spread = cx + R * Math.cos(ang);
       node.y_spread = cy + R * Math.sin(ang);
@@ -734,6 +739,7 @@ let showRibbon = true;
 
 let showAxis=true;
 let showLineage=true;
+let lineageDashed=false;
 let spreadMode=false;
 
 const SPREAD_LEVELS = [
@@ -818,8 +824,16 @@ function applyShipRecvHiding(){
     return;
   }
   const { hiddenNodeIds, hiddenEdgeKeys } = computeShipRecvHideSets();
+  const isCrossParentEdge = (e) => {
+    const u = current.byId.get(e.source);
+    const v = current.byId.get(e.target);
+    if (!u || !v) return false;
+    const ku = orgKeyFromSGLN(u.bizLocation);
+    const kv = orgKeyFromSGLN(v.bizLocation);
+    return !!ku && !!kv && ku !== kv;
+  };
   gNodes.selectAll("g.node").classed("hidden-shiprecv", d => hiddenNodeIds.has(d.id));
-  gEdges.selectAll("path.edge").classed("hidden-shiprecv", d => hiddenEdgeKeys.has(`${d.source}->${d.target}`));
+  gEdges.selectAll("path.edge").classed("hidden-shiprecv", d => hiddenEdgeKeys.has(`${d.source}->${d.target}`) || isCrossParentEdge(d));
 }
 
 /* Banner helpers */
@@ -1685,6 +1699,7 @@ const links = (data.links||[]).filter(e=>{
   const edgeSel=gEdges.selectAll("path.edge").data(links, d=>d.source+"->"+d.target);
   edgeSel.exit().remove();
   edgeSel.enter().append("path").attr("class","edge").attr("marker-end","url(#arrow)")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : null)
     .merge(edgeSel)
     .attr("d", d=> bezierPath(byId.get(d.source), byId.get(d.target)));
 
@@ -1921,7 +1936,13 @@ document.getElementById("unpinAll").addEventListener("click",()=>{
   });
 });
 document.getElementById("toggleAxis").addEventListener("click",()=>{ showAxis=!showAxis; gAxis.classed("hidden",!showAxis); });
-document.getElementById("toggleLineage").addEventListener("click",()=>{ showLineage=!showLineage; gLineage.classed("lineage-hidden",!showLineage); if(!showLineage) clearLineageFocus(); });
+document.getElementById("toggleLineage").addEventListener("click",()=>{
+  lineageDashed=!lineageDashed;
+  gLineage.selectAll("path.lineage-edge")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : "0")
+    .style("opacity", 0.95);
+  document.getElementById("toggleLineage").textContent = lineageDashed ? "Lineage: Dotted" : "Lineage: Solid";
+});
 document.getElementById("toggleSpread").addEventListener("click",(e)=>{
   if (selectedGroupKey){
     const groupNodes = getNodesForSelectedGroup();
