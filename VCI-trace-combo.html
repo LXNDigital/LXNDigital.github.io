@@ -692,7 +692,6 @@ function applyRestoredLayout(layoutObj){
     }
     if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
     if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
-    if (d._timeBadge) d3.select(d._timeBadge).attr("x", x).attr("y", y);
   });
 
   gEdges.selectAll("path.edge")
@@ -759,9 +758,21 @@ let hideShipRecvPaths = false;
 function showTooltip(html, clientX, clientY){
   if (!showEventTooltip) return;
   tooltip.html(html).style("display","block");
+
   const bbox = tooltip.node().getBoundingClientRect();
-  const left = Math.min(clientX + 14, window.innerWidth  - bbox.width  - 10);
-  const top  = Math.min(clientY + 14, window.innerHeight - bbox.height - 10);
+  const gap = 8;
+  const margin = 10;
+  const onLeftHalf = clientX < (window.innerWidth / 2);
+
+  let left = onLeftHalf
+    ? clientX + gap
+    : clientX - bbox.width - gap;
+
+  let top = clientY + gap;
+
+  left = Math.max(margin, Math.min(left, window.innerWidth - bbox.width - margin));
+  top  = Math.max(margin, Math.min(top,  window.innerHeight - bbox.height - margin));
+
   tooltip.style("left", left + "px").style("top", top + "px");
 }
 function hideTooltip(){ tooltip.style("display","none"); }
@@ -2031,9 +2042,7 @@ document.getElementById("toggleMode").addEventListener("click", () => {
       if (rendererMode !== "time") return "time-badge hidden";
       const cls = classifyNodeTime(d);
       return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
-    })
-    .attr("x", d => d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
-    .attr("y", d => d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+    });
 
   if (rendererMode === "sustainability") renderTempStrip();
   updateSpreadButtonLabel();
