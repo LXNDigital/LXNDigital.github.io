@@ -692,7 +692,6 @@ function applyRestoredLayout(layoutObj){
     }
     if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
     if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
-    if (d._timeBadge) d3.select(d._timeBadge).attr("x", x).attr("y", y);
   });
 
   gEdges.selectAll("path.edge")
@@ -2043,9 +2042,7 @@ document.getElementById("toggleMode").addEventListener("click", () => {
       if (rendererMode !== "time") return "time-badge hidden";
       const cls = classifyNodeTime(d);
       return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
-    })
-    .attr("x", d => Number.isFinite(d.fx) ? d.fx : (spreadMode ? (d.x_spread ?? d.x) : d.x))
-    .attr("y", d => Number.isFinite(d.fy) ? d.fy : (spreadMode ? (d.y_spread ?? d.y) : d.y));
+    });
 
   if (rendererMode === "sustainability") renderTempStrip();
   updateSpreadButtonLabel();
