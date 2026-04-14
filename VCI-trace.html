@@ -20,18 +20,19 @@
     html,body{height:100%}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans','Liberation Sans',sans-serif;color:var(--fg);background:var(--bg)}
     header{
-      display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;
+      display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:12px;align-items:center;
       padding:10px 14px;border-bottom:1px solid var(--panel-border);background:var(--panel);
       position:sticky;top:0;z-index:10
     }
+    #titleBlock{display:flex;flex-direction:column;gap:4px;min-width:0}
     h1{font-size:16px;margin:0;font-weight:600}
     #seedTag{color:var(--muted);font-size:12px;margin-left:8px}
-    #controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    #controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-self:end}
     .btn{border:1px solid var(--panel-border);background:#fff;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px}
     .btn:hover{filter:brightness(0.98)}
-    #banner{width:100%;padding:8px 12px;font-size:13px;color:#fff;display:none;border-bottom:1px solid #0001}
-    #banner.ok{background:var(--banner-ok);display:block}
-    #banner.err{background:var(--banner-err);display:block}
+    #banner{width:100%;padding:0;font-size:12px;display:none;background:transparent;border:none;line-height:1.3}
+    #banner.ok{color:var(--banner-ok);display:block}
+    #banner.err{color:var(--banner-err);display:block}
 
     /* KPI strip */
     #kpiBar{
@@ -79,6 +80,27 @@
     .legend-chip .v{font-variant-numeric:tabular-nums; font-weight:600}
     .legend-chip .u{color:#64748b}
 
+    /* Time-centric mode */
+    .node.va circle,
+    .node.nva circle,
+    .node.unknownva circle{ stroke:#ffffff; stroke-width:2px; }
+    .legend-times{margin-top:6px;font-size:11px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+    .legend-timechip{display:inline-flex;gap:4px;align-items:baseline;padding:2px 6px;border:1px solid var(--panel-border);border-radius:999px;background:#fff}
+    .legend-timechip .k{font-weight:600;color:#111}
+    .legend-timechip .v{color:#111}
+    .legend-timechip .u{color:var(--muted)}
+    .kpi .sub{font-size:11px;color:#6b7280;margin-top:2px}
+    .time-badge{
+      pointer-events:none;
+      dominant-baseline:middle;
+      text-anchor:middle;
+      font-size:12px;
+      font-weight:700;
+      fill:#111;
+      stroke:none;
+    }
+    .time-badge.hidden{display:none}
+
     svg{
       width:100%;height:100%;display:block;
       background:
@@ -95,7 +117,7 @@
       color:var(--lineage);
       stroke-width:2;
       fill:none;opacity:0.95;
-      stroke-dasharray:6 6;
+      stroke-dasharray:none;
       pointer-events:none
     }
     .lineage-hidden{display:none !important}
@@ -103,10 +125,13 @@
     .node text{font-size:12px;dominant-baseline:middle;pointer-events:none;fill:#000;paint-order:stroke;stroke:#fff;stroke-width:3px}
     .node .badge{font-size:11px;font-weight:700;fill:#fff;stroke:none;paint-order:stroke;dominant-baseline:middle;text-anchor:middle}
     .faded{opacity:var(--fade)}
-    .active-node circle{stroke:#111;stroke-width:3}
-    .group-selected circle{stroke:#111;stroke-width:3}
+    .active-node circle,
+    .node.active-node circle,
+    .node.group-selected circle,
+    .group-selected circle{stroke:#111 !important;stroke-width:3 !important}
     .active-lineage{stroke-dasharray:0;stroke-width:2.4;opacity:1}
     .hidden-shiprecv{display:none}
+
     .tooltip{
       position:absolute;display:none;min-width:300px;max-width:520px;padding:10px 12px;border-radius:10px;background:#111;color:#fff;
       box-shadow:0 8px 24px #0006;font-size:12px;line-height:1.35;z-index:20;white-space:pre-wrap; pointer-events:none;
@@ -114,68 +139,42 @@
     .tooltip h3{margin:0 0 6px 0;font-size:13px;font-weight:600}
     .tooltip .kv{color:#cbd5e1}
     .tooltip code{display:block;white-space:pre-wrap;background:#0b0b0b;border:1px solid #222;border-radius:6px;padding:8px;margin-top:6px;color:#e2e8f0;overflow-x:auto}
+
+    .event-panel{font-size:12px;line-height:1.4;color:#111}
+    .event-panel h3{margin:0 0 8px 0;font-size:13px;font-weight:700;color:#111}
+    .event-panel .kv{color:#334155;margin-bottom:4px}
+    .event-panel code{display:block;white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border:1px solid #1e293b;border-radius:8px;padding:8px;margin-top:6px;overflow-x:auto}
+    .panel-empty{font-size:12px;color:var(--muted);padding:4px 2px}
   </style>
 </head>
 <body>
 <header>
-  <h1>VCI Traceability <span id="seedTag"></span></h1>
+  <div id="titleBlock">
+    <h1>VCI Traceability <span id="seedTag"></span></h1>
+    <div id="banner"></div>
+  </div>
   <div id="controls">
     <input type="file" id="fileInput" accept=".json,application/json" class="btn" />
     <button id="toggleAxis" class="btn" title="Show/Hide time axis">Toggle X-Axis</button>
-    <button id="toggleLineage" class="btn" title="Show/Hide lineage links">Toggle Lineage</button>
+    <button id="toggleLineage" class="btn" title="Alternate lineage relationships between dotted and solid">Lineage: Dotted</button>
     <button id="toggleSpread" class="btn" title="Spread or compact nodes">Spread</button>
     <button id="resetZoom" class="btn" title="Reset zoom/pan">Reset view</button>
     <button id="unpinAll" class="btn" title="Clear all pinned nodes">Unpin all</button>
-    <button id="toggleShipRecvPaths" class="btn" title="Hide/Show nodes & links strictly between Shipping → nearest Receiving">
+    <button id="toggleShipRecvPaths" class="btn" title="Hide/Show Ship→Recv paths and cross-parent links">
       Hide Ship→Recv Paths
     </button>
     <!-- NEW: ribbon toggle -->
     <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+    <button id="toggleEventTooltip" class="btn" title="Switch the right-side pane between legend and event data">Show Event Data</button>
+    <button id="saveLayout" class="btn" title="Save current node layout to a .loc file">Save Layout</button>
+    <button id="restoreLayout" class="btn" title="Restore node layout from a .loc file">Restore Layout</button>
+    <button id="toggleMode" class="btn" title="Switch legend and ribbon between sustainability and time views">Mode: Sustainability</button>
+    <input type="file" id="layoutInput" accept=".loc,application/json" style="display:none" />
   </div>
-  <div id="banner"></div>
 </header>
 
 <!-- KPI STRIP -->
-<section id="kpiBar">
-  <div class="kpi" id="kpiLeadTime"
-       title="Lead time: from the earliest TransformationEvent (preferring one that outputs the seed EPC) to the last Receiving event at or after that time.">
-    <div class="label">Lead time (Transform→Receive)</div>
-    <div class="value">—</div>
-  </div>
-  <div class="kpi" id="kpiTransitTime"
-       title="Total transit: sum of all legs pairing Departing→next Arriving, considering only events at or after the first transform.">
-    <div class="label">Transit time (Σ Depart→Arrive)</div>
-    <div class="value">—</div>
-  </div>
-  <div class="kpi" id="kpiDwell"
-       title="Total dwell (non-transit) = Lead − Transit, floored at 0.">
-    <div class="label">Dwell (Lead − Transit)</div>
-    <div class="value">—</div>
-  </div>
-  <div class="kpi" id="kpiHandoffs"
-       title="Handoffs: AssociationEvents whose bizStep ends with loading or unloading.">
-    <div class="label">Handoffs</div>
-    <div class="value">—</div>
-  </div>
-  <div class="kpi" id="kpiSensors"
-       title="Sensor pings: events whose bizStep ends with sensor_reporting.">
-    <div class="label">Sensor pings</div>
-    <div class="value">—</div>
-  </div>
-
-  <!-- Seed emissions card -->
-  <div class="kpi" id="kpiSeedEmissions" title="Declared emissions totals for the seed EPC">
-    <div class="label">Seed emissions</div>
-    <div class="legend-emissions">
-      <div class="row" id="kpiSeedEmissionsRow"></div>
-    </div>
-  </div>
-
-  <div id="kpiTemp" title="Cold-chain: product temperature over time from ilmd.cbvmda:productTempC.">
-    <div class="label">Temperature strip</div>
-    <svg id="tempStrip" viewBox="0 0 600 26" preserveAspectRatio="none"></svg>
-  </div>
-</section>
+<section id="kpiBar"></section>
 
 <div id="main">
   <div id="stage">
@@ -196,7 +195,7 @@
   </div>
 
   <aside id="legendPane">
-    <h2>Legend — Ultimate Parent</h2>
+    <h2 id="sidePaneTitle">Legend — Ultimate Parent</h2>
     <div id="legend"></div>
   </aside>
 </div>
@@ -221,16 +220,39 @@ const PREFERRED_PALETTE = [
   "#9D90A0", // purple
   "#B71E42", // red
   "#14B8A6", // teal
-  "#Ed7D31", // amber
+  "#ED7D31", // amber
   "#EB91BB", // pink
   "#64748B", // slate
   "#84CC16", // lime
   "#5B9BD5", // light blue
-  "#F43F5E"  // rose
+  "#F43F5E", // rose
+  "#1D4ED8", // royal blue
+  "#D97706", // burnt orange
+  "#15803D", // forest green
+  "#7C3AED", // violet
+  "#BE123C", // crimson
+  "#0F766E", // deep teal
+  "#C2410C", // rust
+  "#A21CAF", // magenta
+  "#475569", // blue grey
+  "#65A30D", // olive
+  "#0284C7", // azure
+  "#B45309", // ochre
+  "#E11D48"  // raspberry
 ];
 
-const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v1";
+const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v2";
 let orgColorAllocMap = new Map();
+
+function colorIndexForHex(col){
+  return PREFERRED_PALETTE.findIndex(x => String(x).toLowerCase() === String(col).toLowerCase());
+}
+
+function generateDistinctColor(index){
+  const hue = (index * 137.508) % 360;
+  const lightness = (index % 2 === 0) ? 0.48 : 0.58;
+  return hslToHex(hue, 0.65, lightness);
+}
 
 function loadOrgColorAlloc(){
   try{
@@ -252,7 +274,7 @@ function saveOrgColorAlloc(){
 function allocateColorForOrgKey(orgKey, used){
   const n = PREFERRED_PALETTE.length;
   const start = fnv1a(orgKey) % n;
-  const step = 5; // spreads choices across the palette
+  const step = 7;
   let idx = start;
   for(let tries=0; tries<n; tries++){
     if(!used.has(idx)){
@@ -261,14 +283,18 @@ function allocateColorForOrgKey(orgKey, used){
     }
     idx = (idx + step) % n;
   }
-  return PREFERRED_PALETTE[start];
+
+  let extra = n;
+  while(used.has(extra)) extra++;
+  used.add(extra);
+  return generateDistinctColor(extra);
 }
 
 function ensureOrgColors(orgKeys){
   if(!orgKeys || !orgKeys.length) return;
   const used = new Set();
   for(const col of orgColorAllocMap.values()){
-    const ix = PREFERRED_PALETTE.indexOf(col);
+    const ix = colorIndexForHex(col);
     if(ix >= 0) used.add(ix);
   }
   for(const k of orgKeys){
@@ -289,7 +315,7 @@ function getOrgColor(orgKey){
   // lazy allocation
   const used = new Set();
   for(const col of orgColorAllocMap.values()){
-    const ix = PREFERRED_PALETTE.indexOf(col);
+    const ix = colorIndexForHex(col);
     if(ix >= 0) used.add(ix);
   }
   const col = allocateColorForOrgKey(orgKey, used);
@@ -433,13 +459,11 @@ function colorForNode(d){
       return getOrgColor(key);
     }
   }
-  const key=orgKeyFromSGLN(d.bizLocation);
+  const key = orgKeyFromSGLN(d.bizLocation);
   if (key){
-      return getOrgColor(key);
-    }
-  const pal=["#2563eb","#059669","#dc2626","#7c3aed","#ea580c","#16a34a","#0ea5e9","#ca8a04","#db2777","#4b5563"];
-  const ix=Math.abs(fnv1a(d.bizStep||"unknown"))%pal.length;
-  return pal[ix];
+    return getOrgColor(key);
+  }
+  return "#94a3b8";
 }
 
 /* -------------------- Sorting (canonical) -------------------- */
@@ -521,25 +545,48 @@ function applyRadialGroupLayout(nodes, params={radiusBase:10, radiusScale:1}) {
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(n);
   }
-  for (const [key, arr] of groups.entries()) {
+
+  const orderedKeys = (Array.isArray(legendOrder) && legendOrder.length)
+    ? legendOrder.filter(k => groups.has(k)).concat(Array.from(groups.keys()).filter(k => !legendOrder.includes(k)))
+    : Array.from(groups.keys()).sort((a,b)=>{
+        const ax = d3.mean(groups.get(a), d => d.x) ?? 0;
+        const bx = d3.mean(groups.get(b), d => d.x) ?? 0;
+        return ax - bx;
+      });
+
+  orderedKeys.forEach((key, idx) => {
+    const arr = groups.get(key) || [];
+    if (!arr.length) return;
     if (arr.length === 1) {
       const a = arr[0];
       a.x_spread = a.x_spread ?? a.x;
       a.y_spread = a.y_spread ?? a.y;
-      continue;
+      return;
     }
-    const cx = d3.mean(arr, d => d.x);
-    const cy = d3.mean(arr, d => d.y);
-    const R = params.radiusBase + (arr.length * 10) * (params.radiusScale || 1);
+
     const sorted = arr.slice().sort((a,b)=> (a.eventTime||"").localeCompare(b.eventTime||"") || (a.eventId||"").localeCompare(b.eventId||""));
-    const nudge = (fnv1a(key) % 360) * (Math.PI/180);
-    const step  = (2*Math.PI) / sorted.length;
+    const cx = d3.mean(sorted, d => d.x) ?? 0;
+    const cy = d3.mean(sorted, d => d.y) ?? 0;
+    const direction = (idx % 2 === 0) ? -1 : 1; // alternate above / below the baseline
+    const spreadStrength = Math.max(1, params.radiusScale || 1);
+    const R = params.radiusBase + (sorted.length * 10) * spreadStrength;
+    const arcPadding = Math.min(Math.PI / 10, Math.PI / Math.max(sorted.length + 1, 3));
+    const start = direction < 0 ? Math.PI + arcPadding : arcPadding;
+    const end   = direction < 0 ? (2 * Math.PI) - arcPadding : Math.PI - arcPadding;
+    const denom = Math.max(sorted.length - 1, 1);
+
     sorted.forEach((node, i) => {
-      const ang = nudge + i*step;
+      const tBase = denom === 0 ? 0.5 : (i / denom);
+
+      // Alternate rotational direction across the virtual centre line:
+      // clusters above keep the base order, clusters below reverse it.
+      const t = direction < 0 ? tBase : (1 - tBase);
+
+      const ang = start + (end - start) * t;
       node.x_spread = cx + R * Math.cos(ang);
       node.y_spread = cy + R * Math.sin(ang);
     });
-  }
+  });
 }
 function usePositions(nodes,spreadMode){
   nodes.forEach(n=>{
@@ -560,23 +607,150 @@ const tooltip=d3.select("#tooltip");
 const banner=d3.select("#banner");
 const seedTag=d3.select("#seedTag");
 const legendDiv=document.getElementById("legend");
+const sidePaneTitle=document.getElementById("sidePaneTitle");
 
 /* Selection / group-drag state */
 let selectedGroupKey=null;
 let selectedGroupSet=new Set();
 
+/* Local parent spread state */
+let localGroupSpread = new Map();
+let localGroupOriginalPositions = new Map();
+let legendOrder=null;
+
 /* Data state */
 let current={ nodes:[], links:[], lineageLinks:[], byId:new Map(), layout:null, masterData:null, coverage:null, indices:null, emissionsData:null };
+let currentSourceFileName = null;
+
+function getBaseName(filename){
+  if(!filename) return "layout";
+  const i = filename.lastIndexOf(".");
+  return i > 0 ? filename.slice(0, i) : filename;
+}
+function getSuggestedLocName(filename){
+  return `${getBaseName(filename || "layout")}.loc`;
+}
+function buildLayoutPayload(){
+  return {
+    type: "vci-layout",
+    version: 1,
+    sourceFile: currentSourceFileName || null,
+    savedAt: new Date().toISOString(),
+    nodes: (current.nodes || []).map(n => {
+      const x = Number.isFinite(n.fx) ? n.fx : (Number.isFinite(n.x) ? n.x : null);
+      const y = Number.isFinite(n.fy) ? n.fy : (Number.isFinite(n.y) ? n.y : null);
+      return { id: n.id, x, y };
+    }).filter(n => n.id != null && n.x != null && n.y != null)
+  };
+}
+function downloadTextFile(filename, text, mimeType="application/json"){
+  const blob = new Blob([text], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function saveLayoutToLocFile(){
+  if(!current.nodes || !current.nodes.length){
+    setBanner("No graph loaded, nothing to save.", false);
+    return;
+  }
+  const payload = buildLayoutPayload();
+  const filename = getSuggestedLocName(currentSourceFileName || "layout.json");
+  downloadTextFile(filename, JSON.stringify(payload, null, 2), "application/json");
+  setBanner(`Layout saved as ${filename}`, true);
+}
+function normalizeLayoutNodes(layoutObj){
+  if(Array.isArray(layoutObj?.nodes)) return layoutObj.nodes;
+  if(layoutObj?.nodes && typeof layoutObj.nodes === "object") {
+    return Object.entries(layoutObj.nodes).map(([id, p]) => ({ id, x: p?.x, y: p?.y }));
+  }
+  return [];
+}
+function applyRestoredLayout(layoutObj){
+  if(!layoutObj || !current.nodes?.length) return { applied: 0, missing: 0 };
+  const restoredNodes = normalizeLayoutNodes(layoutObj);
+  const byId = new Map(restoredNodes.map(n => [n.id, n]));
+  let applied = 0, missing = 0;
+
+  current.nodes.forEach(n => {
+    const hit = byId.get(n.id);
+    if(hit && Number.isFinite(hit.x) && Number.isFinite(hit.y)){
+      n.fx = hit.x;
+      n.fy = hit.y;
+      applied++;
+    } else {
+      missing++;
+    }
+  });
+
+  gNodes.selectAll("g.node").each(function(d){
+    const x = Number.isFinite(d.fx) ? d.fx : d.x;
+    const y = Number.isFinite(d.fy) ? d.fy : d.y;
+    if (d._circle) d3.select(d._circle).attr("cx", x).attr("cy", y);
+    if (d._marker){
+      const rr = +d3.select(d._circle).attr("r");
+      d3.select(d._marker)
+        .attr("d", markerSymbolPathForNode(d, rr))
+        .attr("transform", markerTransformForNode(d, x, y));
+    }
+    if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
+    if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
+  });
+
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(e.u || current.byId.get(e.source), e.v || current.byId.get(e.target)));
+
+  return { applied, missing };
+}
+async function handleRestoreLayoutFile(file){
+  if(!file) return;
+  try{
+    const txt = await file.text();
+    const layoutObj = JSON.parse(txt);
+    if(layoutObj?.type !== "vci-layout"){
+      setBanner("Selected file is not a valid VCI layout (.loc) file.", false);
+      return;
+    }
+    if(!current.nodes || !current.nodes.length){
+      setBanner("Load a JSON graph before restoring a layout.", false);
+      return;
+    }
+    if(layoutObj.sourceFile && currentSourceFileName && layoutObj.sourceFile !== currentSourceFileName){
+      const proceed = window.confirm(`This layout was saved for "${layoutObj.sourceFile}" but the current graph is "${currentSourceFileName}". Restore anyway?`);
+      if(!proceed) return;
+    }
+    const result = applyRestoredLayout(layoutObj);
+    setBanner(`Layout restored: ${result.applied} node(s) applied.`, true);
+  }catch(err){
+    setBanner("Failed to restore layout: " + (err?.message || err), false);
+    console.error(err);
+  }
+}
 /* Emissions (optional) */
 let emissionsByOrg = new Map();
 let emissionsUnit = "kgCO2e";
 let emissionsSeedTotals = null;
 
-/* NEW: ribbon visibility state */
+/* Time-centric aggregates */
+let timeByOrg = new Map();
+
+/* View state */
+let rendererMode = "sustainability"; // "sustainability" | "time"
 let showRibbon = true;
+let sidePaneMode = "legend"; // "legend" | "event"
+let selectedEventNodeId = null;
 
 let showAxis=true;
 let showLineage=true;
+let lineageDashed=false;
 let spreadMode=false;
 
 const SPREAD_LEVELS = [
@@ -590,14 +764,32 @@ let spreadIndex=0;
 /* NEW: Hide paths state + helpers */
 let hideShipRecvPaths = false;
 
-function showTooltip(html, clientX, clientY){
-  tooltip.html(html).style("display","block");
-  const bbox = tooltip.node().getBoundingClientRect();
-  const left = Math.min(clientX + 14, window.innerWidth  - bbox.width  - 10);
-  const top  = Math.min(clientY + 14, window.innerHeight - bbox.height - 10);
-  tooltip.style("left", left + "px").style("top", top + "px");
-}
+function showTooltip(){ return; }
 function hideTooltip(){ tooltip.style("display","none"); }
+
+function setSelectedEventNode(node){
+  selectedEventNodeId = node?.id || null;
+}
+function getSelectedEventNode(){
+  return selectedEventNodeId ? (current.byId.get(selectedEventNodeId) || null) : null;
+}
+function renderEventPanel(){
+  const n = getSelectedEventNode();
+  if (!n){
+    legendDiv.innerHTML = `<div class="panel-empty">Click a node to view event data.</div>`;
+    return;
+  }
+  legendDiv.innerHTML = `<div class="event-panel">${nodeTooltip(n)}</div>`;
+}
+function renderSidePanel(nodes=current.nodes){
+  if (sidePaneMode === "legend") {
+    sidePaneTitle.textContent = "Legend — Ultimate Parent";
+    updateLegend(nodes || []);
+  } else {
+    sidePaneTitle.textContent = "Event Data";
+    renderEventPanel();
+  }
+}
 
 /* Ship→Recv computations */
 function computeShipRecvHideSets(){
@@ -661,8 +853,16 @@ function applyShipRecvHiding(){
     return;
   }
   const { hiddenNodeIds, hiddenEdgeKeys } = computeShipRecvHideSets();
+  const isCrossParentEdge = (e) => {
+    const u = current.byId.get(e.source);
+    const v = current.byId.get(e.target);
+    if (!u || !v) return false;
+    const ku = orgKeyFromSGLN(u.bizLocation);
+    const kv = orgKeyFromSGLN(v.bizLocation);
+    return !!ku && !!kv && ku !== kv;
+  };
   gNodes.selectAll("g.node").classed("hidden-shiprecv", d => hiddenNodeIds.has(d.id));
-  gEdges.selectAll("path.edge").classed("hidden-shiprecv", d => hiddenEdgeKeys.has(`${d.source}->${d.target}`));
+  gEdges.selectAll("path.edge").classed("hidden-shiprecv", d => hiddenEdgeKeys.has(`${d.source}->${d.target}`) || isCrossParentEdge(d));
 }
 
 /* Banner helpers */
@@ -895,7 +1095,199 @@ function parseEmissions(json){
   return { byOrg, unit, seedTotals };
 }
 
-/* Legend */
+/* Legend + mode-aware summaries */
+function parseHoursMaybe(v){
+  if (v == null) return null;
+  if (typeof v === "number" && isFinite(v)) return v;
+  if (typeof v !== "string") return null;
+  const n = parseFloat(v);
+  return isFinite(n) ? n : null;
+}
+function parseBoolMaybe(v){
+  return v === true || v === "true" || v === 1 || v === "1";
+}
+function classifyNodeTime(d){
+  const ilmd = d?.ilmd || {};
+
+  const cls = (
+    ilmd["mro:timeClass"] ??
+    ilmd["cbvmda:timeClass"] ??
+    ilmd["timeClass"] ??
+    ilmd["cbvmda:valueAddClass"] ??
+    ilmd["valueAddClass"] ??
+    ""
+  ).toString().trim().toLowerCase();
+
+  if (["va","value_add","valueadded","value-added","value added","value add"].includes(cls)) return "va";
+  if (["nva","non_value_add","nonvalueadded","non-value-added","non value added","non value add","non-value-add"].includes(cls)) return "nva";
+
+  if (parseBoolMaybe(ilmd["mro:valueAdded"]) || parseBoolMaybe(ilmd["valueAdded"])) return "va";
+  if (parseBoolMaybe(ilmd["mro:nonValueAdded"]) || parseBoolMaybe(ilmd["nonValueAdded"])) return "nva";
+
+  const va = parseHoursMaybe(ilmd["cbvmda:valueAddedHours"] ?? ilmd["valueAddedHours"] ?? ilmd["cbvmda:vaHours"] ?? ilmd["vaHours"]);
+  const nva = parseHoursMaybe(ilmd["cbvmda:nonValueAddedHours"] ?? ilmd["nonValueAddedHours"] ?? ilmd["cbvmda:nvaHours"] ?? ilmd["nvaHours"]);
+  if ((va ?? 0) > 0 && (nva ?? 0) <= 0) return "va";
+  if ((nva ?? 0) > 0 && (va ?? 0) <= 0) return "nva";
+
+  return "unknown";
+}
+function nodeTimeHours(d){
+  const ilmd = d?.ilmd || {};
+  const va = parseHoursMaybe(ilmd["cbvmda:valueAddedHours"] ?? ilmd["valueAddedHours"] ?? ilmd["cbvmda:vaHours"] ?? ilmd["vaHours"]);
+  const nva = parseHoursMaybe(ilmd["cbvmda:nonValueAddedHours"] ?? ilmd["nonValueAddedHours"] ?? ilmd["cbvmda:nvaHours"] ?? ilmd["nvaHours"]);
+  return {
+    va: va || 0,
+    nva: nva || 0,
+    total: (va || 0) + (nva || 0),
+    explicit: (va != null || nva != null)
+  };
+}
+function computeScenarioTimeTotals(nodes){
+  const sorted = (nodes || []).filter(n => n.eventTime).slice().sort((a,b) => T(a.eventTime) - T(b.eventTime));
+
+  let va = 0, nva = 0, total = 0;
+  let usedExplicit = false;
+
+  for (const n of sorted){
+    const t = nodeTimeHours(n);
+    if (t.explicit){
+      va += t.va;
+      nva += t.nva;
+      total += t.total;
+      usedExplicit = true;
+    }
+  }
+
+  if (!usedExplicit){
+    for (let i = 1; i < sorted.length; i++){
+      const prev = sorted[i - 1], cur = sorted[i];
+      const dtH = (T(cur.eventTime) - T(prev.eventTime)) / 36e5;
+      if (!(dtH > 0)) continue;
+      total += dtH;
+      const cls = classifyNodeTime(cur);
+      if (cls === "va") va += dtH;
+      else if (cls === "nva") nva += dtH;
+    }
+  }
+
+  return {
+    va: +va.toFixed(2),
+    nva: +nva.toFixed(2),
+    total: +total.toFixed(2),
+    pctNva: total > 0 ? (nva / total) * 100 : 0
+  };
+}
+function buildTimeByOrg(nodes){
+  const sorted = (nodes || []).filter(n => n.eventTime).slice().sort((a,b) => T(a.eventTime) - T(b.eventTime));
+  const out = new Map();
+  let usedExplicit = false;
+
+  for (const n of sorted){
+    const key = orgKeyFromSGLN(n.bizLocation);
+    if (!key) continue;
+    if (!out.has(key)) out.set(key, { va:0, nva:0, total:0, unknown:0 });
+
+    const cur = out.get(key);
+    const t = nodeTimeHours(n);
+    if (t.explicit){
+      cur.va += t.va;
+      cur.nva += t.nva;
+      cur.total += t.total;
+      usedExplicit = true;
+    }
+    if (classifyNodeTime(n) === "unknown") cur.unknown += 1;
+  }
+
+  if (!usedExplicit){
+    for (let i = 1; i < sorted.length; i++){
+      const prev = sorted[i - 1], curNode = sorted[i];
+      const key = orgKeyFromSGLN(curNode.bizLocation);
+      if (!key) continue;
+      if (!out.has(key)) out.set(key, { va:0, nva:0, total:0, unknown:0 });
+      const dtH = (T(curNode.eventTime) - T(prev.eventTime)) / 36e5;
+      if (!(dtH > 0)) continue;
+      const agg = out.get(key);
+      agg.total += dtH;
+      const cls = classifyNodeTime(curNode);
+      if (cls === "va") agg.va += dtH;
+      else if (cls === "nva") agg.nva += dtH;
+    }
+  }
+
+  for (const agg of out.values()){
+    agg.va = +agg.va.toFixed(2);
+    agg.nva = +agg.nva.toFixed(2);
+    agg.total = +agg.total.toFixed(2);
+  }
+  return out;
+}
+function countHandoffs(nodes){
+  return (nodes || []).filter(n => ["loading","unloading"].includes(shortBizStep(n.bizStep))).length;
+}
+function countSensors(nodes){
+  return (nodes || []).filter(n => shortBizStep(n.bizStep) === "sensor_reporting").length;
+}
+function kpiCard(label, value, title="", extraClass="", sub=""){
+  return `
+    <div class="kpi ${extraClass}" title="${esc(title)}">
+      <div class="label">${esc(label)}</div>
+      <div class="value">${value}</div>
+      ${sub ? `<div class="sub">${sub}</div>` : ``}
+    </div>
+  `;
+}
+function seedEmissionsHtml(){
+  if (!emissionsSeedTotals) return kpiCard("Seed emissions", "—", "Declared emissions totals for the seed EPC");
+  const s = emissionsSeedTotals;
+  const total = s.total ?? (num2(s.scope1) + num2(s.scope2) + num2(s.scope3Cat1) + num2(s.scope3Cat4));
+  return `
+    <div class="kpi" title="Declared emissions totals for the seed EPC">
+      <div class="label">Seed emissions</div>
+      <div class="legend-emissions">
+        <div class="row">
+          <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(s.scope1)}</span></span>
+          <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(s.scope2)}</span></span>
+          <span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(s.scope3Cat1)}</span></span>
+          <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(s.scope3Cat4)}</span></span>
+          <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
+        </div>
+      </div>
+    </div>`;
+}
+function temperatureStripHtml(){
+  return `
+    <div id="kpiTemp" title="Cold-chain: product temperature over time from ilmd.cbvmda:productTempC.">
+      <div class="label">Temperature strip</div>
+      <svg id="tempStrip" viewBox="0 0 600 26" preserveAspectRatio="none"></svg>
+    </div>`;
+}
+function renderKpiBar(){
+  const el = document.getElementById("kpiBar");
+  if (!el) return;
+  if (rendererMode === "sustainability"){
+    const { leadHours, transitHours, dwellHours, handoffs, sensorPings } = computeKpis_SPEC();
+    const h = v => v==null ? "—" : `${v} h`;
+    el.innerHTML = `
+      ${kpiCard("Lead time (Transform→Receive)", h(leadHours), "Lead time: from the earliest TransformationEvent to the last Receiving event at or after that time.")}
+      ${kpiCard("Transit time (Σ Depart→Arrive)", h(transitHours), "Total transit: sum of all legs pairing Departing→next Arriving, considering only events at or after the first transform.")}
+      ${kpiCard("Dwell (Lead − Transit)", h(dwellHours), "Total dwell (non-transit) = Lead − Transit, floored at 0.")}
+      ${kpiCard("Handoffs", String(handoffs), "Handoffs: AssociationEvents whose bizStep ends with loading or unloading.")}
+      ${kpiCard("Sensor pings", String(sensorPings), "Sensor pings: events whose bizStep ends with sensor_reporting.")}
+      ${seedEmissionsHtml()}
+      ${temperatureStripHtml()}`;
+  } else {
+    const t = computeScenarioTimeTotals(current.nodes);
+    el.innerHTML = `
+      ${kpiCard("Value-added time (Σ VA intervals)", `${fmt2(t.va)} h`, "Value-added time is the sum of intervals explicitly tagged as value-added in ILMD.")}
+      ${kpiCard("Non-value-added time (Σ NVA intervals)", `${fmt2(t.nva)} h`, "Non-value-added time is the sum of intervals explicitly tagged as non-value-added in ILMD.")}
+      ${kpiCard("Total elapsed time (Σ tagged intervals)", `${fmt2(t.total)} h`, "Total elapsed time is the sum of tagged VA and NVA intervals.")}
+      ${kpiCard("% Non-Value-Add time", `${fmt2(t.pctNva)}%`, "Share of tagged elapsed time classified as non-value-added.", "", `${fmt2(t.nva)}h of ${fmt2(t.total)}h`)}
+      ${kpiCard("Handoffs", String(countHandoffs(current.nodes)), "Handoffs: AssociationEvents whose bizStep ends with loading or unloading.")}
+      ${kpiCard("Sensor pings", String(countSensors(current.nodes)), "Sensor pings: events whose bizStep ends with sensor_reporting.")}
+      ${seedEmissionsHtml()}`;
+  }
+  if (showRibbon) requestAnimationFrame(syncRibbonHeight);
+}
 function updateLegend(nodes){
   legendDiv.innerHTML="";
   const seen=new Set(), entries=[];
@@ -903,41 +1295,86 @@ function updateLegend(nodes){
     const key=orgKeyFromSGLN(n.bizLocation);
     if(!key || seen.has(key)) continue;
     seen.add(key);
-    const color = getOrgColor(key);
-    const name  = orgNameByKey.get(key) || key;
-    entries.push({key,name,color});
+    entries.push({key,name:orgNameByKey.get(key) || key,color:getOrgColor(key)});
   }
-  entries.sort((a,b)=>a.name.localeCompare(b.name));
+
+  if (!legendOrder){
+    const groups = new Map();
+    for (const n of nodes){
+      const key = orgKeyFromSGLN(n.bizLocation);
+      if (!key) continue;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(n);
+    }
+
+    const median = arr => {
+      if (!arr.length) return 0;
+      const s = arr.slice().sort((a,b)=>a-b);
+      const mid = Math.floor(s.length / 2);
+      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    };
+
+    legendOrder = Array.from(groups.entries())
+      .map(([key, groupNodes]) => {
+        const ys = groupNodes.map(n => n.y).filter(v => Number.isFinite(v));
+        const xs = groupNodes.map(n => n.x).filter(v => Number.isFinite(v));
+        return {
+          key,
+          medianY: median(ys),
+          medianX: median(xs),
+          avgY: ys.length ? ys.reduce((a,b)=>a+b,0) / ys.length : 0,
+          avgX: xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : 0
+        };
+      })
+      .sort((a,b) => {
+        if (a.medianY !== b.medianY) return a.medianY - b.medianY;
+        if (a.medianX !== b.medianX) return a.medianX - b.medianX;
+        if (a.avgY !== b.avgY) return a.avgY - b.avgY;
+        return a.avgX - b.avgX;
+      })
+      .map(d => d.key);
+  }
+
+  entries.sort((a,b) => {
+    const ia = legendOrder.indexOf(a.key);
+    const ib = legendOrder.indexOf(b.key);
+    if (ia >= 0 && ib >= 0) return ia - ib;
+    if (ia >= 0) return -1;
+    if (ib >= 0) return 1;
+    return a.name.localeCompare(b.name);
+  });
   for(const e of entries){
     const item=document.createElement("div");
     item.className="legend-item";
     item.dataset.orgkey = e.key;
-
-    const em = emissionsByOrg.get(e.key);
-    const emHtml = em ? `
-      <div class="legend-emissions">
-        <div class="row">
+    let metaHtml = "";
+    if (rendererMode === "sustainability"){
+      const em = emissionsByOrg.get(e.key);
+      metaHtml = em ? `
+        <div class="legend-emissions"><div class="row">
           <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(em.scope1)}</span></span>
           <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(em.scope2)}</span></span>
-          ${
-            (em.scope3_cat1 != null || em.scope3_cat4 != null)
-              ? `
-                <span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(em.scope3_cat1)}</span></span>
-                <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(em.scope3_cat4)}</span></span>
-              `
-              : `<span class="legend-chip"><span class="k">S3</span><span class="v">${fmt2(em.scope3_declared)}</span></span>`
-          }
+          ${(em.scope3_cat1 != null || em.scope3_cat4 != null)
+            ? `<span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(em.scope3_cat1)}</span></span>
+               <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(em.scope3_cat4)}</span></span>`
+            : `<span class="legend-chip"><span class="k">S3</span><span class="v">${fmt2(em.scope3_declared)}</span></span>`}
           <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(em.total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
-        </div>
-      </div>` : "";
-
+        </div></div>` : "";
+    } else {
+      const t = timeByOrg.get(e.key) || { va:0, nva:0, total:0, unknown:0 };
+      metaHtml = `
+        <div class="legend-times">
+          <span class="legend-timechip"><span class="k">VA</span><span class="v">${fmt2(t.va)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">NVA</span><span class="v">${fmt2(t.nva)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">Total</span><span class="v">${fmt2(t.total)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">Unknown</span><span class="v">${t.unknown}</span></span>
+        </div>`;
+    }
     item.innerHTML = `<span class="legend-swatch" style="background:${e.color}"></span>
-      <div>
-        <div>${esc(e.name)}</div>
-        <div class="legend-key">${esc(e.key)}</div>
-        ${emHtml}
-      </div>`;
-
+      <div><div>${esc(e.name)}</div><div class="legend-key">${esc(e.key)}</div>${metaHtml}</div>`;
+    item.addEventListener("pointerdown", (ev)=>{
+      ev.preventDefault();
+    });
     item.addEventListener("click", ()=> toggleGroupSelection(e.key));
     legendDiv.appendChild(item);
   }
@@ -947,27 +1384,106 @@ function updateLegend(nodes){
     empty.innerHTML=`<span class="legend-swatch" style="background:#e5e7eb"></span><div>No bizLocation keys</div>`;
     legendDiv.appendChild(empty);
   }
-
-  Array.from(legendDiv.children).forEach(el=>{
-    if(el.dataset.orgkey){
-      el.classList.toggle("active", el.dataset.orgkey===selectedGroupKey);
+  applyGroupSelectionState();
+}
+function applyGroupSelectionState(){
+  if (selectedGroupKey){
+    selectedGroupSet = new Set(current.nodes.filter(n => orgKeyFromSGLN(n.bizLocation) === selectedGroupKey).map(n => n.id));
+  } else {
+    selectedGroupSet = new Set();
+  }
+  gNodes.selectAll("g.node").classed("group-selected", n => selectedGroupSet.has(n.id));
+  Array.from(legendDiv.children).forEach(el => {
+    if (el.dataset.orgkey){
+      el.classList.toggle("active", el.dataset.orgkey === selectedGroupKey);
     }
   });
+}
+function getNodesForSelectedGroup(){
+  if (!selectedGroupKey) return [];
+  return current.nodes.filter(n => orgKeyFromSGLN(n.bizLocation) === selectedGroupKey);
+}
+function syncNodeVisualPosition(n){
+  if (!n) return;
+  if (n._circle) d3.select(n._circle).attr("cx", n.fx).attr("cy", n.fy);
+  if (n._label) d3.select(n._label).attr("x", n.fx + 12).attr("y", n.fy);
+  if (n._badge) d3.select(n._badge).attr("x", n.fx).attr("y", n.fy);
+  if (n._timeBadge) d3.select(n._timeBadge).attr("x", n.fx).attr("y", n.fy);
+}
+function getNodeCurrentPos(n){
+  if (Number.isFinite(n.fx) && Number.isFinite(n.fy)) return { x:n.fx, y:n.fy };
+  if (spreadMode) return { x:(n.x_spread ?? n.x), y:(n.y_spread ?? n.y) };
+  return { x:n.x, y:n.y };
+}
+function computeGroupCenter(groupNodes){
+  if (!groupNodes.length) return { x:0, y:0 };
+  const xs = groupNodes.map(n => getNodeCurrentPos(n).x).sort((a,b)=>a-b);
+  const ys = groupNodes.map(n => getNodeCurrentPos(n).y).sort((a,b)=>a-b);
+  const mid = Math.floor(xs.length/2);
+  return { x: xs[mid], y: ys[mid] };
+}
+function saveOriginalPositionsForGroup(groupKey, groupNodes){
+  if (!groupKey || localGroupOriginalPositions.has(groupKey)) return;
+  const pos = new Map();
+  groupNodes.forEach(n => {
+    const p = getNodeCurrentPos(n);
+    pos.set(n.id, { x:p.x, y:p.y });
+  });
+  localGroupOriginalPositions.set(groupKey, pos);
+}
+function restoreOriginalPositionsForGroup(groupKey, groupNodes){
+  const stored = localGroupOriginalPositions.get(groupKey);
+  if (!stored) return false;
+  groupNodes.forEach(n => {
+    const p = stored.get(n.id);
+    if (p){
+      n.fx = p.x;
+      n.fy = p.y;
+      syncNodeVisualPosition(n);
+    }
+  });
+  localGroupOriginalPositions.delete(groupKey);
+  localGroupSpread.set(groupKey, 0);
+  return true;
+}
+function updateGraphPaths(){
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+}
+function spreadSelectedGroup(groupKey, groupNodes){
+  if (!groupKey || !groupNodes.length) return;
+  const nextLevel = (localGroupSpread.get(groupKey) || 0) + 1;
+  localGroupSpread.set(groupKey, nextLevel);
+  saveOriginalPositionsForGroup(groupKey, groupNodes);
+
+  const center = computeGroupCenter(groupNodes);
+  const radius = 38 + (nextLevel * 24);
+  const ordered = groupNodes.slice().sort((a,b)=>
+    (a.eventTime || "").localeCompare(b.eventTime || "") ||
+    (a.eventId || a.id || "").localeCompare(b.eventId || b.id || "")
+  );
+  ordered.forEach((n, i) => {
+    const angle = (i / Math.max(ordered.length, 1)) * Math.PI * 2;
+    n.fx = center.x + Math.cos(angle) * radius;
+    n.fy = center.y + Math.sin(angle) * radius;
+    syncNodeVisualPosition(n);
+  });
+}
+function updateSpreadButtonLabel(){
+  const btn = document.getElementById("toggleSpread");
+  if (!btn) return;
+  btn.textContent = selectedGroupKey ? "Spread Selected" : SPREAD_LEVELS[spreadIndex].label;
 }
 function toggleGroupSelection(key){
   if(selectedGroupKey===key){
     selectedGroupKey=null;
-    selectedGroupSet.clear();
   } else {
     selectedGroupKey=key;
-    selectedGroupSet = new Set(current.nodes.filter(n=>orgKeyFromSGLN(n.bizLocation)===key).map(n=>n.id));
   }
-  gNodes.selectAll("g.node").classed("group-selected", n=> selectedGroupSet.has(n.id));
-  Array.from(legendDiv.children).forEach(el=>{
-    if(el.dataset.orgkey){
-      el.classList.toggle("active", el.dataset.orgkey===selectedGroupKey);
-    }
-  });
+  applyGroupSelectionState();
+  updateSpreadButtonLabel();
 }
 
 /* ---------- SPEC utilities for KPIs ---------- */
@@ -1212,6 +1728,7 @@ const links = (data.links||[]).filter(e=>{
   const edgeSel=gEdges.selectAll("path.edge").data(links, d=>d.source+"->"+d.target);
   edgeSel.exit().remove();
   edgeSel.enter().append("path").attr("class","edge").attr("marker-end","url(#arrow)")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : null)
     .merge(edgeSel)
     .attr("d", d=> bezierPath(byId.get(d.source), byId.get(d.target)));
 
@@ -1238,17 +1755,19 @@ const links = (data.links||[]).filter(e=>{
         const [wx0, wy0] = pointerToWorld(event.sourceEvent);
         d._grab = { dx: cx - wx0, dy: cy - wy0 };
 
-        const selected = selectedGroupSet.has(d.id);
+        const nodeGroupKey = orgKeyFromSGLN(d.bizLocation);
+        const selected = !!selectedGroupKey && nodeGroupKey === selectedGroupKey;
         if(selected){
+          applyGroupSelectionState();
           const starts = new Map();
-          gNodes.selectAll("g.node").each(n => {
-            if(selectedGroupSet.has(n.id)){
-              const ncx = +d3.select(n._circle).attr("cx");
-              const ncy = +d3.select(n._circle).attr("cy");
-              starts.set(n.id, { fx: n.fx ?? ncx, fy: n.fy ?? ncy });
-            }
+          getNodesForSelectedGroup().forEach(n => {
+            const ncx = Number.isFinite(n.fx) ? n.fx : +d3.select(n._circle).attr("cx");
+            const ncy = Number.isFinite(n.fy) ? n.fy : +d3.select(n._circle).attr("cy");
+            n.fx = ncx;
+            n.fy = ncy;
+            starts.set(n.id, { fx: ncx, fy: ncy });
           });
-          d._groupDrag = { wx0, wy0, starts };
+          d._groupDrag = { wx0, wy0, starts, key: selectedGroupKey };
         } else {
           d._groupDrag = null;
         }
@@ -1262,17 +1781,13 @@ const links = (data.links||[]).filter(e=>{
             const n = current.byId.get(id);
             n.fx = st.fx + dx;
             n.fy = st.fy + dy;
-            d3.select(n._circle).attr("cx", n.fx).attr("cy", n.fy);
-            d3.select(n._label ).attr("x",  n.fx + 12).attr("y",  n.fy);
-            const b = n._badge; if (b) d3.select(b).attr("x", n.fx).attr("y", n.fy);
+            syncNodeVisualPosition(n);
           });
         } else {
           const [wx, wy] = pointerToWorld(event.sourceEvent);
           d.fx = wx + d._grab.dx;
           d.fy = wy + d._grab.dy;
-          d3.select(d._circle).attr("cx", d.fx).attr("cy", d.fy);
-          d3.select(d._label ).attr("x",  d.fx + 12).attr("y",  d.fy);
-          const b = d._badge; if (b) d3.select(b).attr("x", d.fx).attr("y", d.fy);
+          syncNodeVisualPosition(d);
         }
         gEdges.selectAll("path.edge")
           .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
@@ -1292,26 +1807,17 @@ const links = (data.links||[]).filter(e=>{
       d3.select(d._circle).attr("cx", cx).attr("cy", cy);
       d3.select(d._label).attr("x", cx+12).attr("y", cy);
       const b = d._badge; if (b) d3.select(b).attr("x", cx).attr("y", cy);
+      const tb = d._timeBadge; if (tb) d3.select(tb).attr("x", cx).attr("y", cy);
       gEdges.selectAll("path.edge")
         .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
       gLineage.selectAll("path.lineage-edge")
         .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
     })
-    .on("mousemove",(event,d)=> showTooltip(nodeTooltip(d), event.clientX, event.clientY))
-    .on("mouseleave", ()=> hideTooltip())
-    .on("mouseover",(event,d)=>{
-      const nbr=new Set([d.id]);
-      current.links.forEach(e=>{ if(e.source===d.id) nbr.add(e.target); if(e.target===d.id) nbr.add(e.source); });
-      gNodes.selectAll("g.node").classed("faded", n=>!nbr.has(n.id));
-      gEdges.selectAll("path.edge").classed("faded", e=>!(e.source===d.id || e.target===d.id));
-      if(!activeT){ gLineage.selectAll("path.lineage-edge").classed("faded", true); }
-    })
-    .on("mouseout", ()=>{
-      gNodes.selectAll("g.node").classed("faded", false);
-      gEdges.selectAll("path.edge").classed("faded", false);
-      if(!activeT){ gLineage.selectAll("path.lineage-edge").classed("faded", false); }
-    })
-    .on("click",(event,d)=> handleLineageFocus(d));
+    .on("click",(event,d)=>{
+      setSelectedEventNode(d);
+      if (sidePaneMode === "event") renderSidePanel(current.nodes);
+      handleLineageFocus(d);
+    });
 
   nodeEnter.append("circle")
     .attr("r", parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')))
@@ -1322,6 +1828,13 @@ const links = (data.links||[]).filter(e=>{
     .text("T")
     .style("display","none")
     .each(function(d){ d._badge=this; });
+
+  nodeEnter.append("text")
+    .attr("class","time-badge hidden")
+    .attr("text-anchor","middle")
+    .attr("dy","0.35em")
+    .text("")
+    .each(function(d){ d._timeBadge=this; });
 
   nodeEnter.append("text")
     .attr("dy","0").attr("text-anchor","start")
@@ -1345,13 +1858,36 @@ const links = (data.links||[]).filter(e=>{
     .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
     .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
 
-  nodesAll.select("text:not(.badge)")
+  nodesAll.select("text.time-badge")
+    .text(d => {
+      if (rendererMode !== "time") return "";
+      const cls = classifyNodeTime(d);
+      if (cls === "va") return "+";
+      if (cls === "nva") return "−";
+      return "";
+    })
+    .attr("class", d => {
+      if (rendererMode !== "time") return "time-badge hidden";
+      const cls = classifyNodeTime(d);
+      return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
+    })
+    .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  nodesAll.select("text:not(.badge):not(.time-badge)")
     .text(d => labelForNode(d))
     .attr("x", d=> (d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x)) + 12)
     .attr("y", d=>  d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
 
-  gNodes.selectAll("g.node").classed("group-selected", n=> selectedGroupSet.has(n.id));
-  updateLegend(nodes);
+  gNodes.selectAll("g.node")
+    .classed("group-selected", n=> selectedGroupSet.has(n.id))
+    .classed("va", d => rendererMode === "time" && classifyNodeTime(d) === "va")
+    .classed("nva", d => rendererMode === "time" && classifyNodeTime(d) === "nva")
+    .classed("unknownva", d => rendererMode === "time" && classifyNodeTime(d) === "unknown");
+
+  timeByOrg = buildTimeByOrg(nodes);
+  renderSidePanel(nodes);
+  applyGroupSelectionState();
 
   if(errs.length){
     setBanner("Validation failed: "+errs[0], false);
@@ -1361,10 +1897,9 @@ const links = (data.links||[]).filter(e=>{
 
   applyShipRecvHiding();
 
-  /* Render KPIs + temp + seed emissions */
-  renderKpis_SPEC();
-  renderTempStrip();
-  renderSeedEmissionsKpi();
+  /* Render mode-specific ribbon + legend details */
+  renderKpiBar();
+  if (rendererMode === "sustainability") renderTempStrip();
 
   /* After ribbon content changes, sync its height for layout */
   syncRibbonHeight();
@@ -1406,6 +1941,8 @@ document.getElementById("resetZoom").addEventListener("click",()=>{ d3.select(sv
 /* -------------------- Controls -------------------- */
 document.getElementById("unpinAll").addEventListener("click",()=>{
   current.nodes.forEach(n=>{ delete n.fx; delete n.fy; });
+  localGroupSpread.clear();
+  localGroupOriginalPositions.clear();
   usePositions(current.nodes, spreadMode);
   render({
     seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
@@ -1418,8 +1955,30 @@ document.getElementById("unpinAll").addEventListener("click",()=>{
   });
 });
 document.getElementById("toggleAxis").addEventListener("click",()=>{ showAxis=!showAxis; gAxis.classed("hidden",!showAxis); });
-document.getElementById("toggleLineage").addEventListener("click",()=>{ showLineage=!showLineage; gLineage.classed("lineage-hidden",!showLineage); if(!showLineage) clearLineageFocus(); });
+document.getElementById("toggleLineage").addEventListener("click",()=>{
+  lineageDashed=!lineageDashed;
+  gLineage.selectAll("path.lineage-edge")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : "0")
+    .style("opacity", 0.95);
+  document.getElementById("toggleLineage").textContent = lineageDashed ? "Lineage: Dotted" : "Lineage: Solid";
+});
 document.getElementById("toggleSpread").addEventListener("click",(e)=>{
+  if (selectedGroupKey){
+    const groupNodes = getNodesForSelectedGroup();
+    if (!groupNodes.length) return;
+
+    const currentLevel = localGroupSpread.get(selectedGroupKey) || 0;
+    if (currentLevel >= 2){
+      restoreOriginalPositionsForGroup(selectedGroupKey, groupNodes);
+    } else {
+      spreadSelectedGroup(selectedGroupKey, groupNodes);
+    }
+    updateGraphPaths();
+    applyGroupSelectionState();
+    updateSpreadButtonLabel();
+    return;
+  }
+
   spreadIndex=(spreadIndex+1)%SPREAD_LEVELS.length;
   spreadMode=(spreadIndex>0);
   e.target.textContent=SPREAD_LEVELS[spreadIndex].label;
@@ -1455,18 +2014,81 @@ document.getElementById("toggleRibbon").addEventListener("click", () => {
   setRibbonVisible(!showRibbon);
 });
 
+/* NEW: Hover panel toggle */
+document.getElementById("toggleEventTooltip").addEventListener("click", () => {
+  sidePaneMode = sidePaneMode === "legend" ? "event" : "legend";
+  hideTooltip();
+  renderSidePanel(current.nodes);
+  document.getElementById("toggleEventTooltip").textContent =
+    sidePaneMode === "legend" ? "Show Event Data" : "Show Legend";
+});
+
+document.getElementById("toggleMode").addEventListener("click", () => {
+  rendererMode = rendererMode === "sustainability" ? "time" : "sustainability";
+  document.getElementById("toggleMode").textContent = rendererMode === "sustainability" ? "Mode: Sustainability" : "Mode: Time";
+  timeByOrg = buildTimeByOrg(current.nodes);
+  renderSidePanel(current.nodes);
+  applyGroupSelectionState();
+  renderKpiBar();
+  gNodes.selectAll("g.node")
+    .classed("va", d => rendererMode === "time" && classifyNodeTime(d) === "va")
+    .classed("nva", d => rendererMode === "time" && classifyNodeTime(d) === "nva")
+    .classed("unknownva", d => rendererMode === "time" && classifyNodeTime(d) === "unknown");
+
+  gNodes.selectAll("text.time-badge")
+    .text(d => {
+      if (rendererMode !== "time") return "";
+      const cls = classifyNodeTime(d);
+      if (cls === "va") return "+";
+      if (cls === "nva") return "−";
+      return "";
+    })
+    .attr("class", d => {
+      if (rendererMode !== "time") return "time-badge hidden";
+      const cls = classifyNodeTime(d);
+      return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
+    });
+
+  if (rendererMode === "sustainability") renderTempStrip();
+  updateSpreadButtonLabel();
+});
+
+document.getElementById("saveLayout").addEventListener("click", () => {
+  saveLayoutToLocFile();
+});
+
+document.getElementById("restoreLayout").addEventListener("click", () => {
+  document.getElementById("layoutInput").value = "";
+  document.getElementById("layoutInput").click();
+});
+
+document.getElementById("layoutInput").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if(!f) return;
+  await handleRestoreLayoutFile(f);
+});
+
 /* Update ribbon height on resize (only if visible) */
 window.addEventListener("resize", () => { if (showRibbon) syncRibbonHeight(); });
 
 /* -------------------- File loader -------------------- */
 document.getElementById("fileInput").addEventListener("change", async (e)=>{
-  const f=e.target.files?.[0]; if(!f) return;
+  const f = e.target.files?.[0];
+  if(!f) return;
   try{
-    const txt=await f.text();
-    const json=JSON.parse(txt);
+    const txt = await f.text();
+    const json = JSON.parse(txt);
+    currentSourceFileName = f.name || null;
+    legendOrder = null;
+    localGroupSpread.clear();
+    localGroupOriginalPositions.clear();
+    selectedGroupKey = null;
+    selectedGroupSet = new Set();
     render(json);
+    updateSpreadButtonLabel();
+    setBanner(`Loaded JSON: ${currentSourceFileName}`, true);
   }catch(err){
-    setBanner("Failed to load JSON: "+(err?.message||err), false); console.error(err);
+    setBanner("Failed to load JSON: " + (err?.message||err), false); console.error(err);
   }
 });
 
@@ -1474,6 +2096,7 @@ document.getElementById("fileInput").addEventListener("change", async (e)=>{
 setBanner("Load a v2.2.14-compliant JSON to render (File ▶︎ choose JSON). Lineage links are ON by default.", true);
 /* Initialize ribbon height based on current content */
 requestAnimationFrame(syncRibbonHeight);
+updateSpreadButtonLabel();
 </script>
 </body>
 </html>
