@@ -877,7 +877,7 @@ function isSgln(x){
 }
 function isEpc(x){ return typeof x==='string' && /^urn:epc:id:/.test(x); }
 
-function validate2_2_13(json){
+function validate2_2_14(json){
   const errors=[];
   const need=["seedEpc","masterData","nodes","links","indices","lineageLinks","coverage"];
   for(const k of need) if(!(k in json)) errors.push(`Missing top-level '${k}'`);
@@ -1678,7 +1678,7 @@ function render(data){
   clearBanner();
   seedTag.text(data.seedEpc ? `seedEpc: ${data.seedEpc}` : "");
 
-  const errs=validate2_2_13(data);
+  const errs=validate2_2_14(data);
 
   const md = data.masterData ?? current.masterData ?? {};
   ({nameByKey:orgNameByKey, colorByKey:orgColorByKey} = buildOrgLookups(md));
