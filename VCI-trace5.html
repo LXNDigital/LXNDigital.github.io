@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VCI Traceability — v2.2.15 (D3 Journey Map)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root{
+      --fg:#111; --bg:#fff; --muted:#666; --grid:#e9ecef; --edge:#9aa0a6;
+      --fade:0.3; --node-radius:8; --lane-gap:80; --same-time-step:4;
+      --banner-err:#b00020; --banner-ok:#1b5e20; --panel:#f8f9fa; --panel-border:#dfe2e5;
+      --lineage:#64748b;
+
+      /* NEW: layout variables */
+      --header-h:58px;
+      --ribbon-h:74px; /* updated at runtime */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans','Liberation Sans',sans-serif;color:var(--fg);background:var(--bg)}
+    header{
+      display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:12px;align-items:center;
+      padding:10px 14px;border-bottom:1px solid var(--panel-border);background:var(--panel);
+      position:sticky;top:0;z-index:10
+    }
+    #titleBlock{display:flex;flex-direction:column;gap:4px;min-width:0}
+    h1{font-size:16px;margin:0;font-weight:600}
+    #seedTag{color:var(--muted);font-size:12px;margin-left:8px}
+    #controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-self:end}
+    .btn{border:1px solid var(--panel-border);background:#fff;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+    .btn:hover{filter:brightness(0.98)}
+    #banner{width:100%;padding:0;font-size:12px;display:none;background:transparent;border:none;line-height:1.3}
+    #banner.ok{color:var(--banner-ok);display:block}
+    #banner.err{color:var(--banner-err);display:block}
+
+    /* KPI strip */
+    #kpiBar{
+      display:grid;
+      /* +1 card for Seed emissions */
+      grid-template-columns: repeat(6, minmax(120px,1fr)) minmax(240px, 2fr);
+      gap:8px; align-items:stretch;
+      padding:8px 14px;
+      border-bottom:1px solid var(--panel-border);
+      background:#fff; position:sticky; top:var(--header-h); z-index:9;
+    }
+    .kpi{
+      border:1px solid var(--panel-border); border-radius:10px; background:#fff;
+      padding:8px 10px; display:flex; flex-direction:column; gap:2px;
+      min-height:56px;
+    }
+    .kpi .label{font-size:11px;color:#6b7280}
+    .kpi .value{font-size:16px;font-weight:700}
+    #kpiTemp{
+      display:flex; flex-direction:column; gap:4px; padding:8px 10px;
+      border:1px solid var(--panel-border); border-radius:10px; background:#fff;
+      min-height:56px;
+    }
+    #kpiTemp .label{font-size:11px;color:#6b7280}
+    #kpiTemp svg{width:100%; height:26px; display:block}
+
+    /* NEW: main area now uses CSS vars for heights */
+    #main{display:grid;grid-template-columns:1fr 280px;gap:0;height:calc(100vh - var(--header-h) - var(--ribbon-h))}
+    #stage{position:relative;height:100%;width:100%}
+    #legendPane{border-left:1px solid var(--panel-border);background:#fff;padding:12px;overflow:auto}
+    #legendPane h2{margin:8px 0 10px 0;font-size:13px;font-weight:700;color:#111}
+    #legend{display:flex;flex-direction:column;gap:10px}
+    .legend-item{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:center;font-size:12px;color:#222;line-height:1.25;cursor:pointer;border-radius:8px;padding:4px 6px}
+    .legend-item:hover{background:#f3f4f6}
+    .legend-item.active{outline:2px solid #111; background:#f0f9ff}
+    .legend-swatch{width:14px;height:14px;border:1px solid #cfd3d7;border-radius:3px}
+    .legend-key{color:var(--muted);font-size:11px}
+
+    /* Legend emissions mini-chips */
+    .legend-emissions{margin-top:4px; font-size:11px; color:#334155}
+    .legend-emissions .row{display:flex; flex-wrap:wrap; gap:6px}
+    .legend-chip{display:inline-flex; align-items:center; gap:4px; padding:2px 6px;
+      border:1px solid #e2e8f0; border-radius:6px; background:#f8fafc}
+    .legend-chip .k{color:#64748b}
+    .legend-chip .v{font-variant-numeric:tabular-nums; font-weight:600}
+    .legend-chip .u{color:#64748b}
+
+    /* Time-centric mode */
+    .node.va circle,
+    .node.nva circle,
+    .node.unknownva circle{ stroke:#ffffff; stroke-width:2px; }
+    .legend-times{margin-top:6px;font-size:11px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+    .legend-timechip{display:inline-flex;gap:4px;align-items:baseline;padding:2px 6px;border:1px solid var(--panel-border);border-radius:999px;background:#fff}
+    .legend-timechip .k{font-weight:600;color:#111}
+    .legend-timechip .v{color:#111}
+    .legend-timechip .u{color:var(--muted)}
+    .kpi .sub{font-size:11px;color:#6b7280;margin-top:2px}
+    .time-badge{
+      pointer-events:none;
+      dominant-baseline:middle;
+      text-anchor:middle;
+      font-size:12px;
+      font-weight:700;
+      fill:#111;
+      stroke:none;
+    }
+    .time-badge.hidden{display:none}
+
+    svg{
+      width:100%;height:100%;display:block;
+      background:
+        linear-gradient(to right, transparent 0 20px, var(--grid) 20px 21px) repeat-x,
+        linear-gradient(to bottom, transparent calc(var(--lane-gap) - 1px), var(--grid) var(--lane-gap)) repeat-y;
+      background-size:40px 100%, 100% var(--lane-gap)
+    }
+    .axis path,.axis line{stroke:var(--muted)}
+    .axis text{fill:var(--muted);font-size:12px}
+    .axis.hidden{display:none}
+    .edge{stroke:var(--edge);color:var(--edge);stroke-width:2;fill:none;opacity:0.9;pointer-events:none}
+    .lineage-edge{
+      stroke:var(--lineage);
+      color:var(--lineage);
+      stroke-width:2;
+      fill:none;opacity:0.95;
+      stroke-dasharray:none;
+      pointer-events:none
+    }
+    .lineage-hidden{display:none !important}
+    .node circle{stroke-width:2;cursor:grab;filter:drop-shadow(0 1px 1px #0002)}
+    .node text{font-size:12px;dominant-baseline:middle;pointer-events:none;fill:#000;paint-order:stroke;stroke:#fff;stroke-width:3px}
+    .node .badge{font-size:11px;font-weight:700;fill:#fff;stroke:none;paint-order:stroke;dominant-baseline:middle;text-anchor:middle}
+    .faded{opacity:var(--fade)}
+    .active-node circle,
+    .node.active-node circle,
+    .node.group-selected circle,
+    .group-selected circle{stroke:#111 !important;stroke-width:3 !important}
+    .active-lineage{stroke-dasharray:0;stroke-width:2.4;opacity:1}
+    .hidden-shiprecv{display:none}
+
+    .tooltip{
+      position:absolute;display:none;min-width:300px;max-width:520px;padding:10px 12px;border-radius:10px;background:#111;color:#fff;
+      box-shadow:0 8px 24px #0006;font-size:12px;line-height:1.35;z-index:20;white-space:pre-wrap; pointer-events:none;
+    }
+    .tooltip h3{margin:0 0 6px 0;font-size:13px;font-weight:600}
+    .tooltip .kv{color:#cbd5e1}
+    .tooltip code{display:block;white-space:pre-wrap;background:#0b0b0b;border:1px solid #222;border-radius:6px;padding:8px;margin-top:6px;color:#e2e8f0;overflow-x:auto}
+
+    .event-panel{font-size:12px;line-height:1.4;color:#111}
+    .event-panel h3{margin:0 0 8px 0;font-size:13px;font-weight:700;color:#111}
+    .event-panel .kv{color:#334155;margin-bottom:4px}
+    .event-panel code{display:block;white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border:1px solid #1e293b;border-radius:8px;padding:8px;margin-top:6px;overflow-x:auto}
+    .panel-empty{font-size:12px;color:var(--muted);padding:4px 2px}
+  </style>
+</head>
+<body>
+<header>
+  <div id="titleBlock">
+    <h1>VCI Traceability <span id="seedTag"></span></h1>
+    <div id="banner"></div>
+  </div>
+  <div id="controls">
+    <input type="file" id="fileInput" accept=".json,application/json" class="btn" />
+    <button id="toggleAxis" class="btn" title="Show/Hide time axis">Toggle X-Axis</button>
+    <button id="toggleLineage" class="btn" title="Alternate lineage relationships between dotted and solid">Lineage: Dotted</button>
+    <button id="toggleSpread" class="btn" title="Spread or compact nodes">Spread</button>
+    <button id="resetZoom" class="btn" title="Reset zoom/pan">Reset view</button>
+    <button id="unpinAll" class="btn" title="Clear all pinned nodes">Unpin all</button>
+    <button id="toggleShipRecvPaths" class="btn" title="Hide/Show Ship→Recv paths and cross-parent links">
+      Hide Ship→Recv Paths
+    </button>
+    <!-- NEW: ribbon toggle -->
+    <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+    <button id="toggleEventTooltip" class="btn" title="Switch the right-side pane between legend and event data">Show Event Data</button>
+    <button id="saveLayout" class="btn" title="Save current node layout to a .loc file">Save Layout</button>
+    <button id="restoreLayout" class="btn" title="Restore node layout from a .loc file">Restore Layout</button>
+    <button id="toggleMode" class="btn" title="Switch legend and ribbon between sustainability and time views">Mode: Sustainability</button>
+    <input type="file" id="layoutInput" accept=".loc,application/json" style="display:none" />
+  </div>
+</header>
+
+<!-- KPI STRIP -->
+<section id="kpiBar"></section>
+
+<div id="main">
+  <div id="stage">
+    <svg id="svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 12 10" markerUnits="userSpaceOnUse" refX="22" refY="5" markerWidth="8" markerHeight="6" orient="auto">
+          <path d="M0,0 L12,5 L0,10 Z" fill="currentColor"></path>
+        </marker>
+      </defs>
+      <g id="viewport">
+        <g class="axis" id="timeAxis"></g>
+        <g id="edges"></g>
+        <g id="lineage"></g>
+        <g id="nodes"></g>
+      </g>
+    </svg>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <aside id="legendPane">
+    <h2 id="sidePaneTitle">Legend — Ultimate Parent</h2>
+    <div id="legend"></div>
+  </aside>
+</div>
+
+<script>
+/* -------------------- Utilities -------------------- */
+function fnv1a(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193);h>>>=0}return h>>>0}
+function hslToHex(h,s,l){const a=s*Math.min(l,1-l);const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(Math.min(k-3,9-k,1),-1);return Math.round(255*c)};return "#"+[f(0),f(8),f(4)].map(x=>x.toString(16)).map(s=>s.padStart(2,'0')).join('')}
+function shortBizStep(uri){ if(!uri || typeof uri!=='string') return ""; const i=uri.lastIndexOf(":"); return i>=0?uri.slice(i+1):uri; }
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function pretty(obj){ try{return JSON.stringify(obj,null,2)}catch{return String(obj)} }
+function orgKeyFromSGLN(sgln){ if(!sgln||typeof sgln!=='string')return null; const m=sgln.match(/^urn:epc:id:sgln:([0-9]+)\./); return m?`urn:epc:id:sgln:${m[1]}.0.0`:null; }
+function hashColorForKey(key){ const h=fnv1a(key)%360; return hslToHex(h,0.55,0.52); }
+
+
+
+/* ---------------- Preferred palette (stable, high-contrast) ---------------- */
+const PREFERRED_PALETTE = [
+  "#2F5597", // blue
+  "#FF9300", // orange
+  "#70AD47", // green
+  "#9D90A0", // purple
+  "#B71E42", // red
+  "#14B8A6", // teal
+  "#ED7D31", // amber
+  "#EB91BB", // pink
+  "#64748B", // slate
+  "#84CC16", // lime
+  "#5B9BD5", // light blue
+  "#F43F5E", // rose
+  "#1D4ED8", // royal blue
+  "#D97706", // burnt orange
+  "#15803D", // forest green
+  "#7C3AED", // violet
+  "#BE123C", // crimson
+  "#0F766E", // deep teal
+  "#C2410C", // rust
+  "#A21CAF", // magenta
+  "#475569", // blue grey
+  "#65A30D", // olive
+  "#0284C7", // azure
+  "#B45309", // ochre
+  "#E11D48"  // raspberry
+];
+
+const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v2";
+let orgColorAllocMap = new Map();
+
+function colorIndexForHex(col){
+  return PREFERRED_PALETTE.findIndex(x => String(x).toLowerCase() === String(col).toLowerCase());
+}
+
+function generateDistinctColor(index){
+  const hue = (index * 137.508) % 360;
+  const lightness = (index % 2 === 0) ? 0.48 : 0.58;
+  return hslToHex(hue, 0.65, lightness);
+}
+
+function loadOrgColorAlloc(){
+  try{
+    const raw = localStorage.getItem(ORG_COLOR_STORAGE_KEY);
+    if(!raw) return;
+    const obj = JSON.parse(raw);
+    if(obj && typeof obj === "object"){
+      orgColorAllocMap = new Map(Object.entries(obj));
+    }
+  }catch(e){ /* ignore */ }
+}
+function saveOrgColorAlloc(){
+  try{
+    const obj = Object.fromEntries(orgColorAllocMap.entries());
+    localStorage.setItem(ORG_COLOR_STORAGE_KEY, JSON.stringify(obj));
+  }catch(e){ /* ignore */ }
+}
+
+function allocateColorForOrgKey(orgKey, used){
+  const n = PREFERRED_PALETTE.length;
+  const start = fnv1a(orgKey) % n;
+  const step = 7;
+  let idx = start;
+  for(let tries=0; tries<n; tries++){
+    if(!used.has(idx)){
+      used.add(idx);
+      return PREFERRED_PALETTE[idx];
+    }
+    idx = (idx + step) % n;
+  }
+
+  let extra = n;
+  while(used.has(extra)) extra++;
+  used.add(extra);
+  return generateDistinctColor(extra);
+}
+
+function ensureOrgColors(orgKeys){
+  if(!orgKeys || !orgKeys.length) return;
+  const used = new Set();
+  for(const col of orgColorAllocMap.values()){
+    const ix = colorIndexForHex(col);
+    if(ix >= 0) used.add(ix);
+  }
+  for(const k of orgKeys){
+    if(!k || typeof k !== "string") continue;
+    if(orgColorAllocMap.has(k)) continue;
+    const col = allocateColorForOrgKey(k, used);
+    orgColorAllocMap.set(k, col);
+  }
+  saveOrgColorAlloc();
+}
+
+function getOrgColor(orgKey){
+  if(!orgKey) return "#94a3b8";
+  // Respect masterData-provided org colours if present
+  if(orgColorByKey && orgColorByKey.has(orgKey)) return orgColorByKey.get(orgKey);
+  if(orgColorAllocMap && orgColorAllocMap.has(orgKey)) return orgColorAllocMap.get(orgKey);
+
+  // lazy allocation
+  const used = new Set();
+  for(const col of orgColorAllocMap.values()){
+    const ix = colorIndexForHex(col);
+    if(ix >= 0) used.add(ix);
+  }
+  const col = allocateColorForOrgKey(orgKey, used);
+  orgColorAllocMap.set(orgKey, col);
+  saveOrgColorAlloc();
+  return col;
+}
+
+loadOrgColorAlloc();
+
+/* Numeric helpers (deterministic formatting) */
+function num2(n){ return (typeof n === "number" && isFinite(n)) ? n : 0; }
+function fmt2(n){ return (n == null || !isFinite(n)) ? "—" : n.toFixed(2); }
+
+/* ------------ masterData lookups (legend names & sensor vehicle info) --------- */
+function buildOrgLookups(masterData){
+  const nameByKey = new Map();
+  const colorByKey = new Map();
+  if(!masterData || typeof masterData !== "object") return { nameByKey, colorByKey };
+
+  const looksLikeUrn = v => typeof v === "string" && v.startsWith("urn:");
+  const pickName = (attrs) => {
+    if (!attrs || typeof attrs !== "object") return null;
+    const candidates = [
+      "urn:epcglobal:cbv:mda#name",
+      "urn:epcglobal:cbv:mda:name",
+      "urn:epcglobal:cbv:mda#partyName",
+      "urn:epcglobal:cbv:mda#siteName",
+      "urn:epcglobal:cbv:mda:description",
+      "cbv:mda:name",
+      "name"
+    ];
+    for (const k of candidates) {
+      const v = attrs[k];
+      if (v != null) return Array.isArray(v) ? String(v[0]) : String(v);
+    }
+    return null;
+  };
+
+  if (Array.isArray(masterData.orgs)) {
+    for (const o of masterData.orgs) {
+      const key = o?.key || (o?.sgln ? orgKeyFromSGLN(o.sgln) : null);
+      if (!key) continue;
+      if (o?.displayName && !looksLikeUrn(o.displayName)) nameByKey.set(key, String(o.displayName));
+      if (o?.color) colorByKey.set(key, String(o.color));
+    }
+  }
+
+  if (Array.isArray(masterData.raw)) {
+    for (const vocab of masterData.raw) {
+      if (!String(vocab?.type || "").endsWith(":Location")) continue;
+      const key = orgKeyFromSGLN(vocab?.id);
+      if (!key) continue;
+      const nm = pickName(vocab.attributes);
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, nm);
+    }
+  }
+
+  const locs = masterData.locations;
+  if (Array.isArray(locs)) {
+    for (const loc of locs) {
+      const key = loc?.orgKey || (loc?.sgln ? orgKeyFromSGLN(loc.sgln) : null);
+      if (!key) continue;
+      const attrs = loc.attributes || {};
+      const nm = pickName(attrs) || loc.name;
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, String(nm));
+    }
+  } else if (locs && typeof locs === "object") {
+    for (const [sgln, attrs] of Object.entries(locs)) {
+      const key = orgKeyFromSGLN(sgln);
+      if (!key) continue;
+      const nm = pickName(attrs);
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, String(nm));
+    }
+  }
+
+  return { nameByKey, colorByKey };
+}
+
+let orgNameByKey=new Map(), orgColorByKey=new Map();
+
+/* ---------- Sensor vehicle helpers (label, color from owner, badge) ---------- */
+function lookupMasterDataDescription(epc){
+  const md = current.masterData || {};
+  const assets = getMasterAssets(md);
+  const products = md.products || {};
+  const rec = (assets && assets[epc]) || (products && products[epc]);
+  if (rec && typeof rec === "object"){
+    const desc = assetDescription(rec) || rec.description;
+    const op   = rec["urn:epcglobal:cbv:mda#operator"];
+    const t    = rec.assetType || rec.productType || rec["urn:epcglobal:cbv:mda#tmType"] || rec["urn:epcglobal:cbv:mda#type"];
+    if (desc) return String(desc);
+    if (op && t) return `${t} — ${op}`;
+    if (op) return String(op);
+    if (t) return String(t);
+  }
+  return null;
+}
+function findVehicleEpcForNode(d){
+  if (!d || typeof d !== "object") return null;
+  const ilmd = d.ilmd || {};
+  const keys = ["cbvmda:transportVehicle", "cbvmda:vehicleID", "cbvmda:vehicle"];
+  for (const k of keys){
+    const v = ilmd[k];
+    if (typeof v === "string" && v.startsWith("urn:epc:id:")) return v;
+  }
+  const assets = getMasterAssets(current.masterData);
+  if (Array.isArray(d.epcs) && assets && typeof assets === "object"){
+    for (const epc of d.epcs){
+      if (assets[epc]) return epc;
+    }
+  }
+  return null;
+}
+function vehicleOwnerOrgKey(vehEpc){
+  const rec = getMasterAssets(current.masterData)?.[vehEpc];
+  const owner = assetOwner(rec);
+  if (owner && typeof owner === "string") return orgKeyFromSGLN(owner);
+  return null;
+}
+function isSensorVehicleNode(d){
+  return shortBizStep(d.bizStep)==="sensor_reporting" && !!findVehicleEpcForNode(d);
+}
+function labelForNode(d){
+  const step = shortBizStep(d.bizStep);
+  if (step === "sensor_reporting"){
+    const vehEpc = findVehicleEpcForNode(d);
+    const desc = vehEpc ? lookupMasterDataDescription(vehEpc) : null;
+    return desc ? `sensor_reporting — ${desc}` : "sensor_reporting";
+  }
+  return step || (d.eventId || "");
+}
+
+/* -------------------- Node color -------------------- */
+function colorForNode(d){
+  if (isSensorVehicleNode(d)){
+    const vehEpc = findVehicleEpcForNode(d);
+    const key = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
+    if (key){
+      return getOrgColor(key);
+    }
+  }
+  const key = orgKeyFromSGLN(d.bizLocation);
+  if (key){
+    return getOrgColor(key);
+  }
+  return "#94a3b8";
+}
+
+/* -------------------- Sorting (canonical) -------------------- */
+const bizRank=new Map([
+  ["commissioning",0],["packing",1],["shipping",2],["loading",3],
+  ["departing",4],["arriving",5],["unloading",6],["receiving",7],
+  ["unpacking",8],["transforming",9],["sensor_reporting",5.5]
+]);
+function sortNodesDeterministically(nodes){
+  return nodes.slice().sort((a,b)=>{
+    const ta=new Date(a.eventTime||a.recordTime||0).getTime();
+    const tb=new Date(b.eventTime||b.recordTime||0).getTime();
+    if(ta!==tb) return ta-tb;
+    const ra=a.recordTime?new Date(a.recordTime).getTime():-Infinity;
+    const rb=b.recordTime?new Date(b.recordTime).getTime():-Infinity;
+    if(ra!==rb) return ra-rb;
+    const idCmp=(a.eventId||"").localeCompare(b.eventId||"");
+    if(idCmp!==0) return idCmp;
+    const ba=bizRank.get(shortBizStep(a.bizStep)) ?? 999;
+    const bb=bizRank.get(shortBizStep(b.bizStep)) ?? 999;
+    if(ba!==bb) return ba-bb;
+    return (a.id||"").localeCompare(b.id||"");
+  });
+}
+
+/* -------------------- Layout & spread -------------------- */
+function baseLayout(nodes,width,height){
+  const margin={top:40,right:40,bottom:60,left:40};
+  const innerW=width - margin.left - margin.right;
+  const innerH=height - margin.top - margin.bottom;
+
+  const times=nodes.map(n=>new Date(n.eventTime).getTime());
+  const tMin=d3.min(times), tMax=d3.max(times);
+  const pad=(tMax-tMin)*0.04 || 6e5;
+  const x=d3.scaleTime().domain([new Date(tMin-pad), new Date(tMax+pad)]).range([margin.left, margin.left+innerW]);
+
+  const laneKeys=Array.from(new Set(nodes.map(n=>n.lane||"lane0")));
+  const yBase=d3.scalePoint().domain(laneKeys).range([margin.top, margin.top+innerH]).padding(0.5);
+
+  const groups=new Map();
+  nodes.forEach(n=>{
+    const lane=n.lane||"lane0";
+    const key=`${lane}|${new Date(n.eventTime).toISOString()}`;
+    if(!groups.has(key)) groups.set(key,[]);
+    groups.get(key).push(n);
+  });
+  for(const arr of groups.values()){
+    arr.sort((a,b)=>(a.eventId||"").localeCompare(b.eventId||""));
+    arr.forEach((n,i)=>n._sameTimeIndex=i);
+  }
+
+  nodes.forEach(n=>{
+    n.x=x(new Date(n.eventTime));
+    n.y=yBase(n.lane||"lane0");
+    if(n._sameTimeIndex){
+      n.x += n._sameTimeIndex * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--same-time-step'));
+    }
+    delete n.fx; delete n.fy;
+  });
+
+  return {x,yBase,margin,width,height};
+}
+function applySpreadOffsets(nodes, params={maxDX:22,maxDY:70}){
+  const {maxDX,maxDY}=params;
+  for(const n of nodes){
+    const h=fnv1a(n.eventId||n.id||"");
+    const sdx=((h%17)-8)/8;
+    const sdy=(((Math.floor(h/17)%19)-9)/9);
+    const dx=Math.round(sdx*maxDX);
+    const dy=Math.round(sdy*maxDY);
+    n.x_spread=n.x+dx;
+    n.y_spread=n.y+dy;
+  }
+}
+function applyRadialGroupLayout(nodes, params={radiusBase:10, radiusScale:1}) {
+  const groups = new Map();
+  for (const n of nodes) {
+    const key = orgKeyFromSGLN(n.bizLocation) || "__nogroup__";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(n);
+  }
+
+  const orderedKeys = (Array.isArray(legendOrder) && legendOrder.length)
+    ? legendOrder.filter(k => groups.has(k)).concat(Array.from(groups.keys()).filter(k => !legendOrder.includes(k)))
+    : Array.from(groups.keys()).sort((a,b)=>{
+        const ax = d3.mean(groups.get(a), d => d.x) ?? 0;
+        const bx = d3.mean(groups.get(b), d => d.x) ?? 0;
+        return ax - bx;
+      });
+
+  orderedKeys.forEach((key, idx) => {
+    const arr = groups.get(key) || [];
+    if (!arr.length) return;
+    if (arr.length === 1) {
+      const a = arr[0];
+      a.x_spread = a.x_spread ?? a.x;
+      a.y_spread = a.y_spread ?? a.y;
+      return;
+    }
+
+    const sorted = arr.slice().sort((a,b)=> (a.eventTime||"").localeCompare(b.eventTime||"") || (a.eventId||"").localeCompare(b.eventId||""));
+    const cx = d3.mean(sorted, d => d.x) ?? 0;
+    const cy = d3.mean(sorted, d => d.y) ?? 0;
+    const direction = (idx % 2 === 0) ? -1 : 1; // alternate above / below the baseline
+    const spreadStrength = Math.max(1, params.radiusScale || 1);
+    const R = params.radiusBase + (sorted.length * 10) * spreadStrength;
+    const arcPadding = Math.min(Math.PI / 10, Math.PI / Math.max(sorted.length + 1, 3));
+    const start = direction < 0 ? Math.PI + arcPadding : arcPadding;
+    const end   = direction < 0 ? (2 * Math.PI) - arcPadding : Math.PI - arcPadding;
+    const denom = Math.max(sorted.length - 1, 1);
+
+    sorted.forEach((node, i) => {
+      const tBase = denom === 0 ? 0.5 : (i / denom);
+
+      // Alternate rotational direction across the virtual centre line:
+      // clusters above keep the base order, clusters below reverse it.
+      const t = direction < 0 ? tBase : (1 - tBase);
+
+      const ang = start + (end - start) * t;
+      node.x_spread = cx + R * Math.cos(ang);
+      node.y_spread = cy + R * Math.sin(ang);
+    });
+  });
+}
+function usePositions(nodes,spreadMode){
+  nodes.forEach(n=>{
+    const X=spreadMode ? (n.x_spread ?? n.x) : n.x;
+    const Y=spreadMode ? (n.y_spread ?? n.y) : n.y;
+    n.fx = n.fx ?? X; n.fy = n.fy ?? Y;
+  });
+}
+
+/* -------------------- Rendering -------------------- */
+const svg=d3.select("#svg");
+const viewport=d3.select("#viewport");
+const gEdges=d3.select("#edges");
+const gLineage=d3.select("#lineage");
+const gNodes=d3.select("#nodes");
+const gAxis=d3.select("#timeAxis");
+const tooltip=d3.select("#tooltip");
+const banner=d3.select("#banner");
+const seedTag=d3.select("#seedTag");
+const legendDiv=document.getElementById("legend");
+const sidePaneTitle=document.getElementById("sidePaneTitle");
+
+/* Selection / group-drag state */
+let selectedGroupKey=null;
+let selectedGroupSet=new Set();
+
+/* Local parent spread state */
+let localGroupSpread = new Map();
+let localGroupOriginalPositions = new Map();
+let legendOrder=null;
+
+/* Data state */
+let current={ nodes:[], links:[], lineageLinks:[], byId:new Map(), layout:null, masterData:null, coverage:null, indices:null, emissionsData:null };
+let currentSourceFileName = null;
+
+function getBaseName(filename){
+  if(!filename) return "layout";
+  const i = filename.lastIndexOf(".");
+  return i > 0 ? filename.slice(0, i) : filename;
+}
+function getSuggestedLocName(filename){
+  return `${getBaseName(filename || "layout")}.loc`;
+}
+function buildLayoutPayload(){
+  return {
+    type: "vci-layout",
+    version: 1,
+    sourceFile: currentSourceFileName || null,
+    savedAt: new Date().toISOString(),
+    nodes: (current.nodes || []).map(n => {
+      const x = Number.isFinite(n.fx) ? n.fx : (Number.isFinite(n.x) ? n.x : null);
+      const y = Number.isFinite(n.fy) ? n.fy : (Number.isFinite(n.y) ? n.y : null);
+      return { id: n.id, x, y };
+    }).filter(n => n.id != null && n.x != null && n.y != null)
+  };
+}
+function downloadTextFile(filename, text, mimeType="application/json"){
+  const blob = new Blob([text], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function saveLayoutToLocFile(){
+  if(!current.nodes || !current.nodes.length){
+    setBanner("No graph loaded, nothing to save.", false);
+    return;
+  }
+  const payload = buildLayoutPayload();
+  const filename = getSuggestedLocName(currentSourceFileName || "layout.json");
+  downloadTextFile(filename, JSON.stringify(payload, null, 2), "application/json");
+  setBanner(`Layout saved as ${filename}`, true);
+}
+function normalizeLayoutNodes(layoutObj){
+  if(Array.isArray(layoutObj?.nodes)) return layoutObj.nodes;
+  if(layoutObj?.nodes && typeof layoutObj.nodes === "object") {
+    return Object.entries(layoutObj.nodes).map(([id, p]) => ({ id, x: p?.x, y: p?.y }));
+  }
+  return [];
+}
+function applyRestoredLayout(layoutObj){
+  if(!layoutObj || !current.nodes?.length) return { applied: 0, missing: 0 };
+  const restoredNodes = normalizeLayoutNodes(layoutObj);
+  const byId = new Map(restoredNodes.map(n => [n.id, n]));
+  let applied = 0, missing = 0;
+
+  current.nodes.forEach(n => {
+    const hit = byId.get(n.id);
+    if(hit && Number.isFinite(hit.x) && Number.isFinite(hit.y)){
+      n.fx = hit.x;
+      n.fy = hit.y;
+      applied++;
+    } else {
+      missing++;
+    }
+  });
+
+  gNodes.selectAll("g.node").each(function(d){
+    const x = Number.isFinite(d.fx) ? d.fx : d.x;
+    const y = Number.isFinite(d.fy) ? d.fy : d.y;
+    if (d._circle) d3.select(d._circle).attr("cx", x).attr("cy", y);
+    if (d._marker){
+      const rr = +d3.select(d._circle).attr("r");
+      d3.select(d._marker)
+        .attr("d", markerSymbolPathForNode(d, rr))
+        .attr("transform", markerTransformForNode(d, x, y));
+    }
+    if (d._label) d3.select(d._label).attr("x", x + 12).attr("y", y);
+    if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
+      if (d._timeBadge) d3.select(d._timeBadge).attr("x", x).attr("y", y);
+});
+
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(e.u || current.byId.get(e.source), e.v || current.byId.get(e.target)));
+
+  return { applied, missing };
+}
+async function handleRestoreLayoutFile(file){
+  if(!file) return;
+  try{
+    const txt = await file.text();
+    const layoutObj = JSON.parse(txt);
+    if(layoutObj?.type !== "vci-layout"){
+      setBanner("Selected file is not a valid VCI layout (.loc) file.", false);
+      return;
+    }
+    if(!current.nodes || !current.nodes.length){
+      setBanner("Load a JSON graph before restoring a layout.", false);
+      return;
+    }
+    if(layoutObj.sourceFile && currentSourceFileName && layoutObj.sourceFile !== currentSourceFileName){
+      const proceed = window.confirm(`This layout was saved for "${layoutObj.sourceFile}" but the current graph is "${currentSourceFileName}". Restore anyway?`);
+      if(!proceed) return;
+    }
+    const result = applyRestoredLayout(layoutObj);
+    setBanner(`Layout restored: ${result.applied} node(s) applied.`, true);
+  }catch(err){
+    setBanner("Failed to restore layout: " + (err?.message || err), false);
+    console.error(err);
+  }
+}
+/* Emissions (optional) */
+let emissionsByOrg = new Map();
+let emissionsUnit = "kgCO2e";
+let emissionsSeedTotals = null;
+
+/* Time-centric aggregates */
+let timeByOrg = new Map();
+
+/* View state */
+let rendererMode = "sustainability"; // "sustainability" | "time"
+let showRibbon = true;
+let sidePaneMode = "legend"; // "legend" | "event"
+let selectedEventNodeId = null;
+
+let showAxis=true;
+let showLineage=true;
+let lineageDashed=false;
+let spreadMode=false;
+
+const SPREAD_LEVELS = [
+  { label: "Spread",      params: { maxDX: 0,  maxDY: 0  } },
+  { label: "Spread +",    params: { maxDX: 4,  maxDY: 12 } },
+  { label: "Spread ++",   params: { maxDX: 7,  maxDY: 18 } },
+  { label: "Spread +++",  params: { maxDX: 10, maxDY: 26 } },
+];
+let spreadIndex=0;
+
+/* NEW: Hide paths state + helpers */
+let hideShipRecvPaths = false;
+
+function showTooltip(){ return; }
+function hideTooltip(){ tooltip.style("display","none"); }
+
+function setSelectedEventNode(node){
+  selectedEventNodeId = node?.id || null;
+}
+function getSelectedEventNode(){
+  return selectedEventNodeId ? (current.byId.get(selectedEventNodeId) || null) : null;
+}
+function renderEventPanel(){
+  const n = getSelectedEventNode();
+  if (!n){
+    legendDiv.innerHTML = `<div class="panel-empty">Click a node to view event data.</div>`;
+    return;
+  }
+  legendDiv.innerHTML = `<div class="event-panel">${nodeTooltip(n)}</div>`;
+}
+function renderSidePanel(nodes=current.nodes){
+  if (sidePaneMode === "legend") {
+    sidePaneTitle.textContent = "Legend — Ultimate Parent";
+    updateLegend(nodes || []);
+  } else {
+    sidePaneTitle.textContent = "Event Data";
+    renderEventPanel();
+  }
+}
+
+/* Ship→Recv computations */
+function computeShipRecvHideSets(){
+  const hiddenNodeIds = new Set();
+  const hiddenEdgeKeys = new Set();
+  const keyEdge = (u, v) => `${u}->${v}`;
+
+  const adj = new Map();
+  current.links.forEach(e => {
+    if (!adj.has(e.source)) adj.set(e.source, []);
+    adj.get(e.source).push(e.target);
+  });
+
+  const shippingNodes = current.nodes.filter(n => shortBizStep(n.bizStep) === "shipping");
+  const idToNode = current.byId;
+
+  for (const ship of shippingNodes){
+    const q = [ship.id];
+    const prev = new Map();
+    const seen = new Set([ship.id]);
+    let recvId = null;
+
+    while (q.length){
+      const u = q.shift();
+      const nbrs = adj.get(u) || [];
+      for (const v of nbrs){
+        if (seen.has(v)) continue;
+        seen.add(v);
+        prev.set(v, u);
+        const vNode = idToNode.get(v);
+        if (shortBizStep(vNode?.bizStep) === "receiving"){
+          recvId = v; q.length = 0; break;
+        }
+        q.push(v);
+      }
+    }
+
+    if (!recvId) continue;
+
+    const path = [];
+    let cur = recvId;
+    while (cur){
+      path.push(cur);
+      if (cur === ship.id) break;
+      cur = prev.get(cur);
+    }
+    path.reverse();
+
+    if (path.length <= 2) continue;
+
+    for (let i = 1; i < path.length - 1; i++){ hiddenNodeIds.add(path[i]); }
+    for (let i = 0; i < path.length - 1; i++){ hiddenEdgeKeys.add(keyEdge(path[i], path[i+1])); }
+  }
+
+  return { hiddenNodeIds, hiddenEdgeKeys };
+}
+function applyShipRecvHiding(){
+  if (!hideShipRecvPaths){
+    gNodes.selectAll("g.node").classed("hidden-shiprecv", false);
+    gEdges.selectAll("path.edge").classed("hidden-shiprecv", false);
+    return;
+  }
+  const { hiddenNodeIds, hiddenEdgeKeys } = computeShipRecvHideSets();
+  const isCrossParentEdge = (e) => {
+    const u = current.byId.get(e.source);
+    const v = current.byId.get(e.target);
+    if (!u || !v) return false;
+    const ku = orgKeyFromSGLN(u.bizLocation);
+    const kv = orgKeyFromSGLN(v.bizLocation);
+    return !!ku && !!kv && ku !== kv;
+  };
+  gNodes.selectAll("g.node").classed("hidden-shiprecv", d => hiddenNodeIds.has(d.id));
+  gEdges.selectAll("path.edge").classed("hidden-shiprecv", d => hiddenEdgeKeys.has(`${d.source}->${d.target}`) || isCrossParentEdge(d));
+}
+
+/* Banner helpers */
+function setBanner(msg, ok=false){ banner.attr("class", ok?"ok":"err").text(msg).style("display","block"); }
+function clearBanner(){ banner.attr("class","").style("display","none").text(""); }
+
+/* -------------------- Validation -------------------- */
+function isSgln(x){
+  return typeof x === 'string'
+    && /^urn:epc:id:sgln:[0-9]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(x);
+}
+function isEpc(x){ return typeof x==='string' && /^urn:epc:id:/.test(x); }
+
+function nodeInputs(n){
+  if (!n || typeof n !== "object") return [];
+  return Array.isArray(n.inputEPCList) ? n.inputEPCList : (Array.isArray(n.inputs) ? n.inputs : []);
+}
+function nodeOutputs(n){
+  if (!n || typeof n !== "object") return [];
+  return Array.isArray(n.outputEPCList) ? n.outputEPCList : (Array.isArray(n.outputs) ? n.outputs : []);
+}
+function nodeIdentityEpcs(n){
+  return []
+    .concat(Array.isArray(n?.epcs) ? n.epcs : [])
+    .concat(Array.isArray(n?.parentIds) ? n.parentIds : [])
+    .concat(Array.isArray(n?.childIds) ? n.childIds : [])
+    .concat(nodeInputs(n))
+    .concat(nodeOutputs(n));
+}
+function getMasterAssets(md){
+  return (md && (md.assets || md.returnableAssets)) || {};
+}
+function assetDescription(rec){
+  if (!rec || typeof rec !== "object") return null;
+  return rec.description || rec["urn:epcglobal:cbv:mda#description"] || null;
+}
+function assetOwner(rec){
+  if (!rec || typeof rec !== "object") return null;
+  return rec.owner || rec["urn:epcglobal:cbv:mda#owner"] || null;
+}
+
+function validate2_2_15(json){
+  const errors=[];
+  const need=["seedEpc","masterData","nodes","links","indices","lineageLinks","coverage"];
+  for(const k of need) if(!(k in json)) errors.push(`Missing top-level '${k}'`);
+
+  if(!Array.isArray(json.nodes)||json.nodes.length<2) errors.push("At least 2 nodes required");
+  if(!Array.isArray(json.links)||json.links.length<1) errors.push("At least 1 link required");
+
+if(!json.masterData || typeof json.masterData !== "object") errors.push("masterData must be an object");
+  else {
+    ["locations","assets","products"].forEach(k => {
+      if(!(k in json.masterData)) errors.push(`masterData.${k} missing`);
+      else if(typeof json.masterData[k] !== "object" || Array.isArray(json.masterData[k])) errors.push(`masterData.${k} must be a keyed object`);
+    });
+  }
+  if(!json.indices?.xform) errors.push("indices.xform missing");
+
+  for(const n of (json.nodes||[])){
+    if(!n.id) errors.push("node.id missing");
+    if(!n.eventTime) errors.push(`node.eventTime missing for ${n.id||'?'}`);
+    if(Number.isNaN(Date.parse(n.eventTime))) errors.push(`node.eventTime not ISO date for ${n.id}`);
+    if(!n.type) errors.push(`node.type missing for ${n.id||'?'}`);
+    if(n.bizStep && !/^urn:epcglobal:cbv:bizstep:/.test(n.bizStep)) errors.push(`bizStep must be a CBV URI (${n.id})`);
+    if(n.disposition && !/^urn:epcglobal:cbv:disp:/.test(n.disposition)) errors.push(`disposition must be a CBV URI (${n.id})`);
+    if(n.bizLocation && !isSgln(n.bizLocation)) errors.push(`bizLocation must be an SGLN URN (${n.id})`);
+    ["epcs","parentIds","childIds","inputEPCList","outputEPCList"].forEach(f=>{
+      if(Array.isArray(n[f]) && !n[f].every(isEpc)) errors.push(`${f} contains non-EPC URNs (${n.id})`);
+    });
+    if(n.type === "TransformationEvent" && (!Array.isArray(n.inputEPCList) || !Array.isArray(n.outputEPCList))){
+      errors.push(`TransformationEvent must use inputEPCList and outputEPCList (${n.id})`);
+    }
+  }
+
+  const byId=new Map((json.nodes||[]).map(n=>[n.id,n]));
+  for(const e of (json.links||[])){
+    const u=byId.get(e.source), v=byId.get(e.target);
+    if(!u||!v){ errors.push(`link references unknown node: ${e.source}->${e.target}`); continue; }
+    if(new Date(u.eventTime)>new Date(v.eventTime)) errors.push(`Back-in-time edge ${u.id} -> ${v.id}`);
+  }
+
+  for(const ll of (json.lineageLinks||[])){
+    if(!ll || (ll.role!=="xform-input" && ll.role!=="xform-output")) errors.push("lineageLinks.role must be 'xform-input' or 'xform-output'");
+    if(!isEpc(ll.epc)) errors.push("lineageLinks.epc must be an EPC URN");
+    if(!(byId.has(ll.source) && byId.has(ll.target))) errors.push(`lineage link refs unknown node ${ll.source} -> ${ll.target}`);
+  }
+
+  if(!(json.indices && json.indices.byEpc)) errors.push("indices.byEpc missing");
+  else {
+    for(const [epc,arr] of Object.entries(json.indices.byEpc)){
+      if(!isEpc(epc) || !Array.isArray(arr) || !arr.every(id=>typeof id==="string")){
+        errors.push(`indices.byEpc['${epc}'] must be array of node IDs`); continue;
+      }
+      for(const id of arr){ if(!byId.has(id)) errors.push(`indices.byEpc['${epc}'] has unknown node ID ${id}`); }
+    }
+  }
+
+  if(!(json.coverage && Array.isArray(json.coverage.transformations) && json.coverage.unresolved))
+    errors.push("coverage must include 'transformations' array and 'unresolved' object");
+
+  /* Optional emissions soft validation */
+  if (json.emissions && typeof json.emissions === "object"){
+    const e = json.emissions;
+    if (e.byOrg && typeof e.byOrg !== "object") errors.push("emissions.byOrg must be an object");
+    if (e.byLocation && typeof e.byLocation !== "object") errors.push("emissions.byLocation must be an object");
+  }
+
+  const allEpcs=new Set(Object.keys(json.indices?.byEpc||{}));
+  for(const t of (json.coverage?.transformations||[])){
+    if(!t?.eventId || !byId.has(t.eventId)) errors.push(`coverage transformation.eventId not found: ${t?.eventId}`);
+    (t.inputs||[]).forEach(i=>{ if(!isEpc(i.epc) || !allEpcs.has(i.epc)) errors.push(`coverage.inputs EPC not indexed: ${i.epc}`); });
+    (t.outputs||[]).forEach(o=>{ if(!isEpc(o.epc) || !allEpcs.has(o.epc)) errors.push(`coverage.outputs EPC not indexed: ${o.epc}`); });
+  }
+
+  return errors;
+}
+
+/* Screen → SVG "world" coords */
+function pointerToWorld(nativeEvent){
+  const [sx, sy] = d3.pointer(nativeEvent, svg.node());
+  const z = d3.zoomTransform(svg.node());
+  return [(sx - z.x) / z.k, (sy - z.y) / z.k];
+}
+
+function getLocRecord(sgln){
+  const L = current.masterData?.locations;
+  if (!L || !sgln) return null;
+  if (Array.isArray(L)) return L.find(l => l.sgln === sgln) || null;
+  if (typeof L === "object" && L[sgln]) {
+    const rec = L[sgln];
+    return { ...rec, attributes: rec.attributes || rec };
+  }
+  return null;
+}
+
+/* Tooltip (XSS safe) */
+function nodeTooltip(n){
+  const key=orgKeyFromSGLN(n.bizLocation);
+  const mdLoc = getLocRecord(n.bizLocation);
+  const orgLabel = key ? (orgNameByKey.get(key) || key) : null;
+
+  let lines=[];
+  lines.push(`<h3>${esc(shortBizStep(n.bizStep))} <span class="kv">(${esc(n.type||"")})</span></h3>`);
+  lines.push(`<div class="kv"><b>eventId</b>: ${esc(n.eventId||"")}</div>`);
+  lines.push(`<div class="kv"><b>eventTime</b>: ${esc(n.eventTime||"")}</div>`);
+  if(n.recordTime) lines.push(`<div class="kv"><b>recordTime</b>: ${esc(n.recordTime)}</div>`);
+  if(n.bizLocation) lines.push(`<div class="kv"><b>bizLocation</b>: ${esc(n.bizLocation)}${orgLabel?` — <i>${esc(orgLabel)}</i>`:""}</div>`);
+  if(mdLoc){
+    const attrs = mdLoc.attributes||{};
+    const nm = attrs["urn:epcglobal:cbv:mda#name"] || mdLoc.name;
+    const city = attrs["urn:epcglobal:cbv:mda#city"] || mdLoc.city;
+    const region = attrs["urn:epcglobal:cbv:mda#state"] || mdLoc.region;
+    const cc = attrs["urn:epcglobal:cbv:mda#countryCode"] || mdLoc.countryCode;
+    const addr = [nm, city, region, cc].filter(Boolean).map(esc).join(", ");
+    if(addr) lines.push(`<div class="kv"><b>location</b>: ${addr}</div>`);
+  }
+  if(n.readPoint) lines.push(`<div class="kv"><b>readPoint</b>: ${esc(n.readPoint)}</div>`);
+  if(n.disposition) lines.push(`<div class="kv"><b>disposition</b>: ${esc(n.disposition)}</div>`);
+  if(Array.isArray(n.epcs)) lines.push(`<div class="kv"><b>epcs</b>: ${esc(n.epcs.join(", "))}</div>`);
+  if(Array.isArray(n.parentIds)) lines.push(`<div class="kv"><b>parentIds</b>: ${esc(n.parentIds.join(", "))}</div>`);
+  if(Array.isArray(n.childIds) && n.childIds.length) lines.push(`<div class="kv"><b>childIds</b>: ${esc(n.childIds.join(", "))}</div>`);
+  if(n.action) lines.push(`<div class="kv"><b>action</b>: ${esc(n.action)}</div>`);
+  const inList = nodeInputs(n);
+  const outList = nodeOutputs(n);
+  if(inList.length) lines.push(`<div class="kv"><b>inputEPCList</b>: ${esc(inList.join(", "))}</div>`);
+  if(outList.length) lines.push(`<div class="kv"><b>outputEPCList</b>: ${esc(outList.join(", "))}</div>`);
+
+  if(n.type==="TransformationEvent" && current.coverage){
+    const entry = (current.coverage.transformations||[]).find(t => t.eventId===n.id || t.eventId===n.eventId);
+    if(entry){
+      const inSumm = (entry.inputs||[]).map(i => `${i.epc} [commissioned:${i.hasCommissioning?'yes':'no'}; lastPre:${i.lastEventBeforeT||'—'}]`).join("\n");
+      const outSumm = (entry.outputs||[]).map(o => `${o.epc} [firstPost:${o.firstEventAfterT||'—'}]`).join("\n");
+      if(inSumm) lines.push(`<div class="kv"><b>coverage.inputs</b>:\n${esc(inSumm)}</div>`);
+      if(outSumm) lines.push(`<div class="kv"><b>coverage.outputs</b>:\n${esc(outSumm)}</div>`);
+    }
+  }
+
+  if (n.ilmd && typeof n.ilmd === 'object' && Object.keys(n.ilmd).length) {
+    lines.push(`<div class="kv"><b>ilmd</b>:</div><code>${esc(pretty(n.ilmd))}</code>`);
+  }
+  return lines.join("\n");
+}
+
+/* Path drawing */
+function bezierPath(u,v){
+  const r=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius'))||8;
+  const strokeW=2, pad=r+strokeW*0.5;
+  const ux=(u.fx??u.x), uy=(u.fy??u.y);
+  const vx=(v.fx??v.x), vy=(v.fy??v.y);
+  const dx=vx-ux, dy=vy-uy;
+  const len=Math.hypot(dx,dy)||1;
+  const nx=dx/len, ny=dy/len;
+  const sx=ux+nx*pad, sy=uy+ny*pad;
+  const ex=vx-nx*pad, ey=vy-ny*pad;
+  const t=0.25;
+  const c1x=sx+dx*t, c1y=sy+dy*t;
+  const c2x=ex-dx*t, c2y=ey-dy*t;
+  return `M ${sx},${sy} C ${c1x},${c1y} ${c2x},${c2y} ${ex},${ey}`;
+}
+
+/* Emissions parser/merger (v2.2.15 + legacy) */
+function parseEmissions(json){
+  const byOrg = new Map();
+  const unit = (json?.emissions?.unit && typeof json.emissions.unit === "string")
+    ? json.emissions.unit
+    : "kgCO2e";
+
+  // legacy byOrg
+  const srcOrg = json?.emissions?.byOrg;
+  if (srcOrg && typeof srcOrg === "object"){
+    for (const [orgKey, rec] of Object.entries(srcOrg)){
+      if (typeof orgKey !== "string") continue;
+      const s1 = num2(rec?.scope1);
+      const s2 = num2(rec?.scope2);
+      const s3 = num2(rec?.scope3_declared);
+      const tot = (typeof rec?.total === "number" && isFinite(rec.total)) ? rec.total : (s1+s2+s3);
+      byOrg.set(orgKey, { scope1:s1, scope2:s2, scope3_declared:s3, scope3_cat1:null, scope3_cat4:null, total:tot });
+    }
+  }
+
+  // legacy byLocation
+  const srcLoc = json?.emissions?.byLocation;
+  if (srcLoc && typeof srcLoc === "object"){
+    for (const [sgln, rec] of Object.entries(srcLoc)){
+      const orgKey = orgKeyFromSGLN(sgln);
+      if (!orgKey) continue;
+      const s1 = num2(rec?.scope1), s2 = num2(rec?.scope2), s3 = num2(rec?.scope3_declared);
+      const add = s1 + s2 + s3;
+      if (!byOrg.has(orgKey)) byOrg.set(orgKey, { scope1:0, scope2:0, scope3_declared:0, scope3_cat1:null, scope3_cat4:null, total:0 });
+      const cur = byOrg.get(orgKey);
+      cur.scope1 += s1; cur.scope2 += s2; cur.scope3_declared += s3; cur.total += add;
+    }
+  }
+
+  // v2.2.15 orgs[]
+  const orgs = json?.emissions?.orgs;
+  if (Array.isArray(orgs)){
+    for (const o of orgs){
+      const key = (typeof o?.orgSglnRoot === "string") ? o.orgSglnRoot : null;
+      if (!key) continue;
+
+      const s1 = num2(o?.scope1Total ?? o?.scope1);
+      const s2 = num2(o?.scope2Total ?? o?.scope2);
+      const s3c1 = num2(o?.scope3Cat1Total ?? o?.scope3Cat1);
+      const s3c4 = num2(o?.scope3Cat4Total ?? o?.scope3Cat4);
+      const s3other = num2(o?.scope3OtherTotal ?? o?.scope3Other);
+      const s3decl = num2(o?.scope3Total) + s3c1 + s3c4 + s3other;
+      const tot = num2(o?.total ?? (s1 + s2 + s3decl));
+
+      if (!byOrg.has(key)) byOrg.set(key, { scope1:0, scope2:0, scope3_declared:0, scope3_cat1:0, scope3_cat4:0, total:0 });
+      const cur = byOrg.get(key);
+      cur.scope1 += s1;
+      cur.scope2 += s2;
+      cur.scope3_cat1 += s3c1;
+      cur.scope3_cat4 += s3c4;
+      cur.scope3_declared += s3decl;
+      cur.total += tot;
+
+      if (o?.orgName && !orgNameByKey.has(key)) orgNameByKey.set(key, String(o.orgName));
+    }
+  }
+
+  // seed totals for ribbon
+  const seed = json?.emissions?.seedEpcTotals || json?.emissions?.seedTotals;
+  let seedTotals = null;
+  if (seed && typeof seed === "object"){
+    const s1 = num2(seed.scope1 ?? seed.scope1Total);
+    const s2 = num2(seed.scope2 ?? seed.scope2Total);
+    const s3c1 = num2(seed.scope3Cat1 ?? seed.scope3Cat1Total);
+    const s3c4 = num2(seed.scope3Cat4 ?? seed.scope3Cat4Total);
+    const total = num2(seed.total ?? (s1 + s2 + s3c1 + s3c4));
+    seedTotals = { scope1:s1, scope2:s2, scope3Cat1:s3c1, scope3Cat4:s3c4, total };
+  }
+
+  return { byOrg, unit, seedTotals };
+}
+
+/* Legend + mode-aware summaries */
+function parseHoursMaybe(v){
+  if (v == null) return null;
+  if (typeof v === "number" && isFinite(v)) return v;
+  if (typeof v !== "string") return null;
+  const n = parseFloat(v);
+  return isFinite(n) ? n : null;
+}
+function parseBoolMaybe(v){
+  return v === true || v === "true" || v === 1 || v === "1";
+}
+function classifyNodeTime(d){
+  const ilmd = d?.ilmd || {};
+
+  const cls = (
+    ilmd["lxn:timeClass"] ??
+    ilmd["cbvmda:timeClass"] ??
+    ilmd["timeClass"] ??
+    ilmd["cbvmda:valueAddClass"] ??
+    ilmd["valueAddClass"] ??
+    ""
+  ).toString().trim().toLowerCase();
+
+  if (["va","value_add","valueadded","value-added","value added","value add"].includes(cls)) return "va";
+  if (["nva","non_value_add","nonvalueadded","non-value-added","non value added","non value add","non-value-add"].includes(cls)) return "nva";
+
+  if (parseBoolMaybe(ilmd["lxn:valueAdded"]) || parseBoolMaybe(ilmd["valueAdded"])) return "va";
+  if (parseBoolMaybe(ilmd["lxn:nonValueAdded"]) || parseBoolMaybe(ilmd["nonValueAdded"])) return "nva";
+
+  const va = parseHoursMaybe(ilmd["cbvmda:valueAddedHours"] ?? ilmd["valueAddedHours"] ?? ilmd["cbvmda:vaHours"] ?? ilmd["vaHours"]);
+  const nva = parseHoursMaybe(ilmd["cbvmda:nonValueAddedHours"] ?? ilmd["nonValueAddedHours"] ?? ilmd["cbvmda:nvaHours"] ?? ilmd["nvaHours"]);
+  if ((va ?? 0) > 0 && (nva ?? 0) <= 0) return "va";
+  if ((nva ?? 0) > 0 && (va ?? 0) <= 0) return "nva";
+
+  return "unknown";
+}
+function nodeTimeHours(d){
+  const ilmd = d?.ilmd || {};
+  const va = parseHoursMaybe(ilmd["cbvmda:valueAddedHours"] ?? ilmd["valueAddedHours"] ?? ilmd["cbvmda:vaHours"] ?? ilmd["vaHours"]);
+  const nva = parseHoursMaybe(ilmd["cbvmda:nonValueAddedHours"] ?? ilmd["nonValueAddedHours"] ?? ilmd["cbvmda:nvaHours"] ?? ilmd["nvaHours"]);
+  return {
+    va: va || 0,
+    nva: nva || 0,
+    total: (va || 0) + (nva || 0),
+    explicit: (va != null || nva != null)
+  };
+}
+function computeScenarioTimeTotals(nodes){
+  const sorted = (nodes || []).filter(n => n.eventTime).slice().sort((a,b) => T(a.eventTime) - T(b.eventTime));
+
+  let va = 0, nva = 0, total = 0;
+  let usedExplicit = false;
+
+  for (const n of sorted){
+    const t = nodeTimeHours(n);
+    if (t.explicit){
+      va += t.va;
+      nva += t.nva;
+      total += t.total;
+      usedExplicit = true;
+    }
+  }
+
+  if (!usedExplicit){
+    for (let i = 1; i < sorted.length; i++){
+      const prev = sorted[i - 1], cur = sorted[i];
+      const dtH = (T(cur.eventTime) - T(prev.eventTime)) / 36e5;
+      if (!(dtH > 0)) continue;
+      total += dtH;
+      const cls = classifyNodeTime(cur);
+      if (cls === "va") va += dtH;
+      else if (cls === "nva") nva += dtH;
+    }
+  }
+
+  return {
+    va: +va.toFixed(2),
+    nva: +nva.toFixed(2),
+    total: +total.toFixed(2),
+    pctNva: total > 0 ? (nva / total) * 100 : 0
+  };
+}
+function buildTimeByOrg(nodes){
+  const sorted = (nodes || []).filter(n => n.eventTime).slice().sort((a,b) => T(a.eventTime) - T(b.eventTime));
+  const out = new Map();
+  let usedExplicit = false;
+
+  for (const n of sorted){
+    const key = orgKeyFromSGLN(n.bizLocation);
+    if (!key) continue;
+    if (!out.has(key)) out.set(key, { va:0, nva:0, total:0, unknown:0 });
+
+    const cur = out.get(key);
+    const t = nodeTimeHours(n);
+    if (t.explicit){
+      cur.va += t.va;
+      cur.nva += t.nva;
+      cur.total += t.total;
+      usedExplicit = true;
+    }
+    if (classifyNodeTime(n) === "unknown") cur.unknown += 1;
+  }
+
+  if (!usedExplicit){
+    for (let i = 1; i < sorted.length; i++){
+      const prev = sorted[i - 1], curNode = sorted[i];
+      const key = orgKeyFromSGLN(curNode.bizLocation);
+      if (!key) continue;
+      if (!out.has(key)) out.set(key, { va:0, nva:0, total:0, unknown:0 });
+      const dtH = (T(curNode.eventTime) - T(prev.eventTime)) / 36e5;
+      if (!(dtH > 0)) continue;
+      const agg = out.get(key);
+      agg.total += dtH;
+      const cls = classifyNodeTime(curNode);
+      if (cls === "va") agg.va += dtH;
+      else if (cls === "nva") agg.nva += dtH;
+    }
+  }
+
+  for (const agg of out.values()){
+    agg.va = +agg.va.toFixed(2);
+    agg.nva = +agg.nva.toFixed(2);
+    agg.total = +agg.total.toFixed(2);
+  }
+  return out;
+}
+function countHandoffs(nodes){
+  return (nodes || []).filter(n => ["loading","unloading"].includes(shortBizStep(n.bizStep))).length;
+}
+function countSensors(nodes){
+  return (nodes || []).filter(n => shortBizStep(n.bizStep) === "sensor_reporting").length;
+}
+function kpiCard(label, value, title="", extraClass="", sub=""){
+  return `
+    <div class="kpi ${extraClass}" title="${esc(title)}">
+      <div class="label">${esc(label)}</div>
+      <div class="value">${value}</div>
+      ${sub ? `<div class="sub">${sub}</div>` : ``}
+    </div>
+  `;
+}
+function seedEmissionsHtml(){
+  if (!emissionsSeedTotals) return kpiCard("Seed emissions", "—", "Declared emissions totals for the seed EPC");
+  const s = emissionsSeedTotals;
+  const total = s.total ?? (num2(s.scope1) + num2(s.scope2) + num2(s.scope3Cat1) + num2(s.scope3Cat4));
+  return `
+    <div class="kpi" title="Declared emissions totals for the seed EPC">
+      <div class="label">Seed emissions</div>
+      <div class="legend-emissions">
+        <div class="row">
+          <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(s.scope1)}</span></span>
+          <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(s.scope2)}</span></span>
+          <span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(s.scope3Cat1)}</span></span>
+          <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(s.scope3Cat4)}</span></span>
+          <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
+        </div>
+      </div>
+    </div>`;
+}
+function temperatureStripHtml(){
+  return `
+    <div id="kpiTemp" title="Cold-chain: product temperature over time from ilmd.cbvmda:productTempC.">
+      <div class="label">Temperature strip</div>
+      <svg id="tempStrip" viewBox="0 0 600 26" preserveAspectRatio="none"></svg>
+    </div>`;
+}
+function renderKpiBar(){
+  const el = document.getElementById("kpiBar");
+  if (!el) return;
+  if (rendererMode === "sustainability"){
+    const { leadHours, transitHours, dwellHours, handoffs, sensorPings } = computeKpis_SPEC();
+    const h = v => v==null ? "—" : `${v} h`;
+    el.innerHTML = `
+      ${kpiCard("Lead time (Transform→Receive)", h(leadHours), "Lead time: from the earliest TransformationEvent to the last Receiving event at or after that time.")}
+      ${kpiCard("Transit time (Σ Depart→Arrive)", h(transitHours), "Total transit: sum of all legs pairing Departing→next Arriving, considering only events at or after the first transform.")}
+      ${kpiCard("Dwell (Lead − Transit)", h(dwellHours), "Total dwell (non-transit) = Lead − Transit, floored at 0.")}
+      ${kpiCard("Handoffs", String(handoffs), "Handoffs: AssociationEvents whose bizStep ends with loading or unloading.")}
+      ${kpiCard("Sensor pings", String(sensorPings), "Sensor pings: events whose bizStep ends with sensor_reporting.")}
+      ${seedEmissionsHtml()}
+      ${temperatureStripHtml()}`;
+  } else {
+    const t = computeScenarioTimeTotals(current.nodes);
+    el.innerHTML = `
+      ${kpiCard("Value-added time (Σ VA intervals)", `${fmt2(t.va)} h`, "Value-added time is the sum of intervals explicitly tagged as value-added in ILMD.")}
+      ${kpiCard("Non-value-added time (Σ NVA intervals)", `${fmt2(t.nva)} h`, "Non-value-added time is the sum of intervals explicitly tagged as non-value-added in ILMD.")}
+      ${kpiCard("Total elapsed time (Σ tagged intervals)", `${fmt2(t.total)} h`, "Total elapsed time is the sum of tagged VA and NVA intervals.")}
+      ${kpiCard("% Non-Value-Add time", `${fmt2(t.pctNva)}%`, "Share of tagged elapsed time classified as non-value-added.", "", `${fmt2(t.nva)}h of ${fmt2(t.total)}h`)}
+      ${kpiCard("Handoffs", String(countHandoffs(current.nodes)), "Handoffs: AssociationEvents whose bizStep ends with loading or unloading.")}
+      ${kpiCard("Sensor pings", String(countSensors(current.nodes)), "Sensor pings: events whose bizStep ends with sensor_reporting.")}
+      ${seedEmissionsHtml()}`;
+  }
+  if (showRibbon) requestAnimationFrame(syncRibbonHeight);
+}
+function updateLegend(nodes){
+  legendDiv.innerHTML="";
+  const seen=new Set(), entries=[];
+  for(const n of nodes){
+    const key=orgKeyFromSGLN(n.bizLocation);
+    if(!key || seen.has(key)) continue;
+    seen.add(key);
+    entries.push({key,name:orgNameByKey.get(key) || key,color:getOrgColor(key)});
+  }
+
+  if (!legendOrder){
+    const groups = new Map();
+    for (const n of nodes){
+      const key = orgKeyFromSGLN(n.bizLocation);
+      if (!key) continue;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(n);
+    }
+
+    const median = arr => {
+      if (!arr.length) return 0;
+      const s = arr.slice().sort((a,b)=>a-b);
+      const mid = Math.floor(s.length / 2);
+      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    };
+
+    legendOrder = Array.from(groups.entries())
+      .map(([key, groupNodes]) => {
+        const ys = groupNodes.map(n => n.y).filter(v => Number.isFinite(v));
+        const xs = groupNodes.map(n => n.x).filter(v => Number.isFinite(v));
+        return {
+          key,
+          medianY: median(ys),
+          medianX: median(xs),
+          avgY: ys.length ? ys.reduce((a,b)=>a+b,0) / ys.length : 0,
+          avgX: xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : 0
+        };
+      })
+      .sort((a,b) => {
+        if (a.medianY !== b.medianY) return a.medianY - b.medianY;
+        if (a.medianX !== b.medianX) return a.medianX - b.medianX;
+        if (a.avgY !== b.avgY) return a.avgY - b.avgY;
+        return a.avgX - b.avgX;
+      })
+      .map(d => d.key);
+  }
+
+  entries.sort((a,b) => {
+    const ia = legendOrder.indexOf(a.key);
+    const ib = legendOrder.indexOf(b.key);
+    if (ia >= 0 && ib >= 0) return ia - ib;
+    if (ia >= 0) return -1;
+    if (ib >= 0) return 1;
+    return a.name.localeCompare(b.name);
+  });
+  for(const e of entries){
+    const item=document.createElement("div");
+    item.className="legend-item";
+    item.dataset.orgkey = e.key;
+    let metaHtml = "";
+    if (rendererMode === "sustainability"){
+      const em = emissionsByOrg.get(e.key);
+      metaHtml = em ? `
+        <div class="legend-emissions"><div class="row">
+          <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(em.scope1)}</span></span>
+          <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(em.scope2)}</span></span>
+          ${(em.scope3_cat1 != null || em.scope3_cat4 != null)
+            ? `<span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(em.scope3_cat1)}</span></span>
+               <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(em.scope3_cat4)}</span></span>`
+            : `<span class="legend-chip"><span class="k">S3</span><span class="v">${fmt2(em.scope3_declared)}</span></span>`}
+          <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(em.total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
+        </div></div>` : "";
+    } else {
+      const t = timeByOrg.get(e.key) || { va:0, nva:0, total:0, unknown:0 };
+      metaHtml = `
+        <div class="legend-times">
+          <span class="legend-timechip"><span class="k">VA</span><span class="v">${fmt2(t.va)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">NVA</span><span class="v">${fmt2(t.nva)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">Total</span><span class="v">${fmt2(t.total)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">Unknown</span><span class="v">${t.unknown}</span></span>
+        </div>`;
+    }
+    item.innerHTML = `<span class="legend-swatch" style="background:${e.color}"></span>
+      <div><div>${esc(e.name)}</div><div class="legend-key">${esc(e.key)}</div>${metaHtml}</div>`;
+    item.addEventListener("pointerdown", (ev)=>{
+      ev.preventDefault();
+    });
+    item.addEventListener("click", ()=> toggleGroupSelection(e.key));
+    legendDiv.appendChild(item);
+  }
+  if(!entries.length){
+    const empty=document.createElement("div");
+    empty.className="legend-item";
+    empty.innerHTML=`<span class="legend-swatch" style="background:#e5e7eb"></span><div>No bizLocation keys</div>`;
+    legendDiv.appendChild(empty);
+  }
+  applyGroupSelectionState();
+}
+function applyGroupSelectionState(){
+  if (selectedGroupKey){
+    selectedGroupSet = new Set(current.nodes.filter(n => orgKeyFromSGLN(n.bizLocation) === selectedGroupKey).map(n => n.id));
+  } else {
+    selectedGroupSet = new Set();
+  }
+  gNodes.selectAll("g.node").classed("group-selected", n => selectedGroupSet.has(n.id));
+  Array.from(legendDiv.children).forEach(el => {
+    if (el.dataset.orgkey){
+      el.classList.toggle("active", el.dataset.orgkey === selectedGroupKey);
+    }
+  });
+}
+function getNodesForSelectedGroup(){
+  if (!selectedGroupKey) return [];
+  return current.nodes.filter(n => orgKeyFromSGLN(n.bizLocation) === selectedGroupKey);
+}
+function syncNodeVisualPosition(n){
+  if (!n) return;
+  if (n._circle) d3.select(n._circle).attr("cx", n.fx).attr("cy", n.fy);
+  if (n._label) d3.select(n._label).attr("x", n.fx + 12).attr("y", n.fy);
+  if (n._badge) d3.select(n._badge).attr("x", n.fx).attr("y", n.fy);
+  if (n._timeBadge) d3.select(n._timeBadge).attr("x", n.fx).attr("y", n.fy);
+}
+function getNodeCurrentPos(n){
+  if (Number.isFinite(n.fx) && Number.isFinite(n.fy)) return { x:n.fx, y:n.fy };
+  if (spreadMode) return { x:(n.x_spread ?? n.x), y:(n.y_spread ?? n.y) };
+  return { x:n.x, y:n.y };
+}
+function computeGroupCenter(groupNodes){
+  if (!groupNodes.length) return { x:0, y:0 };
+  const xs = groupNodes.map(n => getNodeCurrentPos(n).x).sort((a,b)=>a-b);
+  const ys = groupNodes.map(n => getNodeCurrentPos(n).y).sort((a,b)=>a-b);
+  const mid = Math.floor(xs.length/2);
+  return { x: xs[mid], y: ys[mid] };
+}
+function saveOriginalPositionsForGroup(groupKey, groupNodes){
+  if (!groupKey || localGroupOriginalPositions.has(groupKey)) return;
+  const pos = new Map();
+  groupNodes.forEach(n => {
+    const p = getNodeCurrentPos(n);
+    pos.set(n.id, { x:p.x, y:p.y });
+  });
+  localGroupOriginalPositions.set(groupKey, pos);
+}
+function restoreOriginalPositionsForGroup(groupKey, groupNodes){
+  const stored = localGroupOriginalPositions.get(groupKey);
+  if (!stored) return false;
+  groupNodes.forEach(n => {
+    const p = stored.get(n.id);
+    if (p){
+      n.fx = p.x;
+      n.fy = p.y;
+      syncNodeVisualPosition(n);
+    }
+  });
+  localGroupOriginalPositions.delete(groupKey);
+  localGroupSpread.set(groupKey, 0);
+  return true;
+}
+function updateGraphPaths(){
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+}
+function spreadSelectedGroup(groupKey, groupNodes){
+  if (!groupKey || !groupNodes.length) return;
+  const nextLevel = (localGroupSpread.get(groupKey) || 0) + 1;
+  localGroupSpread.set(groupKey, nextLevel);
+  saveOriginalPositionsForGroup(groupKey, groupNodes);
+
+  const center = computeGroupCenter(groupNodes);
+  const ordered = groupNodes.slice().sort((a,b)=>
+    (a.eventTime || "").localeCompare(b.eventTime || "") ||
+    (a.eventId || a.id || "").localeCompare(b.eventId || b.id || "")
+  );
+
+  if (nextLevel === 1){
+    const angle = Math.PI / 6; // 30 degrees: top-left to bottom-right
+    const spacing = 30;
+    const startOffset = ((ordered.length - 1) * spacing) / 2;
+    ordered.forEach((n, i) => {
+      const offset = (i * spacing) - startOffset;
+      n.fx = center.x + Math.cos(angle) * offset;
+      n.fy = center.y + Math.sin(angle) * offset;
+      syncNodeVisualPosition(n);
+    });
+    return;
+  }
+
+  const radius = 62;
+  ordered.forEach((n, i) => {
+    const angle = (i / Math.max(ordered.length, 1)) * Math.PI * 2;
+    n.fx = center.x + Math.cos(angle) * radius;
+    n.fy = center.y + Math.sin(angle) * radius;
+    syncNodeVisualPosition(n);
+  });
+}
+function updateSpreadButtonLabel(){
+  const btn = document.getElementById("toggleSpread");
+  if (!btn) return;
+  btn.textContent = selectedGroupKey ? "Spread Selected" : SPREAD_LEVELS[spreadIndex].label;
+}
+function toggleGroupSelection(key){
+  if(selectedGroupKey===key){
+    selectedGroupKey=null;
+  } else {
+    selectedGroupKey=key;
+  }
+  applyGroupSelectionState();
+  updateSpreadButtonLabel();
+}
+
+/* ---------- SPEC utilities for KPIs ---------- */
+const T = d => new Date(d);
+const hours2 = ms => (ms == null || !isFinite(ms)) ? null : +(ms/36e5).toFixed(2);
+const endsWithStep = (n, suf) => ((n?.bizStep)||"").endsWith(suf);
+
+function firstTransformForSeed(nodes, seedEpc){
+  const transforms = nodes.filter(n => n.type === "TransformationEvent");
+  if (!transforms.length) return null;
+
+  const outputsSeed = n => nodeOutputs(n).some(o =>
+    (typeof o === "string") ? (o === seedEpc) : (o && o.epc === seedEpc)
+  );
+
+  const tfsForSeed = transforms.filter(outputsSeed);
+  const pickFrom = (tfsForSeed.length ? tfsForSeed : transforms);
+  return pickFrom.sort((a,b)=> T(a.eventTime) - T(b.eventTime))[0];
+}
+
+/** Compute KPIs per spec */
+function computeKpis_SPEC(){
+  const nodes = current.nodes || [];
+  const seedEpc = (document.getElementById("seedTag").textContent || "").replace("seedEpc: ","").trim();
+
+  const firstTf = firstTransformForSeed(nodes, seedEpc);
+
+  // 1) Lead: first Transform → last Receiving >= transform
+  let leadHours = null;
+  if (firstTf){
+    const lastRecv = nodes
+      .filter(n => endsWithStep(n,"receiving") && T(n.eventTime) >= T(firstTf.eventTime))
+      .sort((a,b)=> T(b.eventTime) - T(a.eventTime))[0];
+    if (lastRecv){
+      leadHours = hours2(T(lastRecv.eventTime) - T(firstTf.eventTime));
+    }
+  }
+
+  // 2) Transit: Σ departing→arriving after first transform
+  let transitHours = null;
+  if (firstTf){
+    const post = nodes
+      .filter(n => T(n.eventTime) >= T(firstTf.eventTime))
+      .sort((a,b)=> T(a.eventTime) - T(b.eventTime));
+
+    let sec = 0, pendingDepart = null;
+    for (const e of post){
+      if (endsWithStep(e,"departing")) pendingDepart = e;
+      else if (endsWithStep(e,"arriving") && pendingDepart){
+        sec += (T(e.eventTime) - T(pendingDepart.eventTime)) / 1000;
+        pendingDepart = null;
+      }
+    }
+    transitHours = +(sec/3600).toFixed(2);
+  }
+
+  // 3) Dwell = max(0, lead - transit)
+  let dwellHours = null;
+  if (leadHours != null && transitHours != null){
+    dwellHours = Math.max(0, +(leadHours - transitHours).toFixed(2));
+  } else if (leadHours != null){
+    dwellHours = leadHours;
+  }
+
+  // 4) Handoffs
+  const handoffs = nodes.filter(n =>
+    n.type === "AssociationEvent" &&
+    (endsWithStep(n,"loading") || endsWithStep(n,"unloading"))
+  ).length;
+
+  // 5) Sensor pings
+  const sensorPings = nodes.filter(n => endsWithStep(n,"sensor_reporting")).length;
+
+  return { leadHours, transitHours, dwellHours, handoffs, sensorPings };
+}
+
+function renderKpis_SPEC(){
+  const { leadHours, transitHours, dwellHours, handoffs, sensorPings } = computeKpis_SPEC();
+  const setH = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "—" : `${v} h`); };
+  const setI = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "—" : String(v)); };
+  setH("#kpiLeadTime .value",    leadHours);
+  setH("#kpiTransitTime .value", transitHours);
+  setH("#kpiDwell .value",       dwellHours);
+  setI("#kpiHandoffs .value",    handoffs);
+  setI("#kpiSensors .value",     sensorPings);
+}
+
+/* Temperature strip */
+function getTempPoints(){
+  return (current.nodes||[])
+    .map(n => {
+      const ilmd = n.ilmd || {};
+      const v = ilmd["cbvmda:productTempC"];
+      let c = (Array.isArray(v) ? v[0] : (v && typeof v==="object" ? v.value : v));
+      return (typeof c === "number" && isFinite(c)) ? { t: new Date(n.eventTime), y: c } : null;
+    })
+    .filter(Boolean)
+    .sort((a,b)=>a.t-b.t);
+}
+function renderTempStrip(){
+  const svg = d3.select("#tempStrip");
+  svg.selectAll("*").remove(); // clear
+  const w = svg.node().clientWidth || 600;
+  const h = svg.node().clientHeight || 26;
+  const pts = getTempPoints();
+  if (!pts.length){
+    svg.append("line").attr("x1",0).attr("x2",w).attr("y1",h-2).attr("y2",h-2)
+       .attr("stroke","currentColor").attr("opacity",0.15).attr("stroke-width",1);
+    return;
+  }
+  const x = d3.scaleTime().domain(d3.extent(pts, d=>d.t)).range([0, w]);
+  const y = d3.scaleLinear().domain(d3.extent(pts, d=>d.y)).nice().range([h-2, 2]);
+  const line = d3.line().x(d=>x(d.t)).y(d=>y(d.y));
+  svg.append("path")
+    .datum(pts)
+    .attr("fill","none")
+    .attr("stroke","currentColor")
+    .attr("stroke-width",1.5)
+    .attr("d", line);
+  svg.selectAll("circle")
+    .data(pts).enter().append("circle")
+    .attr("cx", d=>x(d.t)).attr("cy", d=>y(d.y)).attr("r", 2).attr("fill","currentColor");
+}
+
+/* Seed emissions KPI renderer */
+function renderSeedEmissionsKpi(){
+  const card = document.getElementById("kpiSeedEmissions");
+  const row  = document.getElementById("kpiSeedEmissionsRow");
+  if (!card || !row) return;
+
+  if (!emissionsSeedTotals){
+    card.style.display = "none";
+    return;
+  }
+  card.style.display = "";
+
+  const u = esc(emissionsUnit);
+  const chips = [
+    { k: "S1",   v: emissionsSeedTotals.scope1 },
+    { k: "S2",   v: emissionsSeedTotals.scope2 },
+    { k: "S3.1", v: emissionsSeedTotals.scope3Cat1 },
+    { k: "S3.4", v: emissionsSeedTotals.scope3Cat4 },
+    { k: "Total", v: (emissionsSeedTotals.total ?? (num2(emissionsSeedTotals.scope1) + num2(emissionsSeedTotals.scope2) + num2(emissionsSeedTotals.scope3Cat1) + num2(emissionsSeedTotals.scope3Cat4))) }
+  ];
+
+  row.innerHTML = chips.map(c => `
+    <span class="legend-chip">
+      <span class="k">${c.k}</span>
+      <span class="v">${fmt2(c.v)}</span>${c.k==="Total" ? `<span class="u">${u}</span>`:""}
+    </span>`).join("");
+}
+
+/* NEW: ribbon show/hide + dynamic height */
+const kpiBarEl = document.getElementById("kpiBar");
+function syncRibbonHeight(){
+  if (!kpiBarEl) return;
+  const h = kpiBarEl.offsetHeight || 0;
+  document.documentElement.style.setProperty('--ribbon-h', (showRibbon ? h : 0) + 'px');
+  if (h) kpiBarEl.dataset.h = h + 'px';
+}
+function setRibbonVisible(vis){
+  showRibbon = !!vis;
+  if (showRibbon){
+    kpiBarEl.style.display = "grid";
+    // after showing, measure and set height
+    requestAnimationFrame(syncRibbonHeight);
+  } else {
+    kpiBarEl.style.display = "none";
+    document.documentElement.style.setProperty('--ribbon-h', '0px');
+  }
+  const btn = document.getElementById("toggleRibbon");
+  if (btn) btn.textContent = showRibbon ? "Hide Ribbon" : "Show Ribbon";
+}
+
+/* Render */
+function render(data){
+  clearBanner();
+  seedTag.text(data.seedEpc ? `seedEpc: ${data.seedEpc}` : "");
+
+  const errs=validate2_2_15(data);
+
+  const md = data.masterData ?? current.masterData ?? {};
+  current.masterData = md;
+  ({nameByKey:orgNameByKey, colorByKey:orgColorByKey} = buildOrgLookups(md));
+
+  const nodes = sortNodesDeterministically(data.nodes);
+  const byId = new Map(nodes.map(n=>[n.id,n]));
+  
+
+// Build a stable palette allocation for org keys present in this dataset (no per-org hardcoding)
+const orgKeysPresent = new Set();
+for (const n of nodes){
+  const k = orgKeyFromSGLN(n.bizLocation);
+  if (k) orgKeysPresent.add(k);
+  if (isSensorVehicleNode(n)){
+    const vehEpc = findVehicleEpcForNode(n);
+    const vk = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
+    if (vk) orgKeysPresent.add(vk);
+  }
+}
+ensureOrgColors(Array.from(orgKeysPresent));
+
+const links = (data.links||[]).filter(e=>{
+    const u=byId.get(e.source), v=byId.get(e.target);
+    return u && v && new Date(u.eventTime)<=new Date(v.eventTime);
+  });
+
+  current.nodes=nodes;
+  current.links=links;
+  current.byId=byId;
+  current.masterData=md;
+  current.coverage=data.coverage || null;
+  current.indices=data.indices || null;
+
+  /* Emissions (optional) */
+  {
+  // Parse only what came in with *this* data payload
+  const parsed = parseEmissions(data || {});
+  emissionsByOrg       = parsed.byOrg;
+  emissionsUnit        = parsed.unit;
+  emissionsSeedTotals  = parsed.seedTotals;
+
+  // Cache exactly what the current dataset has (or null)
+  current.emissionsData = data?.emissions ?? null;
+  }
+
+  const suppliedLL = Array.isArray(data.lineageLinks) ? data.lineageLinks : [];
+  const lineageDataRaw = suppliedLL.map(ll => ({...ll, u: byId.get(ll.source), v: byId.get(ll.target)}))
+                                   .filter(x=>x.u && x.v);
+  current.lineageLinks = suppliedLL;
+
+  current.layout=baseLayout(nodes, svg.node().clientWidth, svg.node().clientHeight);
+  applySpreadOffsets(nodes, SPREAD_LEVELS[spreadIndex].params);
+  if (spreadIndex > 0) {
+    const scale = spreadIndex * 0.6;
+    applyRadialGroupLayout(nodes, { radiusBase: 12, radiusScale: scale });
+  }
+  usePositions(nodes, spreadMode);
+
+  const axis=d3.axisBottom(current.layout.x).ticks(8).tickSizeOuter(0);
+  gAxis.attr("transform",`translate(0, ${svg.node().clientHeight - current.layout.margin.bottom})`).classed("hidden",!showAxis).call(axis);
+
+  const edgeSel=gEdges.selectAll("path.edge").data(links, d=>d.source+"->"+d.target);
+  edgeSel.exit().remove();
+  edgeSel.enter().append("path").attr("class","edge").attr("marker-end","url(#arrow)")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : null)
+    .merge(edgeSel)
+    .attr("d", d=> bezierPath(byId.get(d.source), byId.get(d.target)));
+
+  const linSel=gLineage.selectAll("path.lineage-edge")
+    .data(lineageDataRaw, d=>`${d.source}->${d.target}|${d.role}|${d.epc}`);
+  linSel.exit().remove();
+  linSel.enter().append("path")
+    .attr("class", d=>`lineage-edge ${d.role==="xform-input"?"input":"output"}`)
+    .attr("marker-end","url(#arrow)")
+    .merge(linSel)
+    .classed("lineage-hidden", !showLineage)
+    .attr("d", d=> bezierPath(d.u, d.v))
+    .raise();
+
+  const nodeSel=gNodes.selectAll("g.node").data(nodes, d=>d.id);
+  nodeSel.exit().remove();
+  const nodeEnter=nodeSel.enter().append("g").attr("class","node")
+    .call(d3.drag()
+      .on("start",(event,d)=>{
+        d3.select(event.sourceEvent.target).style("cursor","grabbing");
+        const cx = +d3.select(d._circle).attr("cx");
+        const cy = +d3.select(d._circle).attr("cy");
+        d.fx = cx; d.fy = cy;
+        const [wx0, wy0] = pointerToWorld(event.sourceEvent);
+        d._grab = { dx: cx - wx0, dy: cy - wy0 };
+
+        const nodeGroupKey = orgKeyFromSGLN(d.bizLocation);
+        const selected = !!selectedGroupKey && nodeGroupKey === selectedGroupKey;
+        if(selected){
+          applyGroupSelectionState();
+          const starts = new Map();
+          getNodesForSelectedGroup().forEach(n => {
+            const ncx = Number.isFinite(n.fx) ? n.fx : +d3.select(n._circle).attr("cx");
+            const ncy = Number.isFinite(n.fy) ? n.fy : +d3.select(n._circle).attr("cy");
+            n.fx = ncx;
+            n.fy = ncy;
+            starts.set(n.id, { fx: ncx, fy: ncy });
+          });
+          d._groupDrag = { wx0, wy0, starts, key: selectedGroupKey };
+        } else {
+          d._groupDrag = null;
+        }
+      })
+      .on("drag",(event,d)=>{
+        if(d._groupDrag){
+          const [wx, wy] = pointerToWorld(event.sourceEvent);
+          const dx = wx - d._groupDrag.wx0;
+          const dy = wy - d._groupDrag.wy0;
+          d._groupDrag.starts.forEach((st, id)=>{
+            const n = current.byId.get(id);
+            n.fx = st.fx + dx;
+            n.fy = st.fy + dy;
+            syncNodeVisualPosition(n);
+          });
+        } else {
+          const [wx, wy] = pointerToWorld(event.sourceEvent);
+          d.fx = wx + d._grab.dx;
+          d.fy = wy + d._grab.dy;
+          syncNodeVisualPosition(d);
+        }
+        gEdges.selectAll("path.edge")
+          .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+        gLineage.selectAll("path.lineage-edge")
+          .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      })
+      .on("end",(event,d)=>{
+        d3.select(event.sourceEvent.target).style("cursor","grab");
+        d._grab = null;
+        d._groupDrag = null;
+      })
+    )
+    .on("dblclick",(event,d)=>{
+      delete d.fx; delete d.fy;
+      const cx = spreadMode ? (d.x_spread ?? d.x) : d.x;
+      const cy = spreadMode ? (d.y_spread ?? d.y) : d.y;
+      d3.select(d._circle).attr("cx", cx).attr("cy", cy);
+      d3.select(d._label).attr("x", cx+12).attr("y", cy);
+      const b = d._badge; if (b) d3.select(b).attr("x", cx).attr("y", cy);
+      const tb = d._timeBadge; if (tb) d3.select(tb).attr("x", cx).attr("y", cy);
+      gEdges.selectAll("path.edge")
+        .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      gLineage.selectAll("path.lineage-edge")
+        .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+    })
+    .on("click",(event,d)=>{
+      setSelectedEventNode(d);
+      if (sidePaneMode === "event") renderSidePanel(current.nodes);
+      handleLineageFocus(d);
+    });
+
+  nodeEnter.append("circle")
+    .attr("r", parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')))
+    .each(function(d){ d._circle=this; });
+
+  nodeEnter.append("text")
+    .attr("class","badge")
+    .text("T")
+    .style("display","none")
+    .each(function(d){ d._badge=this; });
+
+  nodeEnter.append("text")
+    .attr("class","time-badge hidden")
+    .attr("text-anchor","middle")
+    .attr("dy","0.35em")
+    .text("")
+    .each(function(d){ d._timeBadge=this; });
+
+  nodeEnter.append("text")
+    .attr("dy","0").attr("text-anchor","start")
+    .text(d=> labelForNode(d))
+    .each(function(d){ d._label=this; });
+
+  const nodesAll=nodeEnter.merge(nodeSel);
+
+  const baseR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')) || 8;
+
+  nodesAll.select("circle")
+    .attr("fill", d=> colorForNode(d))
+    .attr("stroke", d=> isSensorVehicleNode(d) ? "#ef4444" : "#ffffff")
+    .attr("stroke-width", d=> isSensorVehicleNode(d) ? 3 : 2)
+    .attr("r", d=> isSensorVehicleNode(d) ? baseR + 3 : baseR)
+    .attr("cx", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("cy", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  nodesAll.select("text.badge")
+    .style("display", d=> isSensorVehicleNode(d) ? "block" : "none")
+    .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  nodesAll.select("text.time-badge")
+    .text(d => {
+      if (rendererMode !== "time") return "";
+      const cls = classifyNodeTime(d);
+      if (cls === "va") return "+";
+      if (cls === "nva") return "−";
+      return "";
+    })
+    .attr("class", d => {
+      if (rendererMode !== "time") return "time-badge hidden";
+      const cls = classifyNodeTime(d);
+      return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
+    })
+    .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  nodesAll.select("text:not(.badge):not(.time-badge)")
+    .text(d => labelForNode(d))
+    .attr("x", d=> (d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x)) + 12)
+    .attr("y", d=>  d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  gNodes.selectAll("g.node")
+    .classed("group-selected", n=> selectedGroupSet.has(n.id))
+    .classed("va", d => rendererMode === "time" && classifyNodeTime(d) === "va")
+    .classed("nva", d => rendererMode === "time" && classifyNodeTime(d) === "nva")
+    .classed("unknownva", d => rendererMode === "time" && classifyNodeTime(d) === "unknown");
+
+  timeByOrg = buildTimeByOrg(nodes);
+  renderSidePanel(nodes);
+  applyGroupSelectionState();
+
+  if(errs.length){
+    setBanner("Validation failed: "+errs[0], false);
+  }else{
+    setBanner(`Loaded OK — v2.2.15 checks passed · lineage links: ${lineageDataRaw.length}`, true);
+  }
+
+  applyShipRecvHiding();
+
+  /* Render mode-specific ribbon + legend details */
+  renderKpiBar();
+  if (rendererMode === "sustainability") renderTempStrip();
+
+  /* After ribbon content changes, sync its height for layout */
+  syncRibbonHeight();
+}
+
+/* Lineage focus/highlight */
+let activeT=null;
+function handleLineageFocus(node){
+  if(node?.type!=="TransformationEvent"){ clearLineageFocus(); return; }
+  activeT = node.id || node.eventId;
+
+  const lin = gLineage.selectAll("path.lineage-edge");
+  lin.classed("active-lineage", false).classed("faded", true);
+  gNodes.selectAll("g.node").classed("active-node", false);
+
+  const inputs = current.lineageLinks.filter(ll => ll.role==="xform-input" && ll.target===activeT);
+  const outputs= current.lineageLinks.filter(ll => ll.role==="xform-output" && ll.source===activeT);
+  const ids = new Set([activeT]);
+  inputs.forEach(ll=>{ ids.add(ll.source); });
+  outputs.forEach(ll=>{ ids.add(ll.target); });
+
+  lin.filter(d => (d.role==="xform-input" && d.target===activeT) || (d.role==="xform-output" && d.source===activeT))
+     .classed("active-lineage", true).classed("faded", false);
+
+  gNodes.selectAll("g.node").classed("active-node", n=> ids.has(n.id));
+}
+function clearLineageFocus(){
+  activeT=null;
+  gLineage.selectAll("path.lineage-edge").classed("active-lineage", false).classed("faded", false);
+  gNodes.selectAll("g.node").classed("active-node", false);
+}
+
+/* -------------------- Zoom/Pan -------------------- */
+const zoom=d3.zoom().scaleExtent([0.5,4]).on("zoom",(event)=>{ viewport.attr("transform",event.transform); });
+const svgNode=document.getElementById("svg");
+svg.call(zoom);
+document.getElementById("resetZoom").addEventListener("click",()=>{ d3.select(svgNode).transition().duration(300).call(zoom.transform,d3.zoomIdentity); });
+
+/* -------------------- Controls -------------------- */
+document.getElementById("unpinAll").addEventListener("click",()=>{
+  current.nodes.forEach(n=>{ delete n.fx; delete n.fy; });
+  localGroupSpread.clear();
+  localGroupOriginalPositions.clear();
+  usePositions(current.nodes, spreadMode);
+  render({
+    seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
+    nodes: current.nodes,
+    links: current.links,
+    lineageLinks: current.lineageLinks,
+    masterData: current.masterData,
+    indices: current.indices || { byEpc:{} },
+    coverage: current.coverage || {transformations:[], unresolved:{xformInputsWithoutPrehistory:[], xformOutputsWithoutPosthistory:[], danglingParentIds:[]},emissions: current.emissionsData}
+  });
+});
+document.getElementById("toggleAxis").addEventListener("click",()=>{ showAxis=!showAxis; gAxis.classed("hidden",!showAxis); });
+document.getElementById("toggleLineage").addEventListener("click",()=>{
+  lineageDashed=!lineageDashed;
+  gLineage.selectAll("path.lineage-edge")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : "0")
+    .style("opacity", 0.95);
+  document.getElementById("toggleLineage").textContent = lineageDashed ? "Lineage: Dotted" : "Lineage: Solid";
+});
+document.getElementById("toggleSpread").addEventListener("click",(e)=>{
+  if (selectedGroupKey){
+    const groupNodes = getNodesForSelectedGroup();
+    if (!groupNodes.length) return;
+
+    const currentLevel = localGroupSpread.get(selectedGroupKey) || 0;
+    if (currentLevel >= 2){
+      restoreOriginalPositionsForGroup(selectedGroupKey, groupNodes);
+    } else {
+      spreadSelectedGroup(selectedGroupKey, groupNodes);
+    }
+    updateGraphPaths();
+    applyGroupSelectionState();
+    updateSpreadButtonLabel();
+    return;
+  }
+
+  spreadIndex=(spreadIndex+1)%SPREAD_LEVELS.length;
+  spreadMode=(spreadIndex>0);
+  e.target.textContent=SPREAD_LEVELS[spreadIndex].label;
+  if(current.nodes.length){
+    applySpreadOffsets(current.nodes, SPREAD_LEVELS[spreadIndex].params);
+    if (spreadIndex > 0) {
+      const scale = spreadIndex * 0.6;
+      applyRadialGroupLayout(current.nodes, { radiusBase: 12, radiusScale: scale });
+    }
+    usePositions(current.nodes, spreadMode);
+    render({
+      seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
+      nodes: current.nodes,
+      links: current.links,
+      lineageLinks: current.lineageLinks,
+      masterData: current.masterData,
+      indices: current.indices || { byEpc:{} },
+      coverage: current.coverage || {transformations:[], unresolved:{xformInputsWithoutPrehistory:[], xformOutputsWithoutPosthistory:[], danglingParentIds:[]}}, emissions: current.emissionsData
+    });
+  }
+});
+
+/* NEW: Toggle button for hiding ship→recv paths */
+document.getElementById("toggleShipRecvPaths").addEventListener("click", () => {
+  hideShipRecvPaths = !hideShipRecvPaths;
+  applyShipRecvHiding();
+  document.getElementById("toggleShipRecvPaths").textContent =
+    hideShipRecvPaths ? "Show Ship→Recv Paths" : "Hide Ship→Recv Paths";
+});
+
+/* NEW: Ribbon toggle */
+document.getElementById("toggleRibbon").addEventListener("click", () => {
+  setRibbonVisible(!showRibbon);
+});
+
+/* NEW: Hover panel toggle */
+document.getElementById("toggleEventTooltip").addEventListener("click", () => {
+  sidePaneMode = sidePaneMode === "legend" ? "event" : "legend";
+  hideTooltip();
+  renderSidePanel(current.nodes);
+  document.getElementById("toggleEventTooltip").textContent =
+    sidePaneMode === "legend" ? "Show Event Data" : "Show Legend";
+});
+
+document.getElementById("toggleMode").addEventListener("click", () => {
+  rendererMode = rendererMode === "sustainability" ? "time" : "sustainability";
+  document.getElementById("toggleMode").textContent = rendererMode === "sustainability" ? "Mode: Sustainability" : "Mode: Time";
+  timeByOrg = buildTimeByOrg(current.nodes);
+  renderSidePanel(current.nodes);
+  applyGroupSelectionState();
+  renderKpiBar();
+  gNodes.selectAll("g.node")
+    .classed("va", d => rendererMode === "time" && classifyNodeTime(d) === "va")
+    .classed("nva", d => rendererMode === "time" && classifyNodeTime(d) === "nva")
+    .classed("unknownva", d => rendererMode === "time" && classifyNodeTime(d) === "unknown");
+
+  gNodes.selectAll("text.time-badge")
+    .text(d => {
+      if (rendererMode !== "time") return "";
+      const cls = classifyNodeTime(d);
+      if (cls === "va") return "+";
+      if (cls === "nva") return "−";
+      return "";
+    })
+    .attr("class", d => {
+      if (rendererMode !== "time") return "time-badge hidden";
+      const cls = classifyNodeTime(d);
+      return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
+    })
+    .attr("x", d => Number.isFinite(d.fx) ? d.fx : (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d => Number.isFinite(d.fy) ? d.fy : (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  if (rendererMode === "sustainability") renderTempStrip();
+  updateSpreadButtonLabel();
+});
+
+document.getElementById("saveLayout").addEventListener("click", () => {
+  saveLayoutToLocFile();
+});
+
+document.getElementById("restoreLayout").addEventListener("click", () => {
+  document.getElementById("layoutInput").value = "";
+  document.getElementById("layoutInput").click();
+});
+
+document.getElementById("layoutInput").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if(!f) return;
+  await handleRestoreLayoutFile(f);
+});
+
+/* Update ribbon height on resize (only if visible) */
+window.addEventListener("resize", () => { if (showRibbon) syncRibbonHeight(); });
+
+/* -------------------- File loader -------------------- */
+document.getElementById("fileInput").addEventListener("change", async (e)=>{
+  const f = e.target.files?.[0];
+  if(!f) return;
+  try{
+    const txt = await f.text();
+    const json = JSON.parse(txt);
+    currentSourceFileName = f.name || null;
+    legendOrder = null;
+    localGroupSpread.clear();
+    localGroupOriginalPositions.clear();
+    selectedGroupKey = null;
+    selectedGroupSet = new Set();
+    render(json);
+    updateSpreadButtonLabel();
+    setBanner(`Loaded JSON: ${currentSourceFileName}`, true);
+  }catch(err){
+    setBanner("Failed to load JSON: " + (err?.message||err), false); console.error(err);
+  }
+});
+
+/* -------------------- Initial state -------------------- */
+setBanner("Load a v2.2.15-compliant JSON to render (File ▶︎ choose JSON). Lineage links are ON by default.", true);
+/* Initialize ribbon height based on current content */
+requestAnimationFrame(syncRibbonHeight);
+updateSpreadButtonLabel();
+</script>
+</body>
+</html>
