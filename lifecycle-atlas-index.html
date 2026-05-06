@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCI Supply Chain Opportunity Atlas</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --accent: #0f172a;
+      --border: #e2e8f0;
+      --pill: #eef2ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--accent);
+      color: white;
+      padding: 56px 32px;
+    }
+
+    header h1 {
+      margin: 0 0 16px;
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    header p {
+      max-width: 1000px;
+      font-size: 18px;
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    .controls {
+      padding: 24px 32px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .controls input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .card-summary {
+      padding: 28px;
+      cursor: pointer;
+    }
+
+    .card-summary:hover {
+      background: #fafafa;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .title-block h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      color: var(--accent);
+    }
+
+    .category {
+      display: inline-block;
+      background: var(--pill);
+      color: #3730a3;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .summary-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .summary-item {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid #edf2f7;
+    }
+
+    .summary-item h3 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+    }
+
+    .summary-item p {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .details {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 28px;
+      background: #fcfcfd;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .detail-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .detail-section h4 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      font-size: 16px;
+      color: var(--accent);
+    }
+
+    .detail-row {
+      margin-bottom: 14px;
+    }
+
+    .detail-row strong {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-row span {
+      font-size: 14px;
+    }
+
+    .footer-note {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 30px;
+      }
+
+      .container,
+      .controls,
+      header {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Supply Chain Lifecycle Treaceability Index</h1>
+    <p>
+      Supply chains generate enormous volumes of operational data, yet most organisations still struggle to reconstruct what actually happened to a product, material, asset, or shipment across its full lifecycle. The structural failure is remarkably consistent across industries:
+    </p>
+    <p>
+      This index is representative, not exhaustive. It demonstrates how lifecycle traceability creates different forms of operational, financial, strategic, and trust-based value across different supply chain archetypes. In some industries the issue is provenance. In others it is emissions, authenticity, recall precision, lifecycle time, asset utilisation, regulatory defensibility, resilience, or circularity. What changes between industries is the economic expression of the problem. What remains consistent is the need to convert fragmented operational events into continuous, verifiable lifecycle intelligence.
+Our solution, the Value Chain Integrator (VCI), addresses this gap by creating an event-level chain of custody across organisations, products, assets, locations, and time. The opportunity is not simply better visibility. It is the ability to coordinate supply chains around what actually happened, what is happening now, and what can be trusted for decision-making.
+Traceability is not a niche compliance capability. It is a cross-industry operational and financial coordination layer.
+    </p>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Search archetypes, industries, products, or business drivers..." />
+  </div>
+
+  <div class="container" id="atlasContainer"></div>
+
+  <div class="footer-note">
+    Representative industry archetypes only. The purpose of this atlas is to demonstrate how lifecycle visibility creates materially different forms of operational and financial value across supply chains.
+    Click any industry archetype to expand a more detailed view of the lifecycle challenges, business drivers, operational pressures, and strategic value associated with that supply chain pattern.
+  </div>
+
+  <script>
+    let atlasData = [];
+
+   async function loadData() {
+  try {
+    const response = await fetch('lifecycle-index-v1.json');
+    const rawData = await response.json();
+    atlasData = rawData.archetypes;
+    renderCards(atlasData);
+  } catch (error) {
+        document.getElementById('atlasContainer').innerHTML = `
+          <div class="card">
+            <div class="card-summary">
+              <h2>Unable to load the data file</h2>
+              <p>Please contact us.</p>
+            </div>
+          </div>
+        `;
+        console.error(error);
+      }
+    }
+
+    function createList(value) {
+      if (Array.isArray(value)) {
+        return value.join(', ');
+      }
+      return value || '—';
+    }
+
+    function renderCards(data) {
+      const container = document.getElementById('atlasContainer');
+
+      container.innerHTML = data.map((item, index) => `
+        <div class="card">
+          <div class="card-summary" onclick="toggleDetails(${index})">
+            <div class="top-row">
+              <div class="title-block">
+                <div class="category">${item.category || 'Industry Archetype'}</div>
+                <h2>${item.archetype}</h2>
+              </div>
+            </div>
+
+            <div class="summary-grid">
+              <div class="summary-item">
+                <h3>Why Traceability Matters</h3>
+                <p>${item.whyTraceabilityMatters || '—'}</p>
+              </div>
+
+              <div class="summary-item">
+                <h3>Primary Economic Driver</h3>
+                <p>${item.primaryEconomicDriver || '—'}</p>
+              </div>
+
+              <div class="summary-item">
+                <h3>Measurable Business Outcomes</h3>
+                <p>${createList(item.measurableBusinessOutcomes)}</p>
+              </div>
+
+              <div class="summary-item">
+                <h3>Strategic Narrative</h3>
+                <p>${item.strategicNarrative || '—'}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="details" id="details-${index}">
+            <div class="details-grid">
+
+              <div class="detail-section">
+                <h4>Industry Context</h4>
+
+                <div class="detail-row">
+                  <strong>Industries</strong>
+                  <span>${createList(item.industries)}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Representative Products</strong>
+                  <span>${createList(item.products)}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Lifecycle Model Type</strong>
+                  <span>${item.lifecycleModelType || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Ecosystem Complexity</strong>
+                  <span>${item.ecosystemComplexity || '—'}</span>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <h4>Operational Challenges</h4>
+
+                <div class="detail-row">
+                  <strong>Core Lifecycle Challenge</strong>
+                  <span>${item.coreLifecycleChallenge || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Where Truth Breaks Today</strong>
+                  <span>${item.whereTruthBreaksToday || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Why Current Models Plateau</strong>
+                  <span>${item.whyCurrentModelsPlateau || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Dominant Operational Friction</strong>
+                  <span>${item.dominantOperationalFriction || '—'}</span>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <h4>Business & Financial Value</h4>
+
+                <div class="detail-row">
+                  <strong>Balance Sheet Impact</strong>
+                  <span>${item.balanceSheetImpact || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Working Capital Relevance</strong>
+                  <span>${item.workingCapitalRelevance || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Revenue Protection Potential</strong>
+                  <span>${item.revenueProtectionPotential || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Inventory Optimisation Potential</strong>
+                  <span>${item.inventoryOptimisationPotential || '—'}</span>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <h4>Strategic Positioning</h4>
+
+                <div class="detail-row">
+                  <strong>Dominant Pressure Type</strong>
+                  <span>${item.dominantPressureType || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Primary Strategic Buyer</strong>
+                  <span>${item.primaryStrategicBuyer || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>VCI Strategic Contribution</strong>
+                  <span>${item.vciStrategicContribution || '—'}</span>
+                </div>
+
+                <div class="detail-row">
+                  <strong>Representative Use Cases</strong>
+                  <span>${createList(item.representativeUseCases)}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleDetails(index) {
+      const details = document.getElementById(`details-${index}`);
+      details.style.display = details.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const term = e.target.value.toLowerCase();
+
+      const filtered = atlasData.filter(item => {
+        return JSON.stringify(item).toLowerCase().includes(term);
+      });
+
+      renderCards(filtered);
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
