@@ -12,24 +12,24 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Perspectives | LXNDigital</title>
-    <meta name="title" content="Perspectives | LXNDigital">
-    <meta name="description" content="Executive perspectives from LXNDigital on lifecycle intelligence, operational truth, traceability, supply chain resilience, and the coordination challenges created by globalisation.">
+    <title>Articles | LXNDigital</title>
+    <meta name="title" content="Articles | LXNDigital">
+    <meta name="description" content="Executive insights from LXNDigital on lifecycle intelligence, operational truth, traceability, supply chain resilience, and the coordination challenges created by globalisation.">
     <meta name="author" content="Levine Naidoo">
-    <link rel="canonical" href="https://www.lxndigital.com/perspectives.html">
+    <link rel="canonical" href="https://www.lxndigital.com/articles.html">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.lxndigital.com/perspectives.html">
-    <meta property="og:title" content="Perspectives | LXNDigital">
-    <meta property="og:description" content="Executive perspectives on lifecycle intelligence, operational truth, traceability, supply chain resilience, and globalisation's coordination challenge.">
+    <meta property="og:url" content="https://www.lxndigital.com/articles.html">
+    <meta property="og:title" content="Articles | LXNDigital">
+    <meta property="og:description" content="Executive insights on lifecycle intelligence, operational truth, traceability, supply chain resilience, and globalisation's coordination challenge.">
     <meta property="og:image" content="https://www.lxndigital.com/assets/img/LXNDigitalOG.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.lxndigital.com/perspectives.html">
-    <meta property="twitter:title" content="Perspectives | LXNDigital">
-    <meta property="twitter:description" content="Executive perspectives on lifecycle intelligence, operational truth, traceability, supply chain resilience, and globalisation's coordination challenge.">
+    <meta property="twitter:url" content="https://www.lxndigital.com/articles.html">
+    <meta property="twitter:title" content="Articles | LXNDigital">
+    <meta property="twitter:description" content="Executive insights on lifecycle intelligence, operational truth, traceability, supply chain resilience, and globalisation's coordination challenge.">
     <meta property="twitter:image" content="https://www.lxndigital.com/assets/img/LXNDigitalOG.jpg">
 
     <!-- Favicon-->
@@ -129,24 +129,32 @@
             </a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="index.html#supplychain">Our Offerings</a></li>
-                    <li class="nav-item"><a class="nav-link" href="perspectives.html">Perspectives</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#approach">Approach</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#aboutus">About Us &amp; Contact</a></li>
-                </ul>
-            </div>
+                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="index.html#offerings">Our Offerings</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="perspectivesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Perspectives
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="perspectivesDropdown">
+                                <li><a class="dropdown-item" href="lifecycle-index.html">Lifecycle Traceability Index</a></li>
+                                <li><a class="dropdown-item" href="articles.html">Articles</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#approach">Approach</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#aboutus">About Us & Contact</a></li>
+                    </ul>
+                </div>
         </div>
     </nav>
 
     <section class="page-section" id="perspectives">
         <div class="container px-4 px-lg-5">
             <div class="perspectives-intro">
-                <h2>Perspectives</h2>
+                <h2>Articles</h2>
                 <hr class="divider" />
 
                 <p class="text-faded perspectives-lede mb-4">
-                    Executive perspectives on lifecycle intelligence, operational truth, traceability, and the coordination challenges created by globalisation.
+                    Executive insights on lifecycle intelligence, operational truth, traceability, and the coordination challenges created by globalisation.
                 </p>
 
                 <p class="text-faded mb-5">
@@ -173,7 +181,7 @@
     <script>
         async function loadPerspectives() {
             try {
-                const response = await fetch('perspectives.json');
+                const response = await fetch('articles.json');
                 const data = await response.json();
                 renderPerspectives(data.articles || []);
             } catch (error) {
