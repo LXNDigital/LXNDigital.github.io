@@ -1,60 +1,11 @@
 {
   "articles": [
     {
-      "title": "The Fracture of Time in Globalisation",
-      "category": "Lifecycle Intelligence",
-      "theme": "Globalisation, coordination, lifecycle continuity",
-      "highlight": "Globalisation connected supply chains physically but fractured them operationally across organisations, systems, and time. This article explores why fragmented visibility has become a structural coordination problem, and why lifecycle intelligence is emerging as the missing operational layer.",
-      "url": "https://insights.lxndigital.com/p/the-fracture-of-time-in-globalisation"
-    },
-    {
-      "title": "Why Control Towers Have Underdelivered",
-      "category": "Operational Truth",
-      "theme": "Control towers, visibility, decision confidence",
-      "highlight": "Most control towers aggregate signals but fail to reconstruct lifecycle continuity. This article explains why visibility alone does not create operational truth, and why fragmented timelines continue to limit resilience, coordination, and decision confidence.",
-      "url": "https://insights.lxndigital.com/p/why-control-towers-have-underdelivered"
-    },
-    {
-      "title": "Protecting Supply Chain Investment",
-      "category": "Business Performance",
-      "theme": "Investment protection, resilience, capital allocation",
-      "highlight": "Supply chain investment increasingly depends on trusted operational visibility across ecosystems. This article examines how lifecycle traceability strengthens resilience, protects capital allocation, improves accountability, and reduces exposure created by fragmented operational data.",
-      "url": "https://insights.lxndigital.com/p/protecting-supply-chain-investment"
-    },
-    {
-      "title": "Why Supply Chains Struggle to Prove What Happened",
-      "category": "Traceability",
-      "theme": "Proof, provenance, event-level continuity",
-      "highlight": "Most supply chains can document transactions but still struggle to reconstruct what actually happened across products, assets, organisations, and time. This article begins with what the day looks like without event-level lifecycle continuity and why current traceability models plateau.",
-      "url": "https://insights.lxndigital.com/p/why-supply-chains-struggle-to-prove"
-    },
-    {
-      "title": "What the Day Looks Like When Lifecycle Truth Exists",
-      "category": "Lifecycle Truth",
-      "theme": "Decision-making, AI, enterprise performance",
-      "highlight": "What changes when organisations can continuously reconstruct operational reality across the lifecycle? This article explores how lifecycle truth transforms decision-making, operational coordination, resilience, and AI-enabled enterprise performance.",
-      "url": "https://insights.lxndigital.com/p/what-the-day-looks-like-when-lifecycle"
-    },
-    {
-      "title": "Reconstructing Lifecycle Truth in Critical Mineral Supply Chains",
-      "category": "Lifecycle Truth & Operational Coordination",
-      "theme": "Lifecycle Truth & Critical Minerals",
-      "highlight": "Critical mineral supply chains increasingly depend on proving provenance, ESG performance, and chain-of-custody continuity across fragmented global ecosystems. This article explores why current coordination models struggle to preserve lifecycle continuity, and how event-level traceability creates a continuous, verifiable operational picture across extraction, processing, transport, and manufacturing.",
-      "url": "https://insights.lxndigital.com/p/reconstructing-lifecycle-truth-in"
-    },
-    {
-      "title": "Net-Zero Cannot Simply Become a Future Generation’s Problem",
-      "category": "Sustainability & Lifecycle Intelligence",
-      "theme": "Net-zero, lifecycle impacts, operational truth",
-      "highlight": "Net-zero ambitions increasingly depend on understanding what actually happens across fragmented global value chains. This article explores why sustainability disclosure struggles without lifecycle continuity, and why event-level traceability is emerging as critical infrastructure for operationally grounded emissions intelligence.",
-      "url": "https://insights.lxndigital.com/p/net-zero-cannot-simply-become-a-future"
-    },
-    {
-      "title": "The Hidden Coordination Crisis Beneath Net-Zero",
-      "category": "Sustainability & Lifecycle Intelligence",
-      "theme": "Net-zero, coordination, lifecycle continuity",
-      "highlight": "Net-zero is no longer simply an emissions problem. This article explores why the transition now depends on coordination and continuity infrastructure that can outlast executives, boards, governments, and reporting cycles.",
-      "url": "https://insights.lxndigital.com/p/the-hidden-coordination-crisis-beneath"
+      "title": "Scope 3 May Be the Most Misunderstood Dataset in the Enterprise",
+      "category": "Sustainability & Business Performance",
+      "theme": "Scope 3, operational intelligence, lifecycle visibility",
+      "highlight": "The information required to understand emissions is also information about how products move, how suppliers perform, how logistics networks behave, where costs accumulate, and where operational risks emerge across the value chain.This article explores why Scope 3 may be one of the richest sources of operational intelligence in the enterprise.",
+      "url": "https://insights.lxndigital.com/p/scope-3-may-be-the-most-misunderstood"
     },
     {
       "title": "The Balance Sheet Is Absorbing the Cost of Fragmented Coordination",
@@ -64,11 +15,60 @@
       "url": "https://insights.lxndigital.com/p/the-balance-sheet-is-absorbing-the"
     },
     {
-      "title": "Scope 3 May Be the Most Misunderstood Dataset in the Enterprise",
-      "category": "Sustainability & Business Performance",
-      "theme": "Scope 3, operational intelligence, lifecycle visibility",
-      "highlight": "The information required to understand emissions is also information about how products move, how suppliers perform, how logistics networks behave, where costs accumulate, and where operational risks emerge across the value chain.This article explores why Scope 3 may be one of the richest sources of operational intelligence in the enterprise.",
-      "url": "https://insights.lxndigital.com/p/scope-3-may-be-the-most-misunderstood"
+      "title": "The Hidden Coordination Crisis Beneath Net-Zero",
+      "category": "Sustainability & Lifecycle Intelligence",
+      "theme": "Net-zero, coordination, lifecycle continuity",
+      "highlight": "Net-zero is no longer simply an emissions problem. This article explores why the transition now depends on coordination and continuity infrastructure that can outlast executives, boards, governments, and reporting cycles.",
+      "url": "https://insights.lxndigital.com/p/the-hidden-coordination-crisis-beneath"
+    },
+    {
+      "title": "Net-Zero Cannot Simply Become a Future Generation’s Problem",
+      "category": "Sustainability & Lifecycle Intelligence",
+      "theme": "Net-zero, lifecycle impacts, operational truth",
+      "highlight": "Net-zero ambitions increasingly depend on understanding what actually happens across fragmented global value chains. This article explores why sustainability disclosure struggles without lifecycle continuity, and why event-level traceability is emerging as critical infrastructure for operationally grounded emissions intelligence.",
+      "url": "https://insights.lxndigital.com/p/net-zero-cannot-simply-become-a-future"
+    },
+    {
+      "title": "Reconstructing Lifecycle Truth in Critical Mineral Supply Chains",
+      "category": "Lifecycle Truth & Operational Coordination",
+      "theme": "Lifecycle Truth & Critical Minerals",
+      "highlight": "Critical mineral supply chains increasingly depend on proving provenance, ESG performance, and chain-of-custody continuity across fragmented global ecosystems. This article explores why current coordination models struggle to preserve lifecycle continuity, and how event-level traceability creates a continuous, verifiable operational picture across extraction, processing, transport, and manufacturing.",
+      "url": "https://insights.lxndigital.com/p/reconstructing-lifecycle-truth-in"
+    },
+    {
+      "title": "What the Day Looks Like When Lifecycle Truth Exists",
+      "category": "Lifecycle Truth",
+      "theme": "Decision-making, AI, enterprise performance",
+      "highlight": "What changes when organisations can continuously reconstruct operational reality across the lifecycle? This article explores how lifecycle truth transforms decision-making, operational coordination, resilience, and AI-enabled enterprise performance.",
+      "url": "https://insights.lxndigital.com/p/what-the-day-looks-like-when-lifecycle"
+    },
+    {
+      "title": "Why Supply Chains Struggle to Prove What Happened",
+      "category": "Traceability",
+      "theme": "Proof, provenance, event-level continuity",
+      "highlight": "Most supply chains can document transactions but still struggle to reconstruct what actually happened across products, assets, organisations, and time. This article begins with what the day looks like without event-level lifecycle continuity and why current traceability models plateau.",
+      "url": "https://insights.lxndigital.com/p/why-supply-chains-struggle-to-prove"
+    },
+    {
+      "title": "Protecting Supply Chain Investment",
+      "category": "Business Performance",
+      "theme": "Investment protection, resilience, capital allocation",
+      "highlight": "Supply chain investment increasingly depends on trusted operational visibility across ecosystems. This article examines how lifecycle traceability strengthens resilience, protects capital allocation, improves accountability, and reduces exposure created by fragmented operational data.",
+      "url": "https://insights.lxndigital.com/p/protecting-supply-chain-investment"
+    },
+    {
+      "title": "Why Control Towers Have Underdelivered",
+      "category": "Operational Truth",
+      "theme": "Control towers, visibility, decision confidence",
+      "highlight": "Most control towers aggregate signals but fail to reconstruct lifecycle continuity. This article explains why visibility alone does not create operational truth, and why fragmented timelines continue to limit resilience, coordination, and decision confidence.",
+      "url": "https://insights.lxndigital.com/p/why-control-towers-have-underdelivered"
+    },
+    {
+      "title": "The Fracture of Time in Globalisation",
+      "category": "Lifecycle Intelligence",
+      "theme": "Globalisation, coordination, lifecycle continuity",
+      "highlight": "Globalisation connected supply chains physically but fractured them operationally across organisations, systems, and time. This article explores why fragmented visibility has become a structural coordination problem, and why lifecycle intelligence is emerging as the missing operational layer.",
+      "url": "https://insights.lxndigital.com/p/the-fracture-of-time-in-globalisation"
     }
   ]
 }
