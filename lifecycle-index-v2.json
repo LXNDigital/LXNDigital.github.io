@@ -1,0 +1,2558 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetName": "Supply Chain Lifecycle Continuity Opportunity Atlas",
+  "assetPurpose": "Customer-facing archetype model illustrating how lifecycle continuity creates strategic, operational, financial and trust-based value across supply chains.",
+  "positioningStatement": "Supply chains are among the largest under-instrumented systems in the global economy. Organisations have digitised transactions, documents and status updates, but most still cannot reconstruct what actually happened to products, materials, assets or shipments across time. This atlas is representative rather than exhaustive. It shows where lifecycle continuity creates strategic, operational, financial and trust-based value by converting fragmented operational events into continuous lifecycle intelligence.",
+  "recommendedUiLayers": {
+    "layer1ExecutiveCardFields": [
+      "archetype",
+      "category",
+      "whyLifecycleContinuityMatters",
+      "primaryEconomicDriver",
+      "continuityFailureCost",
+      "measurableBusinessOutcomes",
+      "strategicNarrative",
+      "dominantPressureType",
+      "primaryStrategicBuyer",
+      "strategicUrgency"
+    ],
+    "layer2ExpandedDetailFields": [
+      "coreLifecycleChallenge",
+      "whereTruthBreaksToday",
+      "dominantOperationalFriction",
+      "whyCurrentModelsPlateau",
+      "ecosystemComplexity",
+      "transformationComplexity",
+      "lifecycleTimeSensitivity",
+      "operationalVisibilityMaturity",
+      "vciStrategicContribution",
+      "balanceSheetImpact",
+      "representativeUseCases",
+      "representativeDemonstrations"
+    ]
+  },
+  "fieldCountPerArchetype": 41,
+  "archetypeCount": 25,
+  "fields": [
+    "id",
+    "archetype",
+    "category",
+    "industries",
+    "products",
+    "tags",
+    "strategicUrgency",
+    "whyLifecycleContinuityMatters",
+    "primaryEconomicDriver",
+    "continuityFailureCost",
+    "measurableBusinessOutcomes",
+    "strategicNarrative",
+    "dominantPressureType",
+    "primaryStrategicBuyer",
+    "coreLifecycleChallenge",
+    "whereTruthBreaksToday",
+    "dominantOperationalFriction",
+    "whyCurrentModelsPlateau",
+    "ecosystemComplexity",
+    "transformationComplexity",
+    "lifecycleTimeSensitivity",
+    "operationalVisibilityMaturity",
+    "vciStrategicContribution",
+    "lifecycleModelType",
+    "balanceSheetImpact",
+    "workingCapitalRelevance",
+    "revenueProtectionPotential",
+    "emissionsVisibilityPotential",
+    "inventoryOptimisationPotential",
+    "resilienceContribution",
+    "premiumPricingPotential",
+    "representativeUseCases",
+    "representativeDemonstrations",
+    "representativeOrganisations",
+    "typicalEventTypes",
+    "aiDecisionSupportPotential",
+    "digitalTwinRelevance",
+    "controlTowerRelevance",
+    "circularEconomyEnablement",
+    "futurePressureTrajectory",
+    "keywords"
+  ],
+  "archetypes": [
+    {
+      "id": "aerospace_defence",
+      "archetype": "Aerospace & Defence",
+      "category": "Regulated critical assets",
+      "industries": [
+        "Commercial aviation",
+        "Defence logistics",
+        "Aircraft maintenance",
+        "Space and mission systems"
+      ],
+      "products": [
+        "Engines",
+        "Rotables",
+        "Avionics",
+        "Mission critical spares",
+        "Serialized components"
+      ],
+      "tags": [
+        "safety",
+        "serialized assets",
+        "maintenance",
+        "defence",
+        "mission readiness"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because asset history, maintenance integrity and custody confidence directly affect safety, mission readiness and regulatory defensibility.",
+      "primaryEconomicDriver": "Higher asset availability and lower disruption cost through trusted component history.",
+      "continuityFailureCost": "Asset downtime, investigation delays, spare inventory inflation, quarantine costs and reduced mission readiness.",
+      "measurableBusinessOutcomes": [
+        "Reduced aircraft on ground events",
+        "Improved spare part availability",
+        "Faster maintenance investigation",
+        "Lower quarantine scope",
+        "Higher asset utilisation"
+      ],
+      "strategicNarrative": "Can every critical asset prove its operational history?",
+      "dominantPressureType": "Safety, sovereignty and operational assurance",
+      "primaryStrategicBuyer": [
+        "Chief Operations Officer",
+        "Head of Engineering",
+        "Defence logistics leadership",
+        "Quality and airworthiness executives"
+      ],
+      "coreLifecycleChallenge": "Serialized parts move across manufacturers, operators, maintenance providers and depots, but the operational history is often fragmented across systems and organisations.",
+      "whereTruthBreaksToday": "Truth breaks when maintenance events, inspections, custody changes and usage history sit in separate records that are difficult to reconcile at asset or component level.",
+      "dominantOperationalFriction": "Long investigation cycles, part quarantines, duplicate spares and uncertainty over serviceability.",
+      "whyCurrentModelsPlateau": "Asset management and maintenance systems are strong inside organisational boundaries, but they rarely create a shared lifecycle record that travels with the part across the ecosystem.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "High but fragmented",
+      "vciStrategicContribution": "VCI creates a persistent event level chain of custody for assets, components, inspections, movement and maintenance events across organisational boundaries.",
+      "lifecycleModelType": "Serialized asset lifecycle",
+      "balanceSheetImpact": "Improves return on assets by reducing downtime, increasing utilisation and lowering contingency spares held against uncertainty.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Aircraft component provenance",
+        "Mission critical spares readiness",
+        "Maintenance custody history",
+        "Counterfeit part prevention"
+      ],
+      "representativeDemonstrations": [
+        "Serialized engine component lifecycle",
+        "Defence spares chain of custody"
+      ],
+      "representativeOrganisations": [
+        "Airlines",
+        "Aerospace OEMs",
+        "MRO providers",
+        "Defence agencies"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "shipping",
+        "receiving",
+        "inspection",
+        "repair",
+        "installation",
+        "decommissioning"
+      ],
+      "aiDecisionSupportPotential": "High. Trusted lifecycle history improves maintenance prioritisation, spares planning, reliability analysis and risk based release decisions.",
+      "digitalTwinRelevance": "Very High",
+      "controlTowerRelevance": "High",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as asset assurance, sovereign resilience and predictive maintenance converge.",
+      "keywords": [
+        "aerospace lifecycle continuity",
+        "defence logistics",
+        "serialized asset history",
+        "maintenance provenance",
+        "mission readiness"
+      ]
+    },
+    {
+      "id": "automotive_manufacturing",
+      "archetype": "Automotive Manufacturing",
+      "category": "Complex manufacturing",
+      "industries": [
+        "Automotive OEMs",
+        "Electric vehicles",
+        "Tier suppliers",
+        "Aftermarket parts"
+      ],
+      "products": [
+        "Vehicles",
+        "Batteries",
+        "Engines",
+        "Electronics",
+        "Safety components"
+      ],
+      "tags": [
+        "automotive",
+        "components",
+        "recall",
+        "supplier tiers",
+        "EV"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because vehicle quality, recall precision and ESG claims depend on knowing which components, materials and suppliers contributed to each finished unit.",
+      "primaryEconomicDriver": "Lower recall cost, stronger supplier assurance and faster response to quality incidents.",
+      "continuityFailureCost": "Broad recalls, warranty leakage, supplier dispute costs, production interruptions and excess inventory buffers.",
+      "measurableBusinessOutcomes": [
+        "Smaller recall populations",
+        "Lower warranty leakage",
+        "Improved supplier containment",
+        "Faster quality root cause analysis",
+        "Better component availability"
+      ],
+      "strategicNarrative": "Can vehicles prove the history of every critical component?",
+      "dominantPressureType": "Safety, resilience and ESG",
+      "primaryStrategicBuyer": [
+        "Chief Supply Chain Officer",
+        "Chief Manufacturing Officer",
+        "Quality leadership",
+        "Procurement leadership"
+      ],
+      "coreLifecycleChallenge": "Vehicles are assembled from deep tier components whose material, process and custody histories are often obscured before final assembly.",
+      "whereTruthBreaksToday": "Truth breaks across supplier tiers, batch substitutions, component aggregation and handoffs between manufacturing, logistics and aftermarket channels.",
+      "dominantOperationalFriction": "Recall overreach, supplier dispute cycles, delayed containment and uncertain material provenance.",
+      "whyCurrentModelsPlateau": "ERP, supplier portals and quality systems capture transactions and inspections, but do not consistently preserve component to vehicle lifecycle continuity.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "High inside plants, medium across tiers",
+      "vciStrategicContribution": "VCI links component, batch, shipment and assembly events into a coherent lineage from supplier network to finished vehicle and aftermarket service.",
+      "lifecycleModelType": "Component assembly and serialized product lifecycle",
+      "balanceSheetImpact": "Reduces warranty provisions, excess safety stock and revenue disruption from broad recalls or production holds.",
+      "workingCapitalRelevance": "High",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "High",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Battery pack lineage",
+        "Safety component recall containment",
+        "Tier supplier ESG provenance",
+        "Aftermarket authenticity"
+      ],
+      "representativeDemonstrations": [
+        "EV battery to vehicle component map",
+        "Recall precision scenario"
+      ],
+      "representativeOrganisations": [
+        "Automotive OEMs",
+        "Tier 1 suppliers",
+        "Battery manufacturers",
+        "Aftermarket distributors"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "transformation",
+        "aggregation",
+        "shipping",
+        "receiving",
+        "inspection",
+        "installation"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle truth supports predictive quality, supplier risk sensing, shortage response and recall decision support.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "High",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Increasing with EV scale, battery regulation, product passports and geopolitical supply risk.",
+      "keywords": [
+        "automotive lifecycle continuity",
+        "EV supply chain",
+        "component lineage",
+        "recall precision",
+        "battery passport"
+      ]
+    },
+    {
+      "id": "battery_minerals",
+      "archetype": "Battery Minerals",
+      "category": "Critical materials",
+      "industries": [
+        "Mining",
+        "Battery materials",
+        "Refining",
+        "EV supply chains"
+      ],
+      "products": [
+        "Lithium",
+        "Cobalt",
+        "Nickel",
+        "Graphite",
+        "Manganese"
+      ],
+      "tags": [
+        "battery passport",
+        "mine to battery",
+        "ESG",
+        "critical minerals",
+        "origin"
+      ],
+      "strategicUrgency": "Very High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because market access, customer trust and responsible sourcing increasingly depend on proving mineral origin, custody, ESG integrity and transformation history.",
+      "primaryEconomicDriver": "Trusted access to premium battery, automotive and energy storage markets.",
+      "continuityFailureCost": "Market access delays, assurance overhead, provenance disputes, risk discounts and slower commercial qualification.",
+      "measurableBusinessOutcomes": [
+        "Improved buyer confidence",
+        "Reduced provenance dispute risk",
+        "Faster due diligence",
+        "Lower audit cost",
+        "Stronger eligibility for strategic supply agreements"
+      ],
+      "strategicNarrative": "Can we prove trusted industrial origin?",
+      "dominantPressureType": "ESG, battery passport and geopolitical assurance",
+      "primaryStrategicBuyer": [
+        "Chief Commercial Officer",
+        "Chief Sustainability Officer",
+        "Chief Operations Officer",
+        "Government and industrial strategy leaders"
+      ],
+      "coreLifecycleChallenge": "Battery minerals pass through extraction, concentration, refining, blending and logistics stages where physical identity and provenance can become increasingly difficult to defend.",
+      "whereTruthBreaksToday": "Truth breaks when mine lots, concentrates, shipments and refined outputs are blended or transformed without a continuous event record linking inputs to outputs.",
+      "dominantOperationalFriction": "Provenance uncertainty, audit fatigue, buyer hesitation and long document based assurance cycles.",
+      "whyCurrentModelsPlateau": "Certificates, audits and shipment records can evidence specific claims, but they do not reconstruct the full material lifecycle across extraction, processing and movement.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Very High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI creates mine to battery chain of custody by linking extraction, processing, blending, shipment and receipt events into a defensible lifecycle record.",
+      "lifecycleModelType": "Bulk and batch transformation lifecycle",
+      "balanceSheetImpact": "Supports higher confidence offtake, reduces risk discounts and improves working capital confidence by making custody and quality status clearer across the corridor.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "High",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "Mine to cathode precursor provenance",
+        "Responsible cobalt assurance",
+        "Lithium shipment custody",
+        "Battery passport evidence layer"
+      ],
+      "representativeDemonstrations": [
+        "Lithium chain of custody demo",
+        "Copper and cobalt corridor scenario"
+      ],
+      "representativeOrganisations": [
+        "Mining companies",
+        "Refiners",
+        "Battery manufacturers",
+        "Automotive OEMs",
+        "Commodity traders"
+      ],
+      "typicalEventTypes": [
+        "extraction",
+        "commissioning",
+        "transformation",
+        "aggregation",
+        "shipping",
+        "receiving",
+        "inspection"
+      ],
+      "aiDecisionSupportPotential": "High. Trusted lifecycle data improves supplier selection, assurance prioritisation, route risk analysis and ESG exception handling.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Accelerating as battery passports, responsible sourcing and mineral security become mainstream requirements.",
+      "keywords": [
+        "battery minerals lifecycle continuity",
+        "critical minerals lifecycle intelligence",
+        "lithium provenance",
+        "cobalt chain of custody",
+        "battery passport",
+        "responsible sourcing",
+        "industrial traceability",
+        "critical minerals supply chain",
+        "operational continuity",
+        "supply chain resilience"
+      ]
+    },
+    {
+      "id": "carbon_environmental_markets",
+      "archetype": "Carbon & Environmental Markets",
+      "category": "Environmental attributes",
+      "industries": [
+        "Carbon markets",
+        "Renewable certificates",
+        "Sustainable aviation fuel",
+        "Environmental commodities"
+      ],
+      "products": [
+        "Carbon credits",
+        "Book and claim certificates",
+        "SAF attributes",
+        "Renewable energy certificates"
+      ],
+      "tags": [
+        "carbon",
+        "environmental claims",
+        "certificates",
+        "SAF",
+        "market integrity"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because environmental claims only retain value when they can be linked to credible operational evidence rather than treated as detached certificates.",
+      "primaryEconomicDriver": "Higher trust, lower invalidation risk and stronger market integrity for environmental attributes.",
+      "continuityFailureCost": "Claim challenges, certificate devaluation, verification overhead, reputational exposure and reduced buyer confidence.",
+      "measurableBusinessOutcomes": [
+        "Reduced claim challenge risk",
+        "Improved audit readiness",
+        "Lower verification effort",
+        "Higher confidence in certificate quality",
+        "Better buyer differentiation"
+      ],
+      "strategicNarrative": "Can environmental claims be operationally defended?",
+      "dominantPressureType": "Market integrity, carbon assurance and green claim scrutiny",
+      "primaryStrategicBuyer": [
+        "Chief Sustainability Officer",
+        "Trading leadership",
+        "Risk and compliance executives",
+        "Corporate procurement"
+      ],
+      "coreLifecycleChallenge": "Environmental attributes are often separated from the physical events, assets and activities that created them.",
+      "whereTruthBreaksToday": "Truth breaks when credits, certificates or claims move independently from the underlying operational evidence and lifecycle context.",
+      "dominantOperationalFriction": "Green claim disputes, double counting risk, weak assurance evidence and buyer scepticism.",
+      "whyCurrentModelsPlateau": "Registries can track issuance and ownership, but they often do not preserve operational lineage from activity to attribute to claim.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "Low",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI connects environmental attributes to the event history that generated them, making claims more inspectable, comparable and defensible.",
+      "lifecycleModelType": "Environmental attribute lineage",
+      "balanceSheetImpact": "Reduces impairment and reputational risk attached to environmental assets and strengthens confidence in procurement, tenders and financing decisions.",
+      "workingCapitalRelevance": "Low",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Very High",
+      "inventoryOptimisationPotential": "Low",
+      "resilienceContribution": "Medium",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "SAF attribute lifecycle continuity",
+        "Carbon credit evidence chain",
+        "Shipment level Scope 3 ledger",
+        "Renewable certificate assurance"
+      ],
+      "representativeDemonstrations": [
+        "Operational carbon ledger demo",
+        "Environmental attribute provenance scenario"
+      ],
+      "representativeOrganisations": [
+        "Carbon registries",
+        "Airlines",
+        "Energy companies",
+        "Corporate buyers",
+        "Assurance providers"
+      ],
+      "typicalEventTypes": [
+        "generation",
+        "verification",
+        "assignment",
+        "transfer",
+        "retirement",
+        "claim"
+      ],
+      "aiDecisionSupportPotential": "Medium. Better evidence enables claim risk scoring, portfolio quality analysis and automated exception detection.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "Low",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing sharply as green claim scrutiny and carbon market integrity requirements mature.",
+      "keywords": [
+        "carbon lifecycle continuity",
+        "environmental claims",
+        "SAF certificates",
+        "Scope 3 evidence",
+        "carbon market integrity"
+      ]
+    },
+    {
+      "id": "chemicals_industrial_inputs",
+      "archetype": "Chemicals & Industrial Inputs",
+      "category": "Process industries",
+      "industries": [
+        "Specialty chemicals",
+        "Industrial ingredients",
+        "Paints and coatings",
+        "Agricultural inputs"
+      ],
+      "products": [
+        "Solvents",
+        "Additives",
+        "Resins",
+        "Fertilisers",
+        "Specialty ingredients"
+      ],
+      "tags": [
+        "batch",
+        "mixing",
+        "regulated inputs",
+        "quality",
+        "safety"
+      ],
+      "strategicUrgency": "Medium",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because batch composition, transformation history and handling conditions affect compliance, safety, product performance and customer confidence.",
+      "primaryEconomicDriver": "Lower quality exposure, faster incident containment and stronger customer assurance.",
+      "continuityFailureCost": "Extended quality investigations, batch write-offs, customer claims, inventory holds and regulatory exposure.",
+      "measurableBusinessOutcomes": [
+        "Reduced batch investigation time",
+        "Lower recall scope",
+        "Improved yield confidence",
+        "Lower compliance effort",
+        "Fewer customer disputes"
+      ],
+      "strategicNarrative": "Can industrial chemistry preserve lifecycle truth?",
+      "dominantPressureType": "Compliance, safety and product assurance",
+      "primaryStrategicBuyer": [
+        "Chief Operations Officer",
+        "Quality leadership",
+        "Regulatory affairs",
+        "Commercial account leadership"
+      ],
+      "coreLifecycleChallenge": "Industrial inputs are blended, reacted, repacked and distributed through batch based processes where input to output lineage can become difficult to explain outside the plant.",
+      "whereTruthBreaksToday": "Truth breaks when batch records, quality tests, handling events and logistics custody are not connected into a customer visible lifecycle record.",
+      "dominantOperationalFriction": "Batch holds, quality investigations, customer claims and uncertain exposure mapping.",
+      "whyCurrentModelsPlateau": "LIMS, MES and ERP data are often strong internally, but they are rarely translated into a portable chain of custody across suppliers, processors and customers.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Very High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium to high",
+      "vciStrategicContribution": "VCI links batch, transformation, inspection, custody and shipment events so that industrial inputs can be traced from source through processing to customer use.",
+      "lifecycleModelType": "Batch transformation lifecycle",
+      "balanceSheetImpact": "Reduces write offs, claims exposure and inventory holds by narrowing quality investigations to the affected batches and lifecycle segments.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Batch genealogy",
+        "Customer claim investigation",
+        "Hazardous input custody",
+        "Regulated ingredient provenance"
+      ],
+      "representativeDemonstrations": [
+        "Chemical batch transformation demo",
+        "Ingredient claim containment scenario"
+      ],
+      "representativeOrganisations": [
+        "Chemical manufacturers",
+        "Ingredient suppliers",
+        "Industrial customers",
+        "Distributors"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "transformation",
+        "inspection",
+        "repacking",
+        "shipping",
+        "receiving"
+      ],
+      "aiDecisionSupportPotential": "High. Connected batch history improves quality prediction, exception triage and supplier risk analysis.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as customers demand stronger product stewardship and evidence of safe, responsible sourcing.",
+      "keywords": [
+        "chemical lifecycle continuity",
+        "batch genealogy",
+        "industrial inputs",
+        "quality containment",
+        "ingredient provenance"
+      ]
+    },
+    {
+      "id": "circular_economy_recycling",
+      "archetype": "Circular Economy & Recycling",
+      "category": "Sustainability and recovery",
+      "industries": [
+        "Recycling",
+        "Remanufacturing",
+        "Repair networks",
+        "Material recovery"
+      ],
+      "products": [
+        "Recovered metals",
+        "Recycled plastics",
+        "Refurbished electronics",
+        "Remanufactured parts"
+      ],
+      "tags": [
+        "circularity",
+        "recycling",
+        "remanufacturing",
+        "recycled content",
+        "material identity"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because recovered materials and reused products lose value when their prior identity, quality and custody history cannot be proven.",
+      "primaryEconomicDriver": "Higher recovery value and stronger recycled content assurance.",
+      "continuityFailureCost": "Material value degradation, recycled content disputes, recovery inefficiencies and reduced circular economy returns.",
+      "measurableBusinessOutcomes": [
+        "Improved recycled content confidence",
+        "Higher recovery yield",
+        "Lower material downgrade risk",
+        "Reduced fraud exposure",
+        "Stronger circularity reporting"
+      ],
+      "strategicNarrative": "Can products survive multiple lives?",
+      "dominantPressureType": "Circular economy, ESG and material value preservation",
+      "primaryStrategicBuyer": [
+        "Chief Sustainability Officer",
+        "Operations leadership",
+        "Product stewardship",
+        "Procurement"
+      ],
+      "coreLifecycleChallenge": "Material identity often disappears when products are collected, sorted, dismantled, recovered or remanufactured.",
+      "whereTruthBreaksToday": "Truth breaks at collection, sorting and recovery points where product identity is converted into anonymous material streams.",
+      "dominantOperationalFriction": "Material downgrading, weak recycled content proof, fraud risk and uncertain quality history.",
+      "whyCurrentModelsPlateau": "Recycling records and mass balance approaches can support claims, but they often do not preserve event level continuity across multiple product lives.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Emerging",
+      "vciStrategicContribution": "VCI preserves identity and custody through collection, recovery, transformation and reuse events, enabling circular value to be evidenced rather than asserted.",
+      "lifecycleModelType": "Circular material lifecycle",
+      "balanceSheetImpact": "Improves asset recovery economics by increasing the value of trusted recovered materials and reducing uncertainty discounts.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "Recycled content verification",
+        "Battery recycling lineage",
+        "Remanufactured component history",
+        "Repair and resale assurance"
+      ],
+      "representativeDemonstrations": [
+        "Circular product lifecycle demo",
+        "Recovered material lineage scenario"
+      ],
+      "representativeOrganisations": [
+        "Recyclers",
+        "Manufacturers",
+        "Retailers",
+        "Product stewardship schemes"
+      ],
+      "typicalEventTypes": [
+        "collection",
+        "sorting",
+        "disassembly",
+        "transformation",
+        "quality inspection",
+        "shipping",
+        "reuse"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle intelligence improves recovery routing, quality grading and reuse decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Very High",
+      "futurePressureTrajectory": "Increasing as circularity claims become commercial, regulatory and brand critical.",
+      "keywords": [
+        "circular economy lifecycle continuity",
+        "recycled content",
+        "remanufacturing",
+        "material recovery",
+        "product passport"
+      ]
+    },
+    {
+      "id": "construction_infrastructure",
+      "archetype": "Construction & Infrastructure",
+      "category": "Capital projects and built environment",
+      "industries": [
+        "Construction",
+        "Infrastructure delivery",
+        "Prefabrication",
+        "Building materials"
+      ],
+      "products": [
+        "Structural steel",
+        "Cement",
+        "Prefabricated modules",
+        "Rail components",
+        "Building products"
+      ],
+      "tags": [
+        "construction",
+        "infrastructure",
+        "materials",
+        "projects",
+        "built assets"
+      ],
+      "strategicUrgency": "Medium",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because infrastructure owners need confidence in what assets are made from, where materials came from and whether compliance evidence will survive the project lifecycle.",
+      "primaryEconomicDriver": "Lower project risk, stronger assurance and better asset handover quality.",
+      "continuityFailureCost": "Rework, project delays, supplier disputes, compliance reconstruction effort and lower asset assurance.",
+      "measurableBusinessOutcomes": [
+        "Reduced rework",
+        "Faster defect investigation",
+        "Improved handover evidence",
+        "Lower compliance effort",
+        "Better whole life asset visibility"
+      ],
+      "strategicNarrative": "Can infrastructure prove what it is made from?",
+      "dominantPressureType": "Assurance, ESG and project risk",
+      "primaryStrategicBuyer": [
+        "Project delivery leadership",
+        "Infrastructure owners",
+        "Procurement",
+        "Sustainability executives"
+      ],
+      "coreLifecycleChallenge": "Project supply chains are temporary, fragmented and document heavy, while asset lives extend for decades after delivery.",
+      "whereTruthBreaksToday": "Truth breaks when materials move from suppliers to fabricators, projects and asset registers without a continuous event history.",
+      "dominantOperationalFriction": "Document reconciliation, supplier substitution risk, rework and weak handover evidence.",
+      "whyCurrentModelsPlateau": "Project controls and document management systems preserve approvals, but rarely create material level lifecycle continuity into the operating asset.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI connects material, prefabrication, delivery, installation and handover events into an asset level evidence base.",
+      "lifecycleModelType": "Project material and asset lifecycle",
+      "balanceSheetImpact": "Improves capital efficiency by reducing rework, strengthening assurance and creating higher quality asset records for operations and maintenance.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "High",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Low carbon steel provenance",
+        "Prefabricated module custody",
+        "Critical material compliance",
+        "Asset handover evidence"
+      ],
+      "representativeDemonstrations": [
+        "Infrastructure material provenance demo",
+        "Project to asset handover scenario"
+      ],
+      "representativeOrganisations": [
+        "Contractors",
+        "Infrastructure owners",
+        "Material suppliers",
+        "Government agencies"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "fabrication",
+        "shipping",
+        "receiving",
+        "installation",
+        "inspection",
+        "handover"
+      ],
+      "aiDecisionSupportPotential": "Medium. Trusted material history improves project risk sensing, claims analysis and asset management decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as embodied carbon, modern slavery and infrastructure assurance expectations rise.",
+      "keywords": [
+        "construction lifecycle continuity",
+        "infrastructure materials",
+        "asset handover",
+        "embodied carbon",
+        "prefabrication"
+      ]
+    },
+    {
+      "id": "critical_minerals_metals",
+      "archetype": "Critical Minerals & Metals",
+      "category": "Strategic industrial materials",
+      "industries": [
+        "Copper",
+        "Rare earths",
+        "Platinum group metals",
+        "Tin",
+        "Tantalum"
+      ],
+      "products": [
+        "Copper cathode",
+        "Rare earth oxides",
+        "PGMs",
+        "Concentrates",
+        "Refined metals"
+      ],
+      "tags": [
+        "critical minerals",
+        "metals",
+        "industrial strategy",
+        "PGM",
+        "rare earths"
+      ],
+      "strategicUrgency": "Very High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because strategic minerals increasingly sit at the centre of industrial policy, clean technology, defence capability and responsible sourcing.",
+      "primaryEconomicDriver": "Trusted industrial supply assurance and stronger strategic market access.",
+      "continuityFailureCost": "Market access constraints, assurance costs, provenance disputes, inventory uncertainty and strategic supply risk.",
+      "measurableBusinessOutcomes": [
+        "Improved buyer qualification",
+        "Reduced provenance risk",
+        "Stronger trade corridor confidence",
+        "Better ESG defensibility",
+        "Higher strategic partnership readiness"
+      ],
+      "strategicNarrative": "Can industrial supply chains coordinate against the same reality?",
+      "dominantPressureType": "Sovereignty, ESG and industrial resilience",
+      "primaryStrategicBuyer": [
+        "Chief Commercial Officer",
+        "Chief Operations Officer",
+        "Government and economic development leaders",
+        "Strategic customers"
+      ],
+      "coreLifecycleChallenge": "Materials move through extraction, concentration, logistics, refining and industrial conversion across ecosystems with different incentives and systems.",
+      "whereTruthBreaksToday": "Truth breaks when material identity is transformed, aggregated or transferred across processors and trade corridors without a shared lifecycle record.",
+      "dominantOperationalFriction": "Custody uncertainty, processing opacity, assurance delays and weak corridor intelligence.",
+      "whyCurrentModelsPlateau": "Commodity records, assay certificates and shipping documents support transactions, but they do not continuously connect the material lifecycle.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI creates a trusted industrial lifecycle record across extraction, processing, custody and shipment events.",
+      "lifecycleModelType": "Bulk and batch industrial lifecycle",
+      "balanceSheetImpact": "Supports market access, reduces risk discounts and improves confidence in inventory, quality and custody across strategic supply chains.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "High",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "Copper corridor lifecycle continuity",
+        "PGM provenance",
+        "Rare earth processing lineage",
+        "Strategic mineral assurance"
+      ],
+      "representativeDemonstrations": [
+        "African copperbelt chain of custody demo",
+        "PGM industrial provenance scenario"
+      ],
+      "representativeOrganisations": [
+        "Mining groups",
+        "Processors",
+        "Commodity traders",
+        "Industrial buyers",
+        "Governments"
+      ],
+      "typicalEventTypes": [
+        "extraction",
+        "processing",
+        "transformation",
+        "aggregation",
+        "shipping",
+        "receiving",
+        "inspection"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle data supports supplier assurance, route risk analysis, ESG sensing and strategic sourcing decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Accelerating as critical minerals become a central feature of industrial strategy and supply security.",
+      "keywords": [
+        "critical minerals lifecycle continuity",
+        "copper provenance",
+        "rare earths",
+        "PGM lifecycle continuity",
+        "strategic minerals"
+      ]
+    },
+    {
+      "id": "electronics_semiconductors",
+      "archetype": "Electronics & Semiconductors",
+      "category": "Deep tier technology supply chains",
+      "industries": [
+        "Electronics",
+        "Semiconductors",
+        "Telecom equipment",
+        "Consumer devices"
+      ],
+      "products": [
+        "Chips",
+        "Printed circuit boards",
+        "Rare earth components",
+        "Displays",
+        "Telecom hardware"
+      ],
+      "tags": [
+        "electronics",
+        "semiconductors",
+        "deep tier suppliers",
+        "security",
+        "technology"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because product integrity, security, compliance and resilience depend on visibility into deep tier materials, components and manufacturing pathways.",
+      "primaryEconomicDriver": "Stronger supply resilience, lower compliance risk and higher technology trust.",
+      "continuityFailureCost": "Supply disruptions, counterfeit exposure, compliance overhead, inventory inflation and slower shortage response.",
+      "measurableBusinessOutcomes": [
+        "Improved supplier risk visibility",
+        "Reduced counterfeit exposure",
+        "Faster shortage response",
+        "Better compliance evidence",
+        "Higher customer trust"
+      ],
+      "strategicNarrative": "Can critical technology supply chains be trusted?",
+      "dominantPressureType": "Geopolitical, security and resilience",
+      "primaryStrategicBuyer": [
+        "Chief Procurement Officer",
+        "Manufacturing leadership",
+        "Security and compliance executives",
+        "Product leadership"
+      ],
+      "coreLifecycleChallenge": "Deep tier supply networks contain many hidden dependencies that are difficult to map beyond immediate suppliers.",
+      "whereTruthBreaksToday": "Truth breaks across tier transitions, outsourced manufacturing, component substitutions and regional processing nodes.",
+      "dominantOperationalFriction": "Tier opacity, counterfeit risk, shortage surprises and document based supplier assurance.",
+      "whyCurrentModelsPlateau": "Supplier declarations and audits can identify risks, but they do not create persistent event level lineage across deep tier networks.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "High",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links component, batch, custody and transformation events across supplier tiers to create a more reliable evidence base for technology supply chains.",
+      "lifecycleModelType": "Deep tier component lifecycle",
+      "balanceSheetImpact": "Reduces disruption exposure, improves inventory confidence and lowers the cost of proving compliance or origin across complex supplier networks.",
+      "workingCapitalRelevance": "High",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Chip provenance",
+        "Telecom equipment assurance",
+        "Counterfeit component prevention",
+        "Deep tier supplier mapping"
+      ],
+      "representativeDemonstrations": [
+        "Electronics component lineage demo",
+        "Technology supply risk scenario"
+      ],
+      "representativeOrganisations": [
+        "Electronics OEMs",
+        "Semiconductor manufacturers",
+        "Contract manufacturers",
+        "Telecom providers"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "assembly",
+        "transformation",
+        "inspection",
+        "shipping",
+        "receiving"
+      ],
+      "aiDecisionSupportPotential": "Very High. Trusted lifecycle data improves shortage forecasting, supplier risk scoring and quality exception routing.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "High",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Increasing as technology supply chains become more strategically sensitive and regulated.",
+      "keywords": [
+        "electronics lifecycle continuity",
+        "semiconductor provenance",
+        "deep tier suppliers",
+        "counterfeit components",
+        "technology supply chain"
+      ]
+    },
+    {
+      "id": "fashion_apparel",
+      "archetype": "Fashion & Apparel",
+      "category": "Consumer goods and brand trust",
+      "industries": [
+        "Apparel",
+        "Footwear",
+        "Textiles",
+        "Luxury fashion",
+        "Uniforms"
+      ],
+      "products": [
+        "Cotton garments",
+        "Wool apparel",
+        "Leather goods",
+        "Footwear",
+        "Textiles"
+      ],
+      "tags": [
+        "fashion",
+        "apparel",
+        "cotton",
+        "wool",
+        "provenance",
+        "ESG"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because brand trust, product claims and ethical sourcing depend on preserving provenance through transformation, blending and manufacturing.",
+      "primaryEconomicDriver": "Scalable product trust and lower claim risk across categories.",
+      "continuityFailureCost": "Brand damage, supplier assurance costs, claim disputes, lost premium value and increased regulatory scrutiny.",
+      "measurableBusinessOutcomes": [
+        "Stronger product claim defensibility",
+        "Reduced supplier assurance burden",
+        "Improved category level provenance",
+        "Lower reputational risk",
+        "Better response to regulatory and customer questions"
+      ],
+      "strategicNarrative": "Can product truth survive manufacturing?",
+      "dominantPressureType": "ESG, provenance and brand trust",
+      "primaryStrategicBuyer": [
+        "Chief Sustainability Officer",
+        "Chief Supply Chain Officer",
+        "Brand leadership",
+        "Responsible sourcing leadership"
+      ],
+      "coreLifecycleChallenge": "Fibres and materials are transformed into yarn, fabric, finished goods and retail products through many suppliers and geographies.",
+      "whereTruthBreaksToday": "Truth breaks during blending, spinning, dyeing, cutting, sewing and subcontracting where material continuity is replaced by documents or declarations.",
+      "dominantOperationalFriction": "Provenance gaps, certification complexity, supplier opacity and difficulty scaling across product lines.",
+      "whyCurrentModelsPlateau": "Certification and transaction records can support claims, but they often cannot reconstruct continuous product lifecycle truth after transformation.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Very High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI preserves event level continuity through transformation, custody and movement so product truth can be reconstructed beyond certificates and supplier declarations.",
+      "lifecycleModelType": "Transformation heavy product lifecycle",
+      "balanceSheetImpact": "Protects revenue and brand equity by reducing claim risk, improving supplier confidence and enabling scalable provenance across categories.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "Cotton to garment provenance",
+        "Wool and leather lifecycle",
+        "Luxury apparel chain of custody",
+        "Supplier claim verification"
+      ],
+      "representativeDemonstrations": [
+        "Babywear lifecycle demo",
+        "Fashion transformation chain scenario"
+      ],
+      "representativeOrganisations": [
+        "Fashion retailers",
+        "Luxury houses",
+        "Textile suppliers",
+        "Certification bodies"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "transformation",
+        "aggregation",
+        "shipping",
+        "receiving",
+        "inspection",
+        "retail release"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle data improves supplier risk sensing, product claim validation and demand planning based on trusted availability.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Increasing as product passports, forced labour rules and consumer scrutiny expand.",
+      "keywords": [
+        "fashion lifecycle continuity",
+        "apparel provenance",
+        "cotton lifecycle continuity",
+        "textile lifecycle",
+        "product claims"
+      ]
+    },
+    {
+      "id": "food_agriculture",
+      "archetype": "Food & Agriculture",
+      "category": "Food systems and consumer trust",
+      "industries": [
+        "Seafood",
+        "Meat",
+        "Fresh produce",
+        "Grains",
+        "Dairy"
+      ],
+      "products": [
+        "Fish",
+        "Meat",
+        "Fruit",
+        "Vegetables",
+        "Grain",
+        "Dairy products"
+      ],
+      "tags": [
+        "food safety",
+        "recall",
+        "cold chain",
+        "origin",
+        "agriculture"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because food safety, origin trust, shelf life and recall precision depend on knowing where products moved, waited, changed condition and entered custody.",
+      "primaryEconomicDriver": "Lower recall cost, reduced waste and stronger consumer trust.",
+      "continuityFailureCost": "Product waste, broad recalls, spoilage losses, inventory write-offs and slower incident response.",
+      "measurableBusinessOutcomes": [
+        "Faster recall containment",
+        "Reduced spoilage",
+        "Higher usable shelf life",
+        "Lower write offs",
+        "Improved sell through confidence"
+      ],
+      "strategicNarrative": "Can we reconstruct reality fast enough?",
+      "dominantPressureType": "Food safety, ESG and consumer trust",
+      "primaryStrategicBuyer": [
+        "Chief Operations Officer",
+        "Food safety leadership",
+        "Chief Supply Chain Officer",
+        "Quality leadership"
+      ],
+      "coreLifecycleChallenge": "Food products are perishable, often batch based and exposed to variable conditions across farms, processors, cold chain providers, warehouses and retailers.",
+      "whereTruthBreaksToday": "Truth breaks when origin, lot identity, temperature, dwell and custody data are not linked across the full product journey.",
+      "dominantOperationalFriction": "Broad recalls, delayed incident response, shrinkage, spoilage and inability to distinguish true demand from fulfilment failure.",
+      "whyCurrentModelsPlateau": "Supplier portals, quality checks and logistics data provide partial visibility, but often fail to create a single evidence based lifecycle timeline.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "Very High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI connects harvest, processing, condition, custody, movement and receipt events into a continuous chain of custody for rapid reconstruction and targeted action.",
+      "lifecycleModelType": "Perishable batch and lot lifecycle",
+      "balanceSheetImpact": "Reduces waste and revenue loss while improving inventory quality, service reliability and confidence in available stock.",
+      "workingCapitalRelevance": "High",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Seafood provenance",
+        "Cold chain assurance",
+        "Precision recall",
+        "Shelf life recovery"
+      ],
+      "representativeDemonstrations": [
+        "Seafood chain of custody demo",
+        "Cold chain value preservation scenario"
+      ],
+      "representativeOrganisations": [
+        "Food producers",
+        "Retailers",
+        "Cold chain logistics providers",
+        "Food service companies"
+      ],
+      "typicalEventTypes": [
+        "harvest",
+        "processing",
+        "packing",
+        "temperature monitoring",
+        "shipping",
+        "receiving",
+        "retail release",
+        "recall containment"
+      ],
+      "aiDecisionSupportPotential": "High. Connected events improve demand signal correction, spoilage prediction, recall triage and route intervention decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "High",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as food safety, provenance and waste reduction become more financially and socially visible.",
+      "keywords": [
+        "food lifecycle continuity",
+        "seafood provenance",
+        "cold chain",
+        "precision recall",
+        "shelf life"
+      ]
+    },
+    {
+      "id": "forestry_timber",
+      "archetype": "Forestry & Timber",
+      "category": "Natural resources and land use",
+      "industries": [
+        "Forestry",
+        "Pulp and paper",
+        "Furniture",
+        "Building products"
+      ],
+      "products": [
+        "Logs",
+        "Timber",
+        "Pulp",
+        "Furniture",
+        "Engineered wood"
+      ],
+      "tags": [
+        "forestry",
+        "timber",
+        "legality",
+        "deforestation",
+        "FSC"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because legality, deforestation risk and sustainable sourcing claims depend on preserving forest to product continuity.",
+      "primaryEconomicDriver": "Regulatory access, claim defensibility and reduced illegal sourcing risk.",
+      "continuityFailureCost": "Import restrictions, claim disputes, certification overhead, market access risk and reduced buyer confidence.",
+      "measurableBusinessOutcomes": [
+        "Stronger origin assurance",
+        "Reduced import detention risk",
+        "Improved certification confidence",
+        "Lower audit effort",
+        "Better supplier accountability"
+      ],
+      "strategicNarrative": "Can timber provenance remain provable?",
+      "dominantPressureType": "Deforestation, legality and ESG",
+      "primaryStrategicBuyer": [
+        "Chief Sustainability Officer",
+        "Procurement leadership",
+        "Compliance executives",
+        "Category leadership"
+      ],
+      "coreLifecycleChallenge": "Timber changes form and ownership across harvest, transport, mills, processors and exporters, making physical origin difficult to defend in finished products.",
+      "whereTruthBreaksToday": "Truth breaks when logs are aggregated, milled, mixed or converted into pulp and finished goods without persistent material lineage.",
+      "dominantOperationalFriction": "Origin ambiguity, documentation burden, supplier substitution and regulatory exposure.",
+      "whyCurrentModelsPlateau": "Certificates and chain of custody audits provide assurance, but often rely on periodic controls rather than continuous event based lifecycle evidence.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links harvest, custody, processing and product events into an inspectable forest to finished product record.",
+      "lifecycleModelType": "Natural resource to product lifecycle",
+      "balanceSheetImpact": "Protects market access and brand value by reducing origin risk and strengthening defensibility of sustainable sourcing claims.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Forest to furniture provenance",
+        "Pulp chain of custody",
+        "Deforestation risk evidence",
+        "Certified timber verification"
+      ],
+      "representativeDemonstrations": [
+        "Timber provenance demo",
+        "Forest to product scenario"
+      ],
+      "representativeOrganisations": [
+        "Forestry companies",
+        "Furniture brands",
+        "Retailers",
+        "Importers",
+        "Certification bodies"
+      ],
+      "typicalEventTypes": [
+        "harvest",
+        "aggregation",
+        "milling",
+        "transformation",
+        "shipping",
+        "receiving",
+        "certification"
+      ],
+      "aiDecisionSupportPotential": "Medium. Lifecycle data improves supplier risk scoring, origin exception detection and certification assurance.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "Low",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Increasing as deforestation, forced labour and origin regulations strengthen.",
+      "keywords": [
+        "timber lifecycle continuity",
+        "forestry provenance",
+        "deforestation risk",
+        "FSC chain of custody",
+        "legal timber"
+      ]
+    },
+    {
+      "id": "green_steel_industrial_materials",
+      "archetype": "Green Steel & Industrial Materials",
+      "category": "Decarbonising industry",
+      "industries": [
+        "Steel",
+        "Iron ore",
+        "Aluminium",
+        "Cement",
+        "Industrial materials"
+      ],
+      "products": [
+        "Iron ore",
+        "Steel coils",
+        "Aluminium ingots",
+        "Cement",
+        "Low carbon materials"
+      ],
+      "tags": [
+        "green steel",
+        "industrial emissions",
+        "embodied carbon",
+        "materials",
+        "decarbonisation"
+      ],
+      "strategicUrgency": "Very High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because low carbon materials only earn trust and premium value when carbon intensity is linked to actual operational lifecycle evidence.",
+      "primaryEconomicDriver": "Carbon competitiveness, market access and premium material differentiation.",
+      "continuityFailureCost": "Carbon claim disputes, reduced premium pricing, qualification delays, reporting overhead and weaker market differentiation.",
+      "measurableBusinessOutcomes": [
+        "Improved carbon claim defensibility",
+        "Lower reporting effort",
+        "Better customer qualification",
+        "Higher green premium potential",
+        "Improved supplier and route choices"
+      ],
+      "strategicNarrative": "Can low carbon claims be operationally defended?",
+      "dominantPressureType": "Decarbonisation and industrial competitiveness",
+      "primaryStrategicBuyer": [
+        "Chief Sustainability Officer",
+        "Chief Operations Officer",
+        "Chief Financial Officer",
+        "Commercial leadership"
+      ],
+      "coreLifecycleChallenge": "Industrial materials pass through energy intensive transformations where emissions, custody and product identity are often measured separately.",
+      "whereTruthBreaksToday": "Truth breaks when emissions accounting is detached from production batches, transport events, energy sources and downstream product lineage.",
+      "dominantOperationalFriction": "Carbon estimate disputes, weak green premium evidence and inability to optimise emissions by lifecycle segment.",
+      "whyCurrentModelsPlateau": "Carbon reporting systems provide estimates and disclosures, but often lack direct connection to physical lifecycle events and material flows.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Very High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links material movement, transformation, energy use and emissions indicators into a lifecycle record that can support operational carbon management.",
+      "lifecycleModelType": "Bulk and batch industrial emissions lifecycle",
+      "balanceSheetImpact": "Improves commercial defensibility of green materials and supports lower capital exposure by linking inventory, emissions and customer qualification status.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Very High",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "Medium",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "Iron ore to green steel provenance",
+        "Aluminium carbon lineage",
+        "Embodied carbon evidence",
+        "Low carbon material qualification"
+      ],
+      "representativeDemonstrations": [
+        "Green steel chain demo",
+        "Industrial emissions attribution scenario"
+      ],
+      "representativeOrganisations": [
+        "Mining groups",
+        "Steel producers",
+        "Industrial manufacturers",
+        "Infrastructure buyers"
+      ],
+      "typicalEventTypes": [
+        "extraction",
+        "processing",
+        "transformation",
+        "emissions capture",
+        "shipping",
+        "receiving",
+        "certification"
+      ],
+      "aiDecisionSupportPotential": "High. Trusted lifecycle emissions data supports supplier choice, route optimisation, carbon pricing and green product qualification.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Accelerating as industrial buyers, regulators and financiers require credible carbon intensity evidence.",
+      "keywords": [
+        "green steel lifecycle continuity",
+        "embodied carbon",
+        "industrial materials",
+        "low carbon steel",
+        "carbon intensity"
+      ]
+    },
+    {
+      "id": "hospitality_consumer_experience",
+      "archetype": "Hospitality & Consumer Experience",
+      "category": "Experience led supply chains",
+      "industries": [
+        "Hotels",
+        "Catering",
+        "Premium food service",
+        "Travel retail"
+      ],
+      "products": [
+        "Premium produce",
+        "Seafood",
+        "Wine alternatives",
+        "Amenities",
+        "Responsible sourcing portfolios"
+      ],
+      "tags": [
+        "hospitality",
+        "consumer trust",
+        "premium sourcing",
+        "experience",
+        "provenance"
+      ],
+      "strategicUrgency": "Medium",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because experience brands rely on trust in sourcing, freshness, ethical claims and consistency across distributed supplier ecosystems.",
+      "primaryEconomicDriver": "Premium differentiation and lower sourcing risk.",
+      "continuityFailureCost": "Guest trust erosion, sourcing disputes, product inconsistencies, waste and reduced premium positioning.",
+      "measurableBusinessOutcomes": [
+        "Stronger guest trust",
+        "Reduced sourcing disputes",
+        "Better supplier accountability",
+        "Improved product freshness",
+        "Higher confidence in responsible procurement"
+      ],
+      "strategicNarrative": "Can experience brands prove what they promise?",
+      "dominantPressureType": "Consumer trust, ESG and brand experience",
+      "primaryStrategicBuyer": [
+        "Procurement leadership",
+        "Brand leadership",
+        "Sustainability executives",
+        "Operations leadership"
+      ],
+      "coreLifecycleChallenge": "Hospitality supply chains are highly distributed, service sensitive and dependent on supplier claims that may not be visible to the end customer.",
+      "whereTruthBreaksToday": "Truth breaks between suppliers, distributors, kitchens, sites and branded customer experiences where origin and condition evidence is not continuously linked.",
+      "dominantOperationalFriction": "Claim uncertainty, inconsistent quality, supplier opacity and weak issue containment.",
+      "whyCurrentModelsPlateau": "Procurement systems and supplier audits capture commercial relationships, but do not continuously evidence the lifecycle behind the guest experience.",
+      "ecosystemComplexity": "Medium",
+      "transformationComplexity": "Low",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI connects sourcing, custody, condition and receipt events so that provenance and quality can be linked to brand promises.",
+      "lifecycleModelType": "Source to service lifecycle",
+      "balanceSheetImpact": "Protects revenue and brand trust by improving quality consistency, reducing waste and strengthening responsible sourcing claims.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "Medium",
+      "premiumPricingPotential": "High",
+      "representativeUseCases": [
+        "Premium seafood provenance",
+        "Responsible sourcing proof",
+        "Freshness assurance",
+        "Supplier claim verification"
+      ],
+      "representativeDemonstrations": [
+        "Hospitality sourcing demo",
+        "Premium product provenance scenario"
+      ],
+      "representativeOrganisations": [
+        "Hotel groups",
+        "Caterers",
+        "Food service companies",
+        "Premium suppliers"
+      ],
+      "typicalEventTypes": [
+        "sourcing",
+        "packing",
+        "condition monitoring",
+        "shipping",
+        "receiving",
+        "service release"
+      ],
+      "aiDecisionSupportPotential": "Medium. Lifecycle data improves supplier selection, freshness prediction and issue containment.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as experience brands compete on trust, sustainability and quality.",
+      "keywords": [
+        "hospitality lifecycle continuity",
+        "premium sourcing",
+        "consumer experience",
+        "responsible procurement",
+        "food service provenance"
+      ]
+    },
+    {
+      "id": "logistics_intermodal",
+      "archetype": "Logistics & Intermodal",
+      "category": "Flow and coordination infrastructure",
+      "industries": [
+        "3PL",
+        "Warehousing",
+        "Freight forwarding",
+        "Trucking",
+        "Intermodal logistics"
+      ],
+      "products": [
+        "Shipments",
+        "Containers",
+        "Pallets",
+        "Inventory flows",
+        "Customer orders"
+      ],
+      "tags": [
+        "logistics",
+        "intermodal",
+        "working capital",
+        "lifecycle time",
+        "handoffs"
+      ],
+      "strategicUrgency": "Very High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because lifecycle time, inventory exposure and service reliability are shaped by handoffs across parties that rarely operate from the same timeline.",
+      "primaryEconomicDriver": "Working capital release, better service reliability and lower coordination cost.",
+      "continuityFailureCost": "Expediting costs, customer disputes, exception management overhead, service failures and reduced planning confidence.",
+      "measurableBusinessOutcomes": [
+        "Reduced pipeline inventory",
+        "Lower dwell time",
+        "Improved OTIF performance",
+        "Fewer emergency transfers",
+        "Faster exception response"
+      ],
+      "strategicNarrative": "Can ecosystems coordinate across time?",
+      "dominantPressureType": "Operational efficiency and resilience",
+      "primaryStrategicBuyer": [
+        "Chief Operations Officer",
+        "Chief Supply Chain Officer",
+        "Logistics leadership",
+        "Chief Financial Officer"
+      ],
+      "coreLifecycleChallenge": "Goods move through supplier readiness, transport, terminals, warehouses and final delivery, but each party sees only part of the lifecycle.",
+      "whereTruthBreaksToday": "Truth breaks at handoffs where shipment, location, receipt and readiness events are not connected into a single operational timeline.",
+      "dominantOperationalFriction": "Dwell, waiting, duplicated safety stock, expediting and dispute cycles.",
+      "whyCurrentModelsPlateau": "Visibility platforms show location or status, but often do not reconstruct chain of custody, lifecycle time or economic impact across the full corridor.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Low",
+      "lifecycleTimeSensitivity": "Very High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI creates a shared operational timeline across parties, linking custody, movement, dwell and receipt events to economic outcomes.",
+      "lifecycleModelType": "Intermodal movement and custody lifecycle",
+      "balanceSheetImpact": "Releases working capital by reducing lifecycle time, lowering duplicated inventory and improving confidence in flow between nodes.",
+      "workingCapitalRelevance": "Very High",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Very High",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "Trade corridor lifecycle time",
+        "Multi echelon inventory optimisation",
+        "Shipment anomaly detection",
+        "Cross party exception management"
+      ],
+      "representativeDemonstrations": [
+        "Lifecycle time compression demo",
+        "Network inventory optimisation scenario"
+      ],
+      "representativeOrganisations": [
+        "3PLs",
+        "Freight forwarders",
+        "Retailers",
+        "Manufacturers",
+        "Ports and carriers"
+      ],
+      "typicalEventTypes": [
+        "order",
+        "advance notice",
+        "shipping",
+        "loading",
+        "departing",
+        "arriving",
+        "receiving",
+        "proof of delivery"
+      ],
+      "aiDecisionSupportPotential": "Very High. Lifecycle truth improves ETA prediction, exception prioritisation, inventory deployment and scenario planning.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Very High",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as customers shift from shipment visibility to flow reliability and capital efficiency.",
+      "keywords": [
+        "logistics lifecycle continuity",
+        "lifecycle time",
+        "working capital",
+        "intermodal visibility",
+        "supply chain coordination"
+      ]
+    },
+    {
+      "id": "luxury_goods",
+      "archetype": "Luxury Goods",
+      "category": "Premium products and authenticity",
+      "industries": [
+        "Luxury watches",
+        "Jewellery",
+        "Handbags",
+        "Fine goods",
+        "Diamonds"
+      ],
+      "products": [
+        "Watches",
+        "Diamonds",
+        "Leather goods",
+        "Jewellery",
+        "Limited edition products"
+      ],
+      "tags": [
+        "luxury",
+        "authenticity",
+        "provenance",
+        "resale",
+        "brand protection"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because provenance, authenticity, ownership history and service integrity are part of the product value itself.",
+      "primaryEconomicDriver": "Premium value preservation and trust across primary, service and resale markets.",
+      "continuityFailureCost": "Counterfeit exposure, provenance disputes, reduced resale confidence, brand erosion and loss of premium product value.",
+      "measurableBusinessOutcomes": [
+        "Higher resale confidence",
+        "Reduced counterfeit exposure",
+        "Improved service history confidence",
+        "Stronger client trust",
+        "Protected brand equity"
+      ],
+      "strategicNarrative": "Can provenance become part of the product?",
+      "dominantPressureType": "Authenticity, brand value and client trust",
+      "primaryStrategicBuyer": [
+        "Brand leadership",
+        "Client experience leadership",
+        "After sales service",
+        "Risk and compliance"
+      ],
+      "coreLifecycleChallenge": "Luxury products combine high value materials, craftsmanship, serial identity, service history and ownership journeys that must remain trusted over time.",
+      "whereTruthBreaksToday": "Truth breaks across component sourcing, assembly, repair, resale and ownership transfer when records are not tied to a persistent product lifecycle.",
+      "dominantOperationalFriction": "Counterfeiting, service uncertainty, weak resale assurance and provenance gaps.",
+      "whyCurrentModelsPlateau": "Certificates and authenticity documents support claims, but they are vulnerable when separated from the event history of the product.",
+      "ecosystemComplexity": "Medium",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI creates a persistent product lineage that links materials, manufacture, service, custody and ownership events into a trusted lifecycle record.",
+      "lifecycleModelType": "Serialized premium product lifecycle",
+      "balanceSheetImpact": "Protects premium pricing, reduces fraud risk and creates new trust-based services across ownership and resale.",
+      "workingCapitalRelevance": "Low",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Low",
+      "resilienceContribution": "Medium",
+      "premiumPricingPotential": "Very High",
+      "representativeUseCases": [
+        "Watch component provenance",
+        "Diamond chain of custody",
+        "Luxury repair history",
+        "Resale authenticity"
+      ],
+      "representativeDemonstrations": [
+        "Luxury watch lifecycle demo",
+        "Diamond provenance scenario"
+      ],
+      "representativeOrganisations": [
+        "Luxury houses",
+        "Jewellery brands",
+        "Resale platforms",
+        "Service providers"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "assembly",
+        "inspection",
+        "shipping",
+        "service",
+        "ownership transfer",
+        "authentication"
+      ],
+      "aiDecisionSupportPotential": "Medium. Lifecycle data improves authenticity scoring, service recommendations and client value analytics.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "Low",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Increasing as resale, digital product passports and anti counterfeit expectations grow.",
+      "keywords": [
+        "luxury lifecycle continuity",
+        "product provenance",
+        "watch authenticity",
+        "diamond chain of custody",
+        "resale trust"
+      ]
+    },
+    {
+      "id": "maritime_ports",
+      "archetype": "Maritime & Ports",
+      "category": "Trade gateways and corridor performance",
+      "industries": [
+        "Ports",
+        "Shipping lines",
+        "Terminal operators",
+        "Customs corridors",
+        "Container logistics"
+      ],
+      "products": [
+        "Containers",
+        "Bulk cargo",
+        "Breakbulk shipments",
+        "Port assets",
+        "Trade lanes"
+      ],
+      "tags": [
+        "ports",
+        "maritime",
+        "containers",
+        "dwell",
+        "trade corridors"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because ports and maritime corridors shape lifecycle time, throughput, congestion and customer confidence across global trade.",
+      "primaryEconomicDriver": "Higher throughput, reduced dwell and stronger trade corridor reliability.",
+      "continuityFailureCost": "Port congestion, dwell time inflation, demurrage costs, reduced asset utilisation and lower trade corridor reliability.",
+      "measurableBusinessOutcomes": [
+        "Lower terminal dwell",
+        "Improved asset utilisation",
+        "Faster exception resolution",
+        "Better berth and yard planning",
+        "Reduced customer inventory exposure"
+      ],
+      "strategicNarrative": "Can global trade operate against the same timeline?",
+      "dominantPressureType": "Trade resilience and operational performance",
+      "primaryStrategicBuyer": [
+        "Port operations leadership",
+        "Terminal executives",
+        "Shipping line leadership",
+        "Trade corridor authorities"
+      ],
+      "coreLifecycleChallenge": "Maritime flows span shipping lines, terminals, customs, inland logistics and customers, each with different timestamps and operational priorities.",
+      "whereTruthBreaksToday": "Truth breaks at port and intermodal handoffs where arrival, gate, hold, release and inland movement events are not interpreted as one lifecycle.",
+      "dominantOperationalFriction": "Congestion, dwell, demurrage, detention, uncertain availability and poor onward planning.",
+      "whyCurrentModelsPlateau": "Port community and visibility systems improve status awareness, but may not convert cross party events into a shared lifecycle intelligence layer.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Low",
+      "lifecycleTimeSensitivity": "Very High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links maritime, terminal, customs and inland events into a corridor level chain of custody and lifecycle time record.",
+      "lifecycleModelType": "Intermodal gateway lifecycle",
+      "balanceSheetImpact": "Improves asset productivity and customer cash conversion by reducing dwell, increasing predictability and making flow constraints visible.",
+      "workingCapitalRelevance": "High",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "Container dwell visibility",
+        "Port to inland custody",
+        "Trade corridor synchronisation",
+        "Demurrage reduction"
+      ],
+      "representativeDemonstrations": [
+        "Port corridor time demo",
+        "Container lifecycle scenario"
+      ],
+      "representativeOrganisations": [
+        "Ports",
+        "Terminal operators",
+        "Shipping lines",
+        "Freight forwarders",
+        "Customs agencies"
+      ],
+      "typicalEventTypes": [
+        "loading",
+        "departing",
+        "arriving",
+        "gate in",
+        "hold",
+        "release",
+        "gate out",
+        "inland receiving"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle data improves congestion prediction, exception triage and corridor optimisation.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Very High",
+      "circularEconomyEnablement": "Low",
+      "futurePressureTrajectory": "Increasing as ports compete on resilience, transparency and corridor performance.",
+      "keywords": [
+        "port lifecycle continuity",
+        "container lifecycle",
+        "maritime visibility",
+        "terminal dwell",
+        "trade corridor"
+      ]
+    },
+    {
+      "id": "medical_devices",
+      "archetype": "Medical Devices",
+      "category": "Regulated healthcare assets",
+      "industries": [
+        "Medical devices",
+        "Implants",
+        "Diagnostics",
+        "Surgical equipment"
+      ],
+      "products": [
+        "Implants",
+        "Surgical instruments",
+        "Diagnostic devices",
+        "Capital equipment",
+        "Consumables"
+      ],
+      "tags": [
+        "medical devices",
+        "UDI",
+        "patient safety",
+        "service history",
+        "recall"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because patient safety, device performance and regulatory defensibility depend on knowing device identity, custody, use, servicing and recall exposure.",
+      "primaryEconomicDriver": "Patient safety, lower recall exposure and stronger device lifecycle control.",
+      "continuityFailureCost": "Patient safety exposure, broader recalls, service compliance gaps, inventory inefficiencies and increased regulatory scrutiny.",
+      "measurableBusinessOutcomes": [
+        "Faster field safety actions",
+        "Reduced recall scope",
+        "Improved service compliance",
+        "Better inventory readiness",
+        "Lower patient risk"
+      ],
+      "strategicNarrative": "Can medical devices prove their full operational history?",
+      "dominantPressureType": "Regulatory, safety and service assurance",
+      "primaryStrategicBuyer": [
+        "Quality leadership",
+        "Regulatory affairs",
+        "Hospital operations",
+        "Device manufacturer leadership"
+      ],
+      "coreLifecycleChallenge": "Devices move through manufacturing, distribution, hospital inventory, clinical use, maintenance and disposal, often with fragmented records.",
+      "whereTruthBreaksToday": "Truth breaks when device identifiers, service history, usage context and custody events are not connected across manufacturers, providers and care settings.",
+      "dominantOperationalFriction": "Recall uncertainty, service gaps, unused inventory, patient risk and audit burden.",
+      "whyCurrentModelsPlateau": "UDI and asset systems improve identification, but they do not always create continuous lifecycle evidence across the care ecosystem.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links device identity, custody, use, inspection, service and recall events into a persistent lifecycle record.",
+      "lifecycleModelType": "Serialized device and clinical asset lifecycle",
+      "balanceSheetImpact": "Reduces risk provisions, improves inventory utilisation and protects revenue through faster containment and service assurance.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Low",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Implant lifecycle continuity",
+        "Device recall containment",
+        "Surgical instrument lifecycle",
+        "Maintenance compliance"
+      ],
+      "representativeDemonstrations": [
+        "Medical device lifecycle demo",
+        "Implant recall scenario"
+      ],
+      "representativeOrganisations": [
+        "Device manufacturers",
+        "Hospitals",
+        "Distributors",
+        "Service providers"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "shipping",
+        "receiving",
+        "clinical use",
+        "inspection",
+        "service",
+        "recall",
+        "disposal"
+      ],
+      "aiDecisionSupportPotential": "High. Trusted lifecycle data improves recall targeting, service scheduling and inventory readiness decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as regulators and healthcare providers demand stronger device lifecycle accountability.",
+      "keywords": [
+        "medical device lifecycle continuity",
+        "UDI",
+        "implant provenance",
+        "device recall",
+        "patient safety"
+      ]
+    },
+    {
+      "id": "oil_gas_energy",
+      "archetype": "Oil, Gas & Energy",
+      "category": "Energy flows and commodity assurance",
+      "industries": [
+        "Oil and gas",
+        "LNG",
+        "Fuel distribution",
+        "Petrochemicals",
+        "Energy trading"
+      ],
+      "products": [
+        "LNG cargoes",
+        "Crude oil",
+        "Refined fuels",
+        "Petrochemical feedstocks",
+        "Hydrogen carriers"
+      ],
+      "tags": [
+        "energy",
+        "LNG",
+        "fuels",
+        "custody",
+        "emissions"
+      ],
+      "strategicUrgency": "Medium",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because custody, quality, origin and emissions confidence influence energy trading, regulatory assurance and transition credibility.",
+      "primaryEconomicDriver": "Lower custody risk, stronger carbon and origin assurance and improved trading confidence.",
+      "continuityFailureCost": "Production interruptions, inventory uncertainty, compliance exposure, operational downtime and increased supply assurance costs.",
+      "measurableBusinessOutcomes": [
+        "Reduced custody disputes",
+        "Improved quality assurance",
+        "Better emissions attribution",
+        "Faster incident investigation",
+        "Stronger customer confidence"
+      ],
+      "strategicNarrative": "Can energy provenance be trusted?",
+      "dominantPressureType": "Carbon, compliance and custody assurance",
+      "primaryStrategicBuyer": [
+        "Trading leadership",
+        "Operations leadership",
+        "ESG leadership",
+        "Risk and compliance"
+      ],
+      "coreLifecycleChallenge": "Energy products move through extraction, processing, storage, transport and blending systems where molecules become hard to associate with origin and emissions history.",
+      "whereTruthBreaksToday": "Truth breaks during blending, storage transfers, shipping and processing where custody, quality and emissions evidence become separated.",
+      "dominantOperationalFriction": "Custody disputes, quality claims, emissions estimation and weak proof of origin.",
+      "whyCurrentModelsPlateau": "Commodity trading and SCADA systems manage flows well, but do not always provide customer facing lifecycle proof across organisations.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "High",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "High",
+      "vciStrategicContribution": "VCI links custody, movement, storage, quality and emissions events into a defensible lifecycle record for energy flows.",
+      "lifecycleModelType": "Bulk commodity custody lifecycle",
+      "balanceSheetImpact": "Reduces dispute exposure, supports emissions linked product differentiation and improves confidence in inventory and delivery status.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "High",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "LNG cargo chain of custody",
+        "Fuel quality assurance",
+        "Hydrogen proof of origin",
+        "Emissions attributed energy flows"
+      ],
+      "representativeDemonstrations": [
+        "Energy custody demo",
+        "LNG emissions provenance scenario"
+      ],
+      "representativeOrganisations": [
+        "Energy producers",
+        "Traders",
+        "Terminal operators",
+        "Utilities",
+        "Industrial customers"
+      ],
+      "typicalEventTypes": [
+        "extraction",
+        "processing",
+        "storage transfer",
+        "shipping",
+        "receiving",
+        "quality inspection",
+        "emissions capture"
+      ],
+      "aiDecisionSupportPotential": "Medium. Lifecycle data supports route choice, quality exception detection and emissions based trading decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as energy transition claims, methane rules and product level emissions scrutiny grow.",
+      "keywords": [
+        "energy lifecycle continuity",
+        "LNG provenance",
+        "fuel custody",
+        "hydrogen proof of origin",
+        "energy emissions"
+      ]
+    },
+    {
+      "id": "pharmaceuticals_healthcare",
+      "archetype": "Pharmaceuticals & Healthcare",
+      "category": "Highly regulated products",
+      "industries": [
+        "Pharmaceuticals",
+        "Biologics",
+        "Vaccines",
+        "Healthcare distribution"
+      ],
+      "products": [
+        "Prescription medicines",
+        "Vaccines",
+        "Biologics",
+        "Clinical trial materials",
+        "Controlled medicines"
+      ],
+      "tags": [
+        "pharma",
+        "DSCSA",
+        "serialization",
+        "patient safety",
+        "counterfeit"
+      ],
+      "strategicUrgency": "Very High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because patient safety, anti counterfeit protection and regulatory compliance depend on serialized continuity across manufacturing, distribution, dispensing and returns.",
+      "primaryEconomicDriver": "Regulatory defensibility and reduced patient safety risk.",
+      "continuityFailureCost": "Patient risk, product quarantines, recall expansion, regulatory exposure, inventory write-offs and loss of market confidence.",
+      "measurableBusinessOutcomes": [
+        "Faster suspect product investigation",
+        "Reduced counterfeit exposure",
+        "Improved recall precision",
+        "Lower compliance effort",
+        "Higher supply assurance"
+      ],
+      "strategicNarrative": "Can every unit prove its operational history?",
+      "dominantPressureType": "Regulatory, safety and anti counterfeit assurance",
+      "primaryStrategicBuyer": [
+        "Compliance leadership",
+        "Chief Supply Chain Officer",
+        "Quality leadership",
+        "Healthcare distribution executives"
+      ],
+      "coreLifecycleChallenge": "Pharmaceutical products require serialized identity and custody continuity across manufacturers, wholesalers, dispensers, repackagers and returns processes.",
+      "whereTruthBreaksToday": "Truth breaks when serialization events, custody transfers, exceptions and repackaging are not interpreted as a full lifecycle record.",
+      "dominantOperationalFriction": "Suspect product investigations, broad recalls, compliance burden and returns uncertainty.",
+      "whyCurrentModelsPlateau": "Compliance systems satisfy reporting requirements, but may not provide broader lifecycle intelligence for operational and financial decisions.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "High",
+      "vciStrategicContribution": "VCI extends regulatory event continuity into a richer operational chain of custody that supports assurance, exception handling and lifecycle intelligence.",
+      "lifecycleModelType": "Serialized regulated product lifecycle",
+      "balanceSheetImpact": "Protects revenue and reduces risk by improving confidence in product availability, authenticity and release status.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Low",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "DSCSA event continuity",
+        "Vaccine cold chain",
+        "Suspect product investigation",
+        "Returns verification"
+      ],
+      "representativeDemonstrations": [
+        "Pharma chain of custody demo",
+        "Serialized medicine lifecycle scenario"
+      ],
+      "representativeOrganisations": [
+        "Manufacturers",
+        "Wholesalers",
+        "Pharmacies",
+        "Healthcare providers",
+        "Regulators"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "packing",
+        "shipping",
+        "receiving",
+        "dispensing",
+        "return",
+        "verification",
+        "recall"
+      ],
+      "aiDecisionSupportPotential": "High. Trusted serialized events improve exception triage, recall targeting and supply assurance decisions.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "High",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as regulation and counterfeit risks continue to expand globally.",
+      "keywords": [
+        "pharmaceutical lifecycle continuity",
+        "DSCSA",
+        "medicine serialization",
+        "anti counterfeit",
+        "patient safety"
+      ]
+    },
+    {
+      "id": "public_sector_sovereign_supply_chains",
+      "archetype": "Public Sector & Sovereign Supply Chains",
+      "category": "National resilience and public trust",
+      "industries": [
+        "Defence logistics",
+        "Emergency reserves",
+        "Aid supply chains",
+        "Public procurement",
+        "Strategic stockpiles"
+      ],
+      "products": [
+        "Medical reserves",
+        "Food aid",
+        "Defence supplies",
+        "Critical infrastructure materials",
+        "Emergency equipment"
+      ],
+      "tags": [
+        "public sector",
+        "sovereignty",
+        "resilience",
+        "strategic reserves",
+        "public procurement"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because governments need to coordinate trusted supply, strategic reserves and emergency response across agencies, suppliers and geographies.",
+      "primaryEconomicDriver": "Sovereign resilience, public accountability and lower emergency response risk.",
+      "continuityFailureCost": "Service disruption risk, emergency response delays, procurement inefficiencies, assurance overhead and reduced public confidence.",
+      "measurableBusinessOutcomes": [
+        "Improved reserve readiness",
+        "Faster emergency allocation",
+        "Reduced leakage and fraud",
+        "Better public procurement assurance",
+        "Stronger national supply visibility"
+      ],
+      "strategicNarrative": "Can nations coordinate trusted supply chain reality?",
+      "dominantPressureType": "Sovereignty, resilience and public accountability",
+      "primaryStrategicBuyer": [
+        "Government executives",
+        "Defence logistics leaders",
+        "Emergency management agencies",
+        "Public procurement leadership"
+      ],
+      "coreLifecycleChallenge": "Public supply chains often span multiple agencies, contractors and jurisdictions with fragmented information and high public consequence when supply fails.",
+      "whereTruthBreaksToday": "Truth breaks between procurement, storage, logistics, allocation and field use when records are not integrated into one operational evidence base.",
+      "dominantOperationalFriction": "Slow mobilisation, unclear stock readiness, leakage risk and weak accountability.",
+      "whyCurrentModelsPlateau": "Government systems often optimise compliance and procurement processes, but not continuous lifecycle coordination across agencies and suppliers.",
+      "ecosystemComplexity": "Very High",
+      "transformationComplexity": "Low",
+      "lifecycleTimeSensitivity": "Very High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI creates a trusted operational fabric for public supply chains by linking identity, custody, readiness, movement and use events.",
+      "lifecycleModelType": "Sovereign network lifecycle",
+      "balanceSheetImpact": "Improves capital stewardship by reducing obsolete reserves, increasing readiness and strengthening confidence in emergency supply allocation.",
+      "workingCapitalRelevance": "High",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "Very High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "Strategic reserve visibility",
+        "Emergency supply allocation",
+        "Defence logistics readiness",
+        "Aid distribution assurance"
+      ],
+      "representativeDemonstrations": [
+        "Sovereign supply chain demo",
+        "Emergency stockpile lifecycle scenario"
+      ],
+      "representativeOrganisations": [
+        "Government agencies",
+        "Defence organisations",
+        "Aid agencies",
+        "Critical suppliers"
+      ],
+      "typicalEventTypes": [
+        "procurement",
+        "commissioning",
+        "storage",
+        "inspection",
+        "shipping",
+        "receiving",
+        "allocation",
+        "use"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle truth improves allocation, readiness forecasting, fraud detection and emergency response decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "High",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as resilience, national security and public accountability expectations rise.",
+      "keywords": [
+        "sovereign supply chain",
+        "public sector lifecycle continuity",
+        "strategic reserves",
+        "defence logistics",
+        "emergency supply"
+      ]
+    },
+    {
+      "id": "rail_transport_infrastructure",
+      "archetype": "Rail & Transport Infrastructure",
+      "category": "Network assets and mobility systems",
+      "industries": [
+        "Rail",
+        "Mass transit",
+        "Fleet infrastructure",
+        "Transport assets"
+      ],
+      "products": [
+        "Rolling stock",
+        "Signalling equipment",
+        "Rail components",
+        "Maintenance spares",
+        "Infrastructure assets"
+      ],
+      "tags": [
+        "rail",
+        "transport infrastructure",
+        "asset lifecycle",
+        "maintenance",
+        "i-Trace"
+      ],
+      "strategicUrgency": "Medium",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because infrastructure performance depends on knowing which assets are installed, maintained, moved, repaired and available across operators and service providers.",
+      "primaryEconomicDriver": "Higher asset utilisation, improved reliability and lower maintenance uncertainty.",
+      "continuityFailureCost": "Network disruptions, asset downtime, schedule instability, maintenance inefficiencies and reduced corridor reliability.",
+      "measurableBusinessOutcomes": [
+        "Improved maintenance planning",
+        "Reduced duplicate spares",
+        "Faster fault investigation",
+        "Higher asset availability",
+        "Better lifecycle cost control"
+      ],
+      "strategicNarrative": "Can infrastructure systems coordinate lifecycle truth?",
+      "dominantPressureType": "Operational performance and asset assurance",
+      "primaryStrategicBuyer": [
+        "Infrastructure operations leadership",
+        "Maintenance leadership",
+        "Asset management executives",
+        "Transport authorities"
+      ],
+      "coreLifecycleChallenge": "Transport assets have long lives and move through operators, maintainers, depots and infrastructure programmes where identity standards alone do not prove lifecycle behaviour.",
+      "whereTruthBreaksToday": "Truth breaks when standardized identification is not extended into event level history of custody, condition, installation and maintenance.",
+      "dominantOperationalFriction": "Asset uncertainty, maintenance delays, spare duplication and weak cross operator visibility.",
+      "whyCurrentModelsPlateau": "Identification initiatives improve asset naming and recognition, but plateau if they do not cross into event level lifecycle continuity.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links standardized asset identity to operational events so that infrastructure assets gain a shared lifecycle history.",
+      "lifecycleModelType": "Serialized infrastructure asset lifecycle",
+      "balanceSheetImpact": "Improves return on assets by increasing availability, reducing spares duplication and improving maintenance confidence.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Low",
+      "inventoryOptimisationPotential": "High",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "Rail component lifecycle",
+        "Rolling stock maintenance history",
+        "Infrastructure spare visibility",
+        "Cross operator asset custody"
+      ],
+      "representativeDemonstrations": [
+        "Rail asset lifecycle demo",
+        "Transport infrastructure lifecycle continuity scenario"
+      ],
+      "representativeOrganisations": [
+        "Rail operators",
+        "Transport authorities",
+        "Maintenance providers",
+        "Infrastructure suppliers"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "installation",
+        "inspection",
+        "maintenance",
+        "transfer",
+        "repair",
+        "decommissioning"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle data supports predictive maintenance, asset readiness and network resilience decisions.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as transport networks digitise and seek stronger asset performance outcomes.",
+      "keywords": [
+        "rail lifecycle continuity",
+        "asset lifecycle",
+        "transport infrastructure",
+        "maintenance history",
+        "i-Trace"
+      ]
+    },
+    {
+      "id": "renewable_energy_supply_chains",
+      "archetype": "Renewable Energy Supply Chains",
+      "category": "Clean infrastructure and industrial transition",
+      "industries": [
+        "Solar",
+        "Wind",
+        "Battery systems",
+        "Grid infrastructure",
+        "Renewable projects"
+      ],
+      "products": [
+        "Solar panels",
+        "Wind turbines",
+        "Battery systems",
+        "Inverters",
+        "Grid components"
+      ],
+      "tags": [
+        "renewables",
+        "solar",
+        "wind",
+        "clean energy",
+        "component provenance"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because clean energy infrastructure depends on proving component provenance, ESG integrity, material origin and lifecycle emissions across global manufacturing networks.",
+      "primaryEconomicDriver": "Sustainable infrastructure assurance and lower procurement risk.",
+      "continuityFailureCost": "Project delays, equipment availability risks, qualification bottlenecks, supply assurance costs and reduced generation readiness.",
+      "measurableBusinessOutcomes": [
+        "Improved supplier qualification",
+        "Reduced forced labour exposure",
+        "Better warranty evidence",
+        "Stronger project assurance",
+        "Improved component availability"
+      ],
+      "strategicNarrative": "Can clean energy supply chains prove they are truly clean?",
+      "dominantPressureType": "ESG, localisation and energy transition assurance",
+      "primaryStrategicBuyer": [
+        "Procurement leadership",
+        "Chief Sustainability Officer",
+        "Project delivery leadership",
+        "Energy infrastructure owners"
+      ],
+      "coreLifecycleChallenge": "Renewable energy projects rely on globally sourced components with complex material and manufacturing histories.",
+      "whereTruthBreaksToday": "Truth breaks across sub suppliers, module assembly, logistics, installation and warranty service where provenance and condition are not connected.",
+      "dominantOperationalFriction": "Supplier opacity, claim risk, project delays and uncertain warranty evidence.",
+      "whyCurrentModelsPlateau": "ESG disclosures and supplier audits are useful, but they do not provide component level lifecycle evidence across the project and operating life.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "Medium",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links component provenance, custody, installation and service events into a trusted lifecycle record for clean infrastructure.",
+      "lifecycleModelType": "Component to infrastructure lifecycle",
+      "balanceSheetImpact": "Reduces project risk and improves asset confidence by strengthening component evidence, warranty records and supplier assurance.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "High",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Medium",
+      "representativeUseCases": [
+        "Solar panel provenance",
+        "Wind turbine component lifecycle",
+        "Battery system custody",
+        "Project handover evidence"
+      ],
+      "representativeDemonstrations": [
+        "Renewable component lifecycle continuity demo",
+        "Solar supply chain scenario"
+      ],
+      "representativeOrganisations": [
+        "Renewable developers",
+        "Utilities",
+        "Component manufacturers",
+        "Project contractors"
+      ],
+      "typicalEventTypes": [
+        "manufacture",
+        "inspection",
+        "shipping",
+        "receiving",
+        "installation",
+        "service",
+        "warranty event"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle data improves supplier risk sensing, warranty analytics and project delay prediction.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "High",
+      "futurePressureTrajectory": "Increasing as clean energy supply chains face deeper scrutiny on ESG, origin and resilience.",
+      "keywords": [
+        "renewable energy lifecycle continuity",
+        "solar provenance",
+        "wind supply chain",
+        "clean energy ESG",
+        "component lifecycle"
+      ]
+    },
+    {
+      "id": "waste_hazardous_materials",
+      "archetype": "Waste & Hazardous Materials",
+      "category": "High consequence custody",
+      "industries": [
+        "Hazardous waste",
+        "Chemical disposal",
+        "Industrial waste",
+        "Biohazard logistics"
+      ],
+      "products": [
+        "Hazardous chemicals",
+        "Clinical waste",
+        "Industrial by products",
+        "Contaminated materials",
+        "Waste containers"
+      ],
+      "tags": [
+        "hazardous waste",
+        "custody",
+        "compliance",
+        "liability",
+        "disposal"
+      ],
+      "strategicUrgency": "High",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because liability, public safety and compliance depend on proving exactly where hazardous materials moved, who controlled them and how they were treated or disposed.",
+      "primaryEconomicDriver": "Lower liability exposure and stronger compliance defensibility.",
+      "continuityFailureCost": "Material leakage, recovery inefficiencies, regulatory exposure, reduced resource value and weaker circular economy outcomes.",
+      "measurableBusinessOutcomes": [
+        "Reduced disposal dispute risk",
+        "Improved audit readiness",
+        "Faster incident investigation",
+        "Lower leakage and fraud risk",
+        "Better contractor accountability"
+      ],
+      "strategicNarrative": "Can hazardous materials prove where they went?",
+      "dominantPressureType": "Regulatory, safety and liability",
+      "primaryStrategicBuyer": [
+        "Compliance leadership",
+        "Operations leadership",
+        "Risk executives",
+        "Environmental health and safety leadership"
+      ],
+      "coreLifecycleChallenge": "Hazardous materials move across generators, transporters, treatment sites and disposal facilities where custody integrity is critical.",
+      "whereTruthBreaksToday": "Truth breaks when manifests, transport events, treatment records and disposal evidence are not linked at container or batch level.",
+      "dominantOperationalFriction": "Liability uncertainty, contractor risk, disposal fraud and slow incident reconstruction.",
+      "whyCurrentModelsPlateau": "Manifest and compliance systems document movements, but may not provide continuous, tamper resistant lifecycle evidence across all parties.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Medium",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI creates an end to end custody chain from generation to treatment and disposal, linking movement, custody and compliance events.",
+      "lifecycleModelType": "Regulated custody lifecycle",
+      "balanceSheetImpact": "Reduces contingent liability and compliance cost by making disposal evidence more precise, timely and defensible.",
+      "workingCapitalRelevance": "Low",
+      "revenueProtectionPotential": "High",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Low",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "Hazardous waste custody",
+        "Clinical waste chain of custody",
+        "Disposal verification",
+        "Contractor compliance assurance"
+      ],
+      "representativeDemonstrations": [
+        "Hazardous material custody demo",
+        "Waste disposal proof scenario"
+      ],
+      "representativeOrganisations": [
+        "Waste generators",
+        "Transporters",
+        "Treatment facilities",
+        "Regulators"
+      ],
+      "typicalEventTypes": [
+        "generation",
+        "containerisation",
+        "pickup",
+        "shipping",
+        "receiving",
+        "treatment",
+        "disposal",
+        "certificate"
+      ],
+      "aiDecisionSupportPotential": "Medium. Lifecycle data improves exception detection, contractor risk scoring and compliance prioritisation.",
+      "digitalTwinRelevance": "Medium",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as environmental liability and waste accountability expectations strengthen.",
+      "keywords": [
+        "hazardous waste lifecycle continuity",
+        "disposal verification",
+        "waste custody",
+        "environmental compliance",
+        "liability reduction"
+      ]
+    },
+    {
+      "id": "water_utilities",
+      "archetype": "Water & Utilities",
+      "category": "Infrastructure resilience and environmental systems",
+      "industries": [
+        "Water utilities",
+        "Electric utilities",
+        "Network infrastructure",
+        "Environmental monitoring"
+      ],
+      "products": [
+        "Water assets",
+        "Meters",
+        "Pumps",
+        "Pipes",
+        "Treatment chemicals",
+        "Field equipment"
+      ],
+      "tags": [
+        "utilities",
+        "water",
+        "infrastructure resilience",
+        "assets",
+        "environmental monitoring"
+      ],
+      "strategicUrgency": "Medium",
+      "whyLifecycleContinuityMatters": "Maintaining lifecycle continuity is important because infrastructure reliability, environmental performance and service confidence depend on linking assets, materials, maintenance and operating events over time.",
+      "primaryEconomicDriver": "Higher infrastructure resilience and better asset productivity.",
+      "continuityFailureCost": "Service interruptions, asset performance degradation, compliance exposure, maintenance inefficiencies and reduced operational resilience.",
+      "measurableBusinessOutcomes": [
+        "Improved maintenance targeting",
+        "Reduced service interruptions",
+        "Better asset condition evidence",
+        "Lower emergency repair cost",
+        "Stronger environmental compliance"
+      ],
+      "strategicNarrative": "Can utility systems see lifecycle behaviour in real time?",
+      "dominantPressureType": "Resilience, sustainability and asset performance",
+      "primaryStrategicBuyer": [
+        "Infrastructure leadership",
+        "Asset management executives",
+        "Operations leadership",
+        "Government owners"
+      ],
+      "coreLifecycleChallenge": "Utility networks contain distributed assets and environmental dependencies whose condition, movement and maintenance histories are often not connected at lifecycle level.",
+      "whereTruthBreaksToday": "Truth breaks between asset registers, field work, sensor data, materials, contractors and environmental events.",
+      "dominantOperationalFriction": "Reactive maintenance, weak condition context, service interruptions and fragmented compliance evidence.",
+      "whyCurrentModelsPlateau": "SCADA and asset systems provide operational visibility, but may not connect physical lifecycle events, materials and accountability across the asset base.",
+      "ecosystemComplexity": "High",
+      "transformationComplexity": "Low",
+      "lifecycleTimeSensitivity": "High",
+      "operationalVisibilityMaturity": "Medium",
+      "vciStrategicContribution": "VCI links asset, material, maintenance, custody and environmental events into a lifecycle intelligence layer for infrastructure systems.",
+      "lifecycleModelType": "Infrastructure asset and event lifecycle",
+      "balanceSheetImpact": "Improves return on infrastructure assets by reducing failures, targeting maintenance and improving confidence in service performance.",
+      "workingCapitalRelevance": "Medium",
+      "revenueProtectionPotential": "Medium",
+      "emissionsVisibilityPotential": "Medium",
+      "inventoryOptimisationPotential": "Medium",
+      "resilienceContribution": "High",
+      "premiumPricingPotential": "Low",
+      "representativeUseCases": [
+        "Critical spares visibility",
+        "Treatment chemical provenance",
+        "Field asset lifecycle",
+        "Environmental event linkage"
+      ],
+      "representativeDemonstrations": [
+        "Utility asset lifecycle demo",
+        "Water network resilience scenario"
+      ],
+      "representativeOrganisations": [
+        "Water utilities",
+        "Electric utilities",
+        "Infrastructure operators",
+        "Government asset owners"
+      ],
+      "typicalEventTypes": [
+        "commissioning",
+        "installation",
+        "inspection",
+        "maintenance",
+        "sensor event",
+        "repair",
+        "replacement"
+      ],
+      "aiDecisionSupportPotential": "High. Lifecycle data improves failure prediction, maintenance prioritisation and resilience planning.",
+      "digitalTwinRelevance": "High",
+      "controlTowerRelevance": "Medium",
+      "circularEconomyEnablement": "Medium",
+      "futurePressureTrajectory": "Increasing as utilities face climate stress, ageing infrastructure and stronger public accountability.",
+      "keywords": [
+        "utility lifecycle continuity",
+        "water infrastructure",
+        "asset lifecycle",
+        "network resilience",
+        "environmental monitoring"
+      ]
+    }
+  ]
+}
