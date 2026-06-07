@@ -271,7 +271,7 @@ function toggleContents() {
     document.getElementById('tocPane').classList.toggle('hidden');
 }
 
-fetch('../assets/resources/DiagnosticWorkbench-help.md')
+fetch('../assets/resources/DiagnosticWorkbench-Help.md')
     .then(response => response.text())
     .then(md => {
         const html = marked.parse(md);
