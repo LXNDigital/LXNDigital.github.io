@@ -685,3 +685,71 @@ header.masthead {
         grid-template-columns: 1fr;
     }
 }
+
+/* ====== HOMEPAGE HERO READABILITY REFINEMENTS ====== */
+
+header.masthead {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+header.masthead h1,
+header.masthead h5,
+header.masthead h6,
+header.masthead p,
+header.masthead .text-faded {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Dark overlay over the existing hero background image */
+header.masthead::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 22, 36, 0.64) 0%,
+            rgba(0, 22, 36, 0.48) 45%,
+            rgba(0, 22, 36, 0.24) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(0, 22, 36, 0.04) 0%,
+            rgba(0, 22, 36, 0.24) 100%
+        );
+    pointer-events: none;
+}
+
+/* Keep hero content above the overlay */
+header.masthead > .container,
+.masthead > .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Improve support paragraph readability */
+header.masthead .text-faded {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Improve readability of the three hero columns */
+header.masthead .col-md-4 .text-faded {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Add subtle structure above each hero column */
+header.masthead .col-md-4 {
+    border-top: 1px solid rgba(7, 152, 139, 0.55);
+    padding-top: 1rem;
+}
+
+/* Make the hero column headings slightly cleaner */
+header.masthead .col-md-4 h6 {
+    margin-bottom: 0.7rem;
+}
+
