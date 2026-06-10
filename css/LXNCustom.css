@@ -773,3 +773,24 @@ header.masthead .hero-resolution-copy p {
     color: rgba(255, 255, 255, 0.88) !important;
 }
 
+/* ====== ABOUT SECTION REFINEMENTS ====== */
+
+#aboutus .about-divider {
+    margin-bottom: 0.5rem;
+}
+
+#aboutus .about-row {
+    margin-top: 0;
+}
+
+#aboutus .about-text {
+    font-style: normal;
+}
+
+#aboutus .about-text p:first-child {
+    margin-top: 0;
+}
+
+#aboutus .about-text p:last-child {
+    margin-bottom: 0;
+}
