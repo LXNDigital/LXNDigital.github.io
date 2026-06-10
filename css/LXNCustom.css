@@ -742,14 +742,34 @@ header.masthead .col-md-4 .text-faded {
     color: rgba(255, 255, 255, 0.88) !important;
 }
 
-/* Add subtle structure above each hero column */
-header.masthead .col-md-4 {
-    border-top: 1px solid rgba(7, 152, 139, 0.55);
-    padding-top: 1rem;
-}
-
 /* Make the hero column headings slightly cleaner */
 header.masthead .col-md-4 h6 {
     margin-bottom: 0.7rem;
+}
+
+/* ====== HOMEPAGE HERO TENSION BLOCK ====== */
+
+header.masthead .hero-kicker {
+    margin-bottom: 0.9rem;
+}
+
+header.masthead .hero-tension-row {
+    border-top: 1px solid rgba(7, 152, 139, 0.55);
+    border-bottom: 1px solid rgba(7, 152, 139, 0.28);
+    padding-top: 1rem;
+    padding-bottom: 1.35rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1.35rem;
+}
+
+header.masthead .hero-resolution-copy {
+    max-width: 1120px;
+    margin-top: 0;
+}
+
+header.masthead .hero-resolution-copy p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.88) !important;
 }
 
