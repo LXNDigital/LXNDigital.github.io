@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SM2CCTJXEM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SM2CCTJXEM');
+    </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Global Traceability Landscape | LXNDigital</title>
+    <meta name="title" content="Global Traceability Landscape | LXNDigital">
+    <meta name="description" content="A global view of traceability maturity, chain-of-custody pressure and lifecycle-continuity business value by country and bloc.">
+    <meta name="author" content="Levine Naidoo">
+    <link rel="canonical" href="https://www.lxndigital.com/global-traceability-landscape.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.lxndigital.com/global-traceability-landscape.html">
+    <meta property="og:title" content="Global Traceability Landscape | LXNDigital">
+    <meta property="og:description" content="Traceability is spreading as a global groundswell of regimes, platforms, product passports and sector-specific chain-of-custody obligations.">
+    <meta property="og:image" content="https://www.lxndigital.com/assets/img/LXNDigitalOG.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.lxndigital.com/global-traceability-landscape.html">
+    <meta property="twitter:title" content="Global Traceability Landscape | LXNDigital">
+    <meta property="twitter:description" content="A country and bloc landscape showing traceability maturity and the broader lifecycle-continuity value proposition beyond compliance.">
+    <meta property="twitter:image" content="https://www.lxndigital.com/assets/img/LXNDigitalOG.jpg">
+
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/LXNCustom.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --lxn-bg: #071927;
+            --lxn-panel: rgba(255,255,255,0.08);
+            --lxn-panel-soft: rgba(255,255,255,0.12);
+            --lxn-line: rgba(255,255,255,0.18);
+            --lxn-text: #f7fafc;
+            --lxn-muted: rgba(247,250,252,0.78);
+            --lxn-muted-2: rgba(247,250,252,0.62);
+            --lxn-accent: #5CB8B2;
+            --tier-1: #3FA9F5;
+            --tier-2: #2EC4B6;
+            --tier-3: #F2B84B;
+            --tier-na: #bdcbd89f;
+            --index-card: #ffffff;
+            --index-card-soft: #f7f9fc;
+            --index-card-line: #e6ebf2;
+            --index-card-text: #12172a;
+            --index-card-muted: #65738a;
+            --index-pill: #f0f1ff;
+            --success: #5ea168;
+        }
+
+        body {
+            background: var(--lxn-bg);
+            color: var(--lxn-text);
+        }
+
+        .brand-fallback {
+            display: none;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: .02em;
+        }
+
+        #traceability-landscape {
+            padding-top: 9rem;
+            background: var(--lxn-bg);
+            min-height: 100vh;
+        }
+
+        .landscape-kicker {
+            color: var(--lxn-accent);
+            text-transform: uppercase;
+            font-size: .78rem;
+            letter-spacing: .16em;
+            font-weight: 700;
+            text-align: left;
+            margin-bottom: .75rem;
+        }
+
+        .landscape-lede {
+            max-width: 1060px;
+            margin: 0;
+            color: var(--lxn-muted);
+            font-size: 1.12rem;
+            line-height: 1.72;
+            text-align: left;
+        }
+
+        .landscape-note {
+            max-width: 980px;
+            margin: 1.25rem 0 0;
+            color: var(--lxn-muted-2);
+            font-size: .94rem;
+            line-height: 1.65;
+            text-align: left;
+        }
+
+        .landscape-divider {
+            width: 5rem;
+            height: 0.22rem;
+            background: var(--lxn-accent);
+            border: 0;
+            opacity: 1;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        .kpi-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--lxn-line);
+            border-radius: 1.1rem;
+            padding: 1.1rem 1.15rem;
+            min-height: 8.25rem;
+        }
+
+        .kpi-card strong {
+            display: block;
+            font-size: clamp(1.7rem, 3vw, 2.65rem);
+            line-height: 1;
+            letter-spacing: -0.04em;
+            color: #fff;
+            margin-bottom: .65rem;
+        }
+
+        .kpi-card span {
+            display: block;
+            color: var(--lxn-muted);
+            line-height: 1.45;
+            font-size: .94rem;
+        }
+
+        .map-panel, .controls-panel, .landscape-table-panel {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 1.35rem;
+            box-shadow: 0 1.2rem 3.2rem rgba(0,0,0,0.18);
+        }
+
+        .map-panel {
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .map-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .map-header h3, .controls-panel h3, .landscape-table-panel h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: #fff;
+            margin: 0;
+        }
+
+        .tier-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .55rem;
+            align-items: center;
+            color: var(--lxn-muted);
+            font-size: .84rem;
+        }
+
+        .legend-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .42rem;
+            white-space: nowrap;
+        }
+
+        .legend-swatch {
+            display: inline-block;
+            width: .82rem;
+            height: .82rem;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+
+        .tier-1-bg { background: var(--tier-1); }
+        .tier-2-bg { background: var(--tier-2); }
+        .tier-3-bg { background: var(--tier-3); }
+        .tier-na-bg { background: var(--tier-na); }
+
+        .map-wrap {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: radial-gradient(circle at 50% 20%, rgba(92,184,178,0.12), transparent 38rem), #0b2030;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        #worldMap {
+            display: block;
+            width: 100%;
+            height: auto;
+            min-height: 330px;
+        }
+
+        .country {
+            stroke: rgba(255, 255, 255, 0.622);
+            stroke-width: .35;
+            transition: opacity .16s ease, stroke-width .16s ease, filter .16s ease;
+        }
+
+        .country.has-profile {
+            cursor: pointer;
+        }
+
+        .country.has-profile:hover,
+        .country.is-active {
+            stroke: #fff;
+            stroke-width: .9;
+            filter: brightness(1.18);
+        }
+
+        .sphere {
+            fill: #0b2030;
+        }
+
+        .graticule {
+            fill: none;
+            stroke: rgba(255,255,255,0.07);
+            stroke-width: .45;
+        }
+
+        .map-tooltip {
+            position: absolute;
+            pointer-events: none;
+            z-index: 20;
+            display: none;
+            min-width: 220px;
+            max-width: 330px;
+            background: rgba(10,10,10,0.95);
+            border: 1px solid rgba(255,255,255,0.16);
+            color: #fff;
+            border-radius: .9rem;
+            padding: .85rem .95rem;
+            box-shadow: 0 1rem 2.4rem rgba(0,0,0,.38);
+            font-size: .86rem;
+        }
+
+        .map-tooltip strong {
+            display: block;
+            margin-bottom: .3rem;
+            font-size: .98rem;
+        }
+
+        .tooltip-muted {
+            color: var(--lxn-muted);
+        }
+
+        .controls-panel {
+            padding: 1.15rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(4, 1fr) auto;
+            gap: .75rem;
+            align-items: end;
+            margin-top: 1rem;
+        }
+
+        .filters-grid label {
+            display: block;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--lxn-muted-2);
+            margin-bottom: .35rem;
+        }
+
+        .filters-grid input,
+        .filters-grid select {
+            background: #061725;
+            border: 1px solid rgba(92,184,178,0.72);
+            color: #fff;
+            border-radius: .65rem;
+            padding: .68rem .75rem;
+            width: 100%;
+        }
+
+        .filters-grid input::placeholder {
+            color: rgba(255,255,255,0.38);
+        }
+
+        .filters-grid select option {
+            color: #111;
+        }
+
+        .reset-button {
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            border-radius: .65rem;
+            padding: .72rem .95rem;
+            white-space: nowrap;
+        }
+
+        .reset-button:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .landscape-table-panel {
+            padding: 1.15rem;
+        }
+
+        .table-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .row-count {
+            color: var(--lxn-muted);
+            font-size: .9rem;
+        }
+
+        .landscape-table-wrap {
+            max-height: 74vh;
+            overflow-y: auto;
+            border-radius: 1rem;
+            border: none;
+            background: transparent;
+        }
+
+        .landscape-table-header,
+        .landscape-row-summary {
+            display: grid;
+            grid-template-columns: 1.05fr 1.45fr 1fr 1.7fr 1.6fr;
+            gap: .8rem;
+            align-items: center;
+        }
+
+        .landscape-table-header {
+            position: sticky;
+            top: 0;
+            z-index: 8;
+            padding: .85rem 1rem;
+            background: #0b2030;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: .9rem;
+            color: var(--lxn-muted-2);
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .09em;
+            margin-bottom: 1rem;
+        }
+
+        .landscape-row {
+            border: 0;
+            background: var(--index-card);
+            color: var(--index-card-text);
+            border-radius: 1.25rem;
+            margin-bottom: 1.35rem;
+            overflow: hidden;
+            box-shadow: 0 1rem 2.8rem rgba(0,0,0,0.10);
+            transition: transform .18s ease, box-shadow .18s ease;
+            cursor: pointer;
+        }
+
+        .landscape-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .landscape-row.selected {
+            box-shadow: 0 1rem 2.8rem rgba(0,0,0,0.14), inset 4px 0 0 var(--lxn-accent);
+        }
+
+        .landscape-row.expanded {
+            background: var(--index-card);
+        }
+
+        .landscape-row-summary {
+            padding: 1.35rem;
+            cursor: pointer;
+        }
+
+        .landscape-row-summary:hover {
+            background: #fbfcff;
+        }
+
+        .summary-cell {
+            color: var(--index-card-muted);
+            font-size: .91rem;
+            line-height: 1.45;
+        }
+
+        .summary-cell strong {
+            color: var(--index-card-text);
+            font-size: 1rem;
+        }
+
+        .summary-sub {
+            display: block;
+            color: var(--index-card-muted);
+            font-size: .79rem;
+            margin-top: .2rem;
+        }
+
+        .tier-pill, .coc-pill, .coverage-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: .35rem .65rem;
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            white-space: nowrap;
+            border: 1px solid rgba(18,23,42,0.08);
+            color: #fff;
+        }
+
+        .tier-pill.tier-1 { background: var(--tier-1); }
+        .tier-pill.tier-2 { background: var(--tier-2); }
+        .tier-pill.tier-3 { background: var(--tier-3); color: #151515; }
+        .tier-pill.tier-na { background: var(--tier-na); }
+
+        .coc-pill {
+            background: var(--index-pill);
+            color: #2d3283;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .coverage-pill {
+            background: var(--index-pill);
+            color: #2d3283;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .landscape-details {
+            display: none;
+            padding: 0 1rem 1.15rem;
+        }
+
+        .details-inner {
+            border-top: 1px solid var(--index-card-line);
+            padding-top: 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-section {
+            background: var(--index-card-soft);
+            border: 1px solid var(--index-card-line);
+            border-radius: .95rem;
+            padding: 1rem;
+        }
+
+        .detail-section h4 {
+            color: #111827 !important;
+            font-size: .9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            margin-bottom: .8rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: minmax(9rem, 0.42fr) minmax(0, 1fr);
+            gap: .85rem;
+            padding: .62rem 0;
+            border-top: 1px solid var(--index-card-line);
+            color: var(--index-card-text);
+            font-size: .9rem;
+            line-height: 1.5;
+        }
+
+        .detail-row:first-of-type {
+            border-top: 0;
+        }
+
+        .detail-row strong {
+            color: #65738a;
+            font-weight: 700;
+        }
+
+        .detail-row a, .source-link {
+            color: #126782;
+            text-decoration: none;
+            word-break: break-word;
+        }
+
+        .detail-row a:hover, .source-link:hover {
+            color: #0b2030;
+            text-decoration: underline;
+        }
+
+        .evidence-stack {
+            display: grid;
+            gap: .85rem;
+            margin-top: 1rem;
+        }
+
+        .evidence-card {
+            border: 1px solid var(--index-card-line);
+            background: #ffffff;
+            border-radius: .95rem;
+            overflow: hidden;
+        }
+
+        .evidence-card-header {
+            padding: .9rem 1rem;
+            border-bottom: 1px solid var(--index-card-line);
+            display: flex;
+            justify-content: space-between;
+            gap: .9rem;
+            align-items: start;
+        }
+
+        .evidence-card-header h5 {
+            font-size: .98rem;
+            color: var(--index-card-text);
+            margin: 0 0 .25rem;
+        }
+
+        .evidence-card-header p {
+            margin: 0;
+            color: var(--index-card-muted);
+            font-size: .86rem;
+        }
+
+        .evidence-columns {
+            padding: .4rem 1rem .9rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .empty-state, .map-error {
+            text-align: center;
+            padding: 2.2rem 1rem;
+            color: var(--lxn-muted);
+        }
+
+        .map-error {
+            min-height: 330px;
+            display: grid;
+            place-content: center;
+        }
+
+        .small-print {
+            color: var(--lxn-muted-2);
+            font-size: .84rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .filters-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .landscape-table-header,
+            .landscape-row-summary {
+                grid-template-columns: .95fr 1.4fr 1fr;
+            }
+            .hide-lg { display: none; }
+        }
+
+        @media (max-width: 900px) {
+            #traceability-landscape { padding-top: 7.5rem; }
+            .kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .details-grid { grid-template-columns: 1fr; }
+            .detail-row { grid-template-columns: 1fr; gap: .22rem; }
+            .landscape-table-header { display: none; }
+            .landscape-row-summary {
+                grid-template-columns: 1fr;
+                gap: .6rem;
+            }
+            .summary-cell::before {
+                content: attr(data-label);
+                display: block;
+                color: var(--lxn-muted-2);
+                font-size: .7rem;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+                margin-bottom: .1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .filters-grid { grid-template-columns: 1fr; }
+            .kpi-strip { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="index.html#page-top">
+                <img src="assets/img/LXNDigitalLogo.png" alt="LXNDigital" height="35" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';">
+                <span class="brand-fallback">LXNDigital</span>
+            </a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html#focusareas">Focus Areas</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="perspectivesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perspectives</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="perspectivesDropdown">
+                            <li><a class="dropdown-item" href="lifecycle-index.html">Lifecycle Continuity Index</a></li>
+                            <li><a class="dropdown-item" href="global-traceability-landscape.html">Global Traceability Landscape</a></li>
+                            <li><a class="dropdown-item" href="articles.html">Articles</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#approach">Approach</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#aboutus">About Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-section" id="traceability-landscape">
+        <div class="container px-4 px-lg-5">
+            <div class="lifecycle-intro">
+                <h2>Global Traceability Landscape</h2>
+                <hr class="landscape-divider" />
+                <p class="landscape-lede">
+                    Traceability is no longer arriving as a single regulatory wave. It is spreading as a groundswell of sector rules, chain-of-custody obligations, product passports, source verification regimes and digital trade platforms.
+                </p>
+                <p class="landscape-note">
+                    Compliance is the entry point, not the whole value proposition. The broader opportunity is lifecycle continuity: turning fragmented operational events into evidence that improves capital efficiency, product integrity, risk containment, market access, planning and sustainability decisions.
+                </p>
+            </div>
+
+            <div class="kpi-strip" id="kpiStrip"></div>
+
+            <div class="map-panel">
+                <div class="map-header">
+                    <h3>World map by maturity tier</h3>
+                    <div class="tier-legend" id="tierLegend">
+                        <span class="legend-chip"><span class="legend-swatch tier-1-bg"></span>Tier 1</span>
+                        <span class="legend-chip"><span class="legend-swatch tier-2-bg"></span>Tier 2</span>
+                        <span class="legend-chip"><span class="legend-swatch tier-3-bg"></span>Tier 3</span>
+                        <span class="legend-chip"><span class="legend-swatch tier-na-bg"></span>Not assessed</span>
+                    </div>
+                </div>
+                <div class="map-wrap">
+                    <svg id="worldMap" viewBox="0 0 960 430" preserveAspectRatio="xMidYMid meet" role="img" aria-label="World map showing traceability maturity tiers"></svg>
+                    <div class="map-tooltip" id="mapTooltip"></div>
+                </div>
+                <p class="small-print mt-3 mb-0">
+                    Click a coloured country to scroll to its row. Click on each row to see more details. EU member states scroll to the European Union (27) profile. Multi-country initiatives such as UNECE / UNTP and global apparel supply chains appear in the table but are not shaded as individual countries.
+                </p>
+            </div>
+
+            <div class="controls-panel">
+                <h3>Explore the landscape</h3>
+                <div class="filters-grid">
+                    <div>
+                        <label for="searchInput">Search</label>
+                        <input type="text" id="searchInput" placeholder="Search country, regime, CoC, value pillar, metric or URL..." />
+                    </div>
+                    <div>
+                        <label for="tierFilter">Tier</label>
+                        <select id="tierFilter"><option value="">All tiers</option></select>
+                    </div>
+                    <div>
+                        <label for="regionFilter">Region</label>
+                        <select id="regionFilter"><option value="">All regions</option></select>
+                    </div>
+                    <div>
+                        <label for="cocFilter">CoC posture</label>
+                        <select id="cocFilter"><option value="">All CoC postures</option></select>
+                    </div>
+                    <div>
+                        <label for="valueFilter">Value pillar</label>
+                        <select id="valueFilter"><option value="">All value pillars</option></select>
+                    </div>
+                    <button type="button" class="reset-button" id="resetFilters">Reset</button>
+                </div>
+            </div>
+
+            <div class="landscape-table-panel">
+                <div class="table-panel-header">
+                    <h3>Country and bloc evidence rows</h3>
+                    <div class="row-count" id="rowCount"></div>
+                </div>
+                <div class="landscape-table-wrap" id="landscapeTableWrap">
+                    <div class="landscape-table-header">
+                        <div>Tier</div>
+                        <div>Jurisdiction</div>
+                        <div>Region</div>
+                        <div class="hide-lg">Traceability scope</div>
+                        <div class="hide-lg">Primary value</div>
+                    </div>
+                    <div id="landscapeRows"></div>
+                </div>
+                <p class="small-print mt-3 mb-2">
+                    The table is grouped by country/bloc. Click a row to expand or collapse it. Expanding a row exposes every country-profile field and every evidence-row column from the due-diligence workbook, including source URLs.
+                </p>
+                <p class="small-print mt-3 mb-0">
+                    Disclaimer: This Global Traceability Landscape is a point-in-time snapshot and is not fed in real time. It should be treated as a due-diligence reference, not as a live regulatory monitoring service.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-5">
+        <div class="container px-4 px-lg-5"><div class="small text-center text-muted">Copyright &copy; 2026 - LXNDigital</div></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
+    <script>
+        const DATA_URL = 'global-traceability-landscape.json';
+        const WORLD_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+
+        let landscape = null;
+        let countryProfiles = [];
+        let evidenceRows = [];
+        let jurisdictionalHistory = [];
+        let evidenceById = new Map();
+        let historyById = new Map();
+        let profileById = new Map();
+        let currentProfiles = [];
+        let activeProfileId = null;
+        let expandedProfileId = null;
+        let programmaticScroll = false;
+        let lastTableScrollTop = 0;
+
+        const tierColours = {
+            1: getCss('--tier-1'),
+            2: getCss('--tier-2'),
+            3: getCss('--tier-3'),
+            na: getCss('--tier-na')
+        };
+
+        function getCss(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        function escapeHtml(value) {
+            if (value === null || value === undefined || value === '') return '—';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeAttr(value) {
+            return escapeHtml(value).replace(/`/g, '&#096;');
+        }
+
+        function formatValue(value, options = {}) {
+            if (Array.isArray(value)) {
+                if (!value.length) return '—';
+                if (options.asLinks) {
+                    return value.map((url, idx) => `<a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">Reference ${idx + 1}</a>`).join(' &middot; ');
+                }
+                return value.map(escapeHtml).join('; ');
+            }
+            if (value === null || value === undefined || value === '') return '—';
+            const str = String(value);
+            if (options.asLink && /^https?:\/\//i.test(str)) {
+                return `<a href="${escapeAttr(str)}" target="_blank" rel="noopener noreferrer">${escapeHtml(str)}</a>`;
+            }
+            return escapeHtml(str);
+        }
+
+        function tierShort(tierNumber) {
+            return tierNumber ? `Tier ${tierNumber}` : 'Unmapped';
+        }
+
+        function firstNonEmpty(...values) {
+            return values.find(v => v !== null && v !== undefined && v !== '') || '—';
+        }
+
+        async function loadLandscape() {
+            try {
+                const response = await fetch(DATA_URL);
+                landscape = await response.json();
+                countryProfiles = landscape.countryProfiles || [];
+                evidenceRows = landscape.evidenceRows || [];
+                jurisdictionalHistory = landscape.jurisdictionalHistory || [];
+                evidenceById = new Map(evidenceRows.map(row => [row.id, row]));
+                historyById = new Map(jurisdictionalHistory.map(row => [row.id, row]));
+                profileById = new Map(countryProfiles.map(profile => [profile.id, profile]));
+                currentProfiles = [...countryProfiles];
+
+                renderKpis();
+                populateFilters();
+                renderRows(currentProfiles);
+                await renderMap();
+                bindControls();
+            } catch (error) {
+                document.getElementById('landscapeRows').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Unable to load the landscape data</h3>
+                        <p class="mb-0">Place <code>global-traceability-landscape.json</code> in the same directory as this page.</p>
+                    </div>`;
+                console.error(error);
+            }
+        }
+
+        function renderKpis() {
+            const stats = landscape.stats || {};
+            const formalCoc = Object.entries(stats.chainOfCustodyCounts || {})
+                .filter(([key]) => key.toLowerCase().includes('yes'))
+                .reduce((sum, [, value]) => sum + Number(value || 0), 0);
+            const evidenceCount = stats.evidenceRowCount || evidenceRows.length;
+            const profileCount = stats.countryProfileCount || countryProfiles.length;
+            const mappableCount = stats.mappableProfileCount || countryProfiles.filter(p => p.mappable).length;
+            const valuePillarCount = Object.keys(stats.primaryValuePillarCounts || {}).length;
+            document.getElementById('kpiStrip').innerHTML = `
+                <div class="kpi-card"><strong>${profileCount}</strong><span>country, bloc and global profiles grouped for executive scanning.</span></div>
+                <div class="kpi-card"><strong>${evidenceCount}</strong><span>due-diligence evidence rows with mechanisms, dates, burdens and URLs.</span></div>
+                <div class="kpi-card"><strong>${formalCoc}</strong><span>evidence rows involving formal or de facto chain-of-custody/event tracking.</span></div>
+                <div class="kpi-card"><strong>${valuePillarCount}</strong><span>business-value pillars showing that compliance is only one part of the value proposition.</span></div>
+            `;
+        }
+
+        function uniqueSorted(values) {
+            return [...new Set(values.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+        }
+
+        function setOptions(selectId, values, labelFn = v => v) {
+            const select = document.getElementById(selectId);
+            values.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = labelFn(value);
+                select.appendChild(option);
+            });
+        }
+
+        function populateFilters() {
+            setOptions('tierFilter', uniqueSorted(countryProfiles.map(p => String(p.tierNumber || ''))), value => `Tier ${value}`);
+            setOptions('regionFilter', uniqueSorted(countryProfiles.map(p => p.region)));
+            setOptions('cocFilter', uniqueSorted(countryProfiles.map(p => p.cocPosture)));
+            setOptions('valueFilter', uniqueSorted(countryProfiles.map(p => p.primaryValuePillar)));
+        }
+
+        function bindControls() {
+            ['searchInput', 'tierFilter', 'regionFilter', 'cocFilter', 'valueFilter'].forEach(id => {
+                document.getElementById(id).addEventListener('input', applyFilters);
+                document.getElementById(id).addEventListener('change', applyFilters);
+            });
+            document.getElementById('resetFilters').addEventListener('click', () => resetFilters(true));
+
+            const tableWrap = document.getElementById('landscapeTableWrap');
+            tableWrap.addEventListener('scroll', () => {
+                lastTableScrollTop = tableWrap.scrollTop;
+            });
+        }
+
+        function resetFilters(render = true) {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('tierFilter').value = '';
+            document.getElementById('regionFilter').value = '';
+            document.getElementById('cocFilter').value = '';
+            document.getElementById('valueFilter').value = '';
+            currentProfiles = [...countryProfiles];
+            if (render) renderRows(currentProfiles);
+            updateMapActiveState();
+        }
+
+        function applyFilters() {
+            const term = document.getElementById('searchInput').value.trim().toLowerCase();
+            const tier = document.getElementById('tierFilter').value;
+            const region = document.getElementById('regionFilter').value;
+            const coc = document.getElementById('cocFilter').value;
+            const value = document.getElementById('valueFilter').value;
+
+            currentProfiles = countryProfiles.filter(profile => {
+                const evidenceText = (profile.evidenceIds || []).map(id => JSON.stringify(evidenceById.get(id) || {})).join(' ');
+                const haystack = `${profile.searchText || ''} ${JSON.stringify(profile)} ${evidenceText}`.toLowerCase();
+                return (!term || haystack.includes(term)) &&
+                    (!tier || String(profile.tierNumber) === tier) &&
+                    (!region || profile.region === region) &&
+                    (!coc || profile.cocPosture === coc) &&
+                    (!value || profile.primaryValuePillar === value);
+            });
+            expandedProfileId = null;
+            renderRows(currentProfiles);
+            updateMapActiveState();
+        }
+
+        function renderRows(profiles) {
+            const container = document.getElementById('landscapeRows');
+            document.getElementById('rowCount').textContent = `${profiles.length} of ${countryProfiles.length} profiles`;
+            if (!profiles.length) {
+                container.innerHTML = `<div class="empty-state"><h3>No matching profiles found</h3><p class="mb-0">Try another search term, tier, region, CoC posture or value pillar.</p></div>`;
+                return;
+            }
+            container.innerHTML = profiles.map(profile => renderProfileRow(profile)).join('');
+            updateMapActiveState();
+        }
+
+        function getHistoryItems(profile) {
+            const explicitItems = (profile.jurisdictionalHistoryIds || []).map(id => historyById.get(id)).filter(Boolean);
+            if (explicitItems.length) return explicitItems;
+
+            const byProfile = jurisdictionalHistory.filter(item => item.profileId === profile.id);
+            if (byProfile.length) return byProfile;
+
+            const evidenceIds = new Set(profile.evidenceIds || []);
+            const byEvidence = jurisdictionalHistory.filter(item => evidenceIds.has(item.evidenceRowId));
+            if (byEvidence.length) return byEvidence;
+
+            // Final fallback: older JSON files did not contain the curated jurisdictionalHistory array.
+            // Convert the evidence rows into readable jurisdictional-history cards so the panel is never blank.
+            return (profile.evidenceIds || []).map(id => evidenceById.get(id)).filter(Boolean).map(row => ({
+                id: `fallback-${row.id}`,
+                evidenceRowId: row.id,
+                profileId: profile.id,
+                jurisdiction: profile.jurisdiction,
+                region: profile.region,
+                tierGroup: row.tierGroup || profile.highestMaturityTier || tierShort(profile.tierNumber),
+                tierNumber: row.tierNumber || profile.tierNumber,
+                tierClass: row.tierClass || profile.tierClass,
+                title: row.instrumentPlatform || row.sectorProductScope || profile.jurisdiction,
+                whatHappenedNarrative: firstNonEmpty(row.instrumentPlatform, row.traceabilityMechanism, row.sectorProductScope),
+                whyIncludedNarrative: firstNonEmpty(row.maturityVerdict, row.notes, profile.maturityPosture),
+                originalProblemNarrative: firstNonEmpty(row.complianceTriggersSubset, row.regulatoryFocus, row.primaryTraceabilityDriver, profile.complianceTriggersSubset),
+                maturityNarrative: firstNonEmpty(row.legalStatusCategory, row.currentEffectiveDateStatus, row.effectiveDate, profile.maturityPosture),
+                sourceEvidenceSummary: firstNonEmpty(row.dueDiligenceCaveat, row.confidence, 'Source references are listed below.'),
+                bestReferenceUrl: row.bestReferenceUrl,
+                secondaryReferenceUrls: row.secondaryReferenceUrls || [],
+                sourceUrls: row.sourceUrls || [row.bestReferenceUrl].filter(Boolean)
+            }));
+        }
+
+        function renderProfileRow(profile) {
+            const evidence = (profile.evidenceIds || []).map(id => evidenceById.get(id)).filter(Boolean);
+            const selectedClass = activeProfileId === profile.id ? ' selected' : '';
+            const expandedClass = expandedProfileId === profile.id ? ' expanded' : '';
+            const displayStyle = expandedProfileId === profile.id ? 'display:block;' : '';
+            return `
+                <div class="landscape-row${selectedClass}${expandedClass}" id="profile-${escapeAttr(profile.id)}" data-profile-id="${escapeAttr(profile.id)}" onclick="handleRowClick(event, '${escapeAttr(profile.id)}')" role="button" tabindex="0" onkeydown="handleRowKeydown(event, '${escapeAttr(profile.id)}')">
+                    <div class="landscape-row-summary">
+                        <div class="summary-cell" data-label="Tier"><span class="tier-pill ${escapeAttr(profile.tierClass || 'tier-na')}">${escapeHtml(tierShort(profile.tierNumber))}</span><span class="summary-sub">${escapeHtml(profile.tierLabel)}</span></div>
+                        <div class="summary-cell" data-label="Jurisdiction"><strong>${escapeHtml(profile.jurisdiction)}</strong><span class="summary-sub">${escapeHtml(profile.maturityPosture)} · ${escapeHtml(profile.coverageType)}</span></div>
+                        <div class="summary-cell" data-label="Region">${escapeHtml(profile.region)}</div>
+                        <div class="summary-cell hide-lg" data-label="Traceability scope">${escapeHtml(profile.primaryTraceabilityScopes)}</div>
+                        <div class="summary-cell hide-lg" data-label="Primary value">${escapeHtml(profile.primaryValuePillar)}</div>
+                    </div>
+                    <div class="landscape-details" id="details-${escapeAttr(profile.id)}" style="${displayStyle}">
+                        <div class="details-inner">
+                            <div class="details-grid">
+                                <div class="detail-section">
+                                    <h4>Country profile</h4>
+                                    ${renderCountryProfileColumns(profile)}
+                                </div>
+                                <div class="detail-section">
+                                    <h4>Lifecycle continuity value narrative</h4>
+                                    ${detailRow('Lifecycle continuity narrative', profile.lifecycleContinuityNarrative)}
+                                    ${detailRow('What lifecycle continuity could do', profile.whatLifecycleContinuityCouldDo)}
+                                    ${detailRow('Recommended performance metrics', profile.recommendedPerformanceMetrics)}
+                                    ${detailRow('Why compliance is only a subset', profile.whyComplianceIsOnlyASubset)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function detailRow(label, value, options = {}) {
+            return `<div class="detail-row"><strong>${escapeHtml(label)}</strong><span>${formatValue(value, options)}</span></div>`;
+        }
+
+        function renderAllColumns(rawColumns, overrides = {}) {
+            return Object.entries(rawColumns || {}).map(([label, value]) => {
+                const override = overrides[label] || {};
+                let displayValue = Object.prototype.hasOwnProperty.call(override, 'value') ? override.value : value;
+                let options = {};
+                if (override.asLinks || /url/i.test(label)) {
+                    if (Array.isArray(displayValue)) {
+                        options.asLinks = true;
+                    } else {
+                        options.asLink = true;
+                    }
+                }
+                return detailRow(label, displayValue, options);
+            }).join('');
+        }
+        function renderCountryProfileColumns(profile) {
+            const excluded = new Set([
+                'Lifecycle continuity narrative',
+                'What lifecycle continuity could do',
+                'Recommended performance metrics',
+                'Why compliance is only a subset',
+                'Business value source',
+                'Primary value pillar',
+                'Dataset evidence IDs',
+                'datasetEvidenceIdsRaw'
+            ]);
+            const filteredColumns = {};
+            Object.entries(profile.allColumns || {}).forEach(([label, value]) => {
+                if (excluded.has(label)) return;
+                const displayLabel = label === 'CoC posture' ? 'Chain-of-custody posture' : label;
+                filteredColumns[displayLabel] = value;
+            });
+            return renderAllColumns(filteredColumns, {
+                'Best reference URL(s)': {asLinks: true, value: profile.bestReferenceUrls}
+            });
+        }
+
+
+        function renderHistoryCard(row) {
+            const sourceLinks = row.sourceUrls && row.sourceUrls.length
+                ? row.sourceUrls.map((url, idx) => `<a class="source-link" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">Source ${idx + 1}</a>`).join(' &middot; ')
+                : '—';
+            return `
+                <div class="evidence-card history-card">
+                    <div class="evidence-card-header">
+                        <div>
+                            <h5>${escapeHtml(row.evidenceRowId)} · ${escapeHtml(row.title || row.jurisdiction)}</h5>
+                            <p>${escapeHtml(firstNonEmpty(row.tierGroup, row.region))}</p>
+                        </div>
+                        <span class="tier-pill ${escapeAttr(row.tierClass || 'tier-na')}">${escapeHtml(tierShort(row.tierNumber))}</span>
+                    </div>
+                    <div class="evidence-columns">
+                        ${detailRow('What happened', row.whatHappenedNarrative)}
+                        ${detailRow('Why this jurisdiction is included', row.whyIncludedNarrative)}
+                        ${detailRow('What the activity was originally trying to solve', row.originalProblemNarrative)}
+                        ${detailRow('Maturity and binding status', row.maturityNarrative)}
+                        ${detailRow('Source evidence', row.sourceEvidenceSummary)}
+                        ${detailRow('Best reference URL', row.bestReferenceUrl ? [row.bestReferenceUrl] : [], {asLinks: true})}
+                        ${detailRow('Secondary reference URL(s)', row.secondaryReferenceUrls || [], {asLinks: true})}
+                        ${detailRow('Source links', row.sourceUrls || [], {asLinks: true})}
+                    </div>
+                </div>`;
+        }
+
+        function handleRowClick(event, profileId) {
+            if (event.target.closest('a, button, input, select, textarea')) return;
+            toggleProfile(profileId);
+        }
+
+        function handleRowKeydown(event, profileId) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleProfile(profileId);
+            }
+        }
+
+        function toggleProfile(profileId) {
+            const rowEl = document.getElementById(`profile-${profileId}`);
+            if (!rowEl) return;
+            const shouldExpand = expandedProfileId !== profileId;
+            collapseAllRows();
+            if (shouldExpand) {
+                expandedProfileId = profileId;
+                rowEl.classList.add('expanded');
+                const details = document.getElementById(`details-${profileId}`);
+                if (details) details.style.display = 'block';
+            }
+            if (typeof gtag === 'function') {
+                gtag('event', 'traceability_landscape_row_toggle', {
+                    event_category: 'Traceability Landscape',
+                    event_label: profileId,
+                    value: shouldExpand ? 1 : 0
+                });
+            }
+        }
+
+        function collapseAllRows() {
+            expandedProfileId = null;
+            document.querySelectorAll('.landscape-row').forEach(row => row.classList.remove('expanded'));
+            document.querySelectorAll('.landscape-details').forEach(details => details.style.display = 'none');
+        }
+
+        async function renderMap() {
+            const svg = d3.select('#worldMap');
+            const width = 960;
+            const height = 430;
+            const tooltip = d3.select('#mapTooltip');
+            svg.selectAll('*').remove();
+
+            try {
+                const world = await d3.json(WORLD_URL);
+                const countries = topojson.feature(world, world.objects.countries).features;
+                const numericLookup = landscape.mapLookup || {};
+
+                const projection = d3.geoNaturalEarth1()
+                    .fitExtent([[8, 10], [width - 8, height - 8]], {type: 'Sphere'});
+                const path = d3.geoPath(projection);
+                const graticule = d3.geoGraticule10();
+
+                svg.append('path')
+                    .datum({type: 'Sphere'})
+                    .attr('class', 'sphere')
+                    .attr('d', path);
+
+                svg.append('path')
+                    .datum(graticule)
+                    .attr('class', 'graticule')
+                    .attr('d', path);
+
+                svg.selectAll('path.country')
+                    .data(countries)
+                    .join('path')
+                    .attr('class', d => {
+                        const numeric = String(d.id).padStart(3, '0');
+                        return numericLookup[numeric] ? `country has-profile map-profile-${numericLookup[numeric].profileId}` : 'country';
+                    })
+                    .attr('d', path)
+                    .attr('fill', d => {
+                        const numeric = String(d.id).padStart(3, '0');
+                        const entry = numericLookup[numeric];
+                        return entry ? tierColours[entry.tierNumber] : tierColours.na;
+                    })
+                    .attr('opacity', d => {
+                        const numeric = String(d.id).padStart(3, '0');
+                        return numericLookup[numeric] ? 0.96 : 0.55;
+                    })
+                    .on('mousemove', function(event, d) {
+                        const numeric = String(d.id).padStart(3, '0');
+                        const entry = numericLookup[numeric];
+                        const countryName = d.properties && d.properties.name ? d.properties.name : 'Country';
+                        if (!entry) {
+                            tooltip.style('display', 'block')
+                                .style('left', `${event.offsetX + 16}px`)
+                                .style('top', `${event.offsetY + 16}px`)
+                                .html(`<strong>${escapeHtml(countryName)}</strong><span class="tooltip-muted">Not assessed in this dataset.</span>`);
+                            return;
+                        }
+                        const profile = profileById.get(entry.profileId) || entry;
+                        tooltip.style('display', 'block')
+                            .style('left', `${event.offsetX + 16}px`)
+                            .style('top', `${event.offsetY + 16}px`)
+                            .html(`
+                                <strong>${escapeHtml(countryName)}</strong>
+                                <div class="tooltip-muted">Maps to: ${escapeHtml(entry.jurisdiction)}</div>
+                                <div>${escapeHtml(tierShort(entry.tierNumber))} · ${escapeHtml(profile.cocPosture || entry.cocPosture || '')}</div>
+                                <div class="tooltip-muted">${escapeHtml(profile.primaryValuePillar || entry.primaryValuePillar || '')}</div>
+                            `);
+                    })
+                    .on('mouseleave', () => tooltip.style('display', 'none'))
+                    .on('click', function(event, d) {
+                        const numeric = String(d.id).padStart(3, '0');
+                        const entry = numericLookup[numeric];
+                        if (entry) selectProfile(entry.profileId);
+                    });
+                updateMapActiveState();
+            } catch (error) {
+                console.error(error);
+                document.querySelector('.map-wrap').innerHTML = `<div class="map-error"><div><h3>Unable to load the map geometry</h3><p class="mb-0">The page could not load the world-atlas TopoJSON file from the CDN.</p></div></div>`;
+            }
+        }
+
+        function selectProfile(profileId) {
+            activeProfileId = profileId;
+            expandedProfileId = null;
+            if (!currentProfiles.some(profile => profile.id === profileId)) {
+                resetFilters(false);
+                currentProfiles = [...countryProfiles];
+            }
+            renderRows(currentProfiles);
+            updateMapActiveState();
+            const row = document.getElementById(`profile-${profileId}`);
+            const tableWrap = document.getElementById('landscapeTableWrap');
+            if (row && tableWrap) {
+                programmaticScroll = true;
+                row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                setTimeout(() => { programmaticScroll = false; }, 950);
+            }
+            if (typeof gtag === 'function') {
+                gtag('event', 'traceability_landscape_map_click', {
+                    event_category: 'Traceability Landscape',
+                    event_label: profileId,
+                    value: 1
+                });
+            }
+        }
+
+        function updateMapActiveState() {
+            d3.selectAll('.country').classed('is-active', false);
+            if (activeProfileId) {
+                d3.selectAll(`.map-profile-${CSS.escape(activeProfileId)}`).classed('is-active', true);
+            }
+        }
+
+        loadLandscape();
+    </script>
+</body>
+</html>
