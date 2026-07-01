@@ -1,6 +1,20 @@
 {
   "articles": [
     {
+  "title": "The Missing Assumption Behind Supply Chain Modernisation Investments",
+  "category": "Lifecycle Continuity & Business Performance",
+  "theme": "Traceability, lifecycle continuity, operational confidence",
+  "highlight": "Traceability is often discussed as compliance, visibility, or data capture. This article argues that the missing assumption is lifecycle continuity: the ability to preserve enough connected evidence across products, assets, organisations, and time for organisations to understand, prove, and act with confidence.",
+  "url": "https://insights.lxndigital.com/p/the-missing-assumption-behind-every"
+},
+    {
+  "title": "From Lifecycle Evidence to Financial Confidence",
+  "category": "Finance & Lifecycle Intelligence",
+  "theme": "Working capital, lifecycle evidence, financial decision confidence",
+  "highlight": "Financial decisions are increasingly made against commercial lifecycles that no institution can fully see. This article explores why lifecycle continuity should become a financial decision discipline for B2B money movement, working capital, credit, and insurance.",
+  "url": "https://insights.lxndigital.com/p/from-lifecycle-evidence-to-financial"
+},
+    {
       "title": "Scope 3 May Be the Most Misunderstood Dataset in the Enterprise",
       "category": "Sustainability & Business Performance",
       "theme": "Scope 3, operational intelligence, lifecycle visibility",
