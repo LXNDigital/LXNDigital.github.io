@@ -182,7 +182,7 @@
     <script>
         async function loadPerspectives() {
             try {
-                const response = await fetch('articles.json');
+                const response = await fetch('data/articles.json');
                 const data = await response.json();
                 renderPerspectives(data.articles || []);
             } catch (error) {

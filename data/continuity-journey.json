@@ -1,0 +1,70 @@
+{
+  "label": "Continuity journey",
+  "title": "Navigate the continuity journey",
+  "intro": "Use this guide to move from recognising continuity loss to understanding sector relevance, assessing value, proving impact, scaling adoption, and influencing your ecosystem.",
+  "steps": [
+    {
+      "id": 1,
+      "title": "Understand the Situation",
+      "microcopy": "Globalisation fragmented continuity across value chains. The balance sheet is increasingly compensating for operational uncertainty.",
+      "overlay": "The articles explore the loss of continuity different angles: fractured time, weak lifecycle visibility, control tower limitations, working capital absorption, Scope 3 complexity, net-zero coordination, compounded risk, and the hidden cost of fragmented operational truth. Together, they point to the same underlying pattern: organisations are carrying the cost of continuity loss through capital, assurance, reconstruction effort, delay, and decision uncertainty.",
+      "cta": "Read the articles",
+      "url": "articles.html",
+      "matches": ["articles.html"]
+    },
+    {
+      "id": 2,
+      "title": "See What’s Complicating Matters",
+      "microcopy": "Traceability obligations are rising faster than many organisations are prepared for.",
+      "overlay": "Compliance requirements are multiplying across jurisdictions, sectors, and trade corridors. The real tension is that organisations treating traceability as a burden may miss the performance advantage available to those who treat it as continuity infrastructure.",
+      "cta": "Review the global traceability landscape",
+      "url": "global-traceability-landscape.html",
+      "matches": ["global-traceability-landscape.html"]
+    },
+    {
+      "id": 3,
+      "title": "See How This Applies to Your Sector",
+      "microcopy": "Continuity breaks differently in every industry.",
+      "overlay": "The Lifecycle Continuity Index shows where lifecycle continuity creates strategic, operational, financial and trust-based value across different supply chain archetypes. Although the economic expression varies by industry, the underlying challenge remains consistent: transforming fragmented operational events into continuous, verifiable lifecycle intelligence.",
+      "cta": "Explore your sector",
+      "url": "lifecycle-index.html",
+      "matches": ["lifecycle-index.html"]
+    },
+    {
+      "id": 4,
+      "title": "See the Continuity Value to You",
+      "microcopy": "Continuity loss has a measurable cost. Continuity confidence has a measurable lift.",
+      "overlay": "The diagnostic helps identify where continuity is leaking through excess inventory, firefighting, rework, disputes, delays, and planning instability — and where value can be reclaimed through smoother flow, faster decisions, lower working capital, stronger assurance, and more predictable lifecycle performance.",
+      "cta": "Explore the self-diagnostic",
+      "url": "DiagnosticWorkbench-Download.html",
+      "matches": ["operational-continuity-framework.html", "DiagnosticWorkbench-Download.html"]
+    },
+    {
+      "id": 5,
+      "title": "Prove the Value",
+      "microcopy": "A proof-of-value pilot turns the continuity case into evidence.",
+      "overlay": "A proof-of-value pilot demonstrates how continuity changes performance inside your organisation, not in theory, but in practice. It builds confidence, aligns stakeholders, and creates the evidence needed to decide whether and how to scale.",
+      "cta": "Discuss a proof-of-value pilot",
+      "url": "mailto:info@lxndigital.com?subject=Proof%20of%20Value%20Pilot",
+      "matches": []
+    },
+    {
+      "id": 6,
+      "title": "Scale the Benefits",
+      "microcopy": "Scaling continuity requires more than expanding a pilot.",
+      "overlay": "The scaling challenge is adoption, not just deployment. We help apply practical lessons learned to extend benefits across functions, partners, and the wider ecosystem while reducing friction, improving assurance, and strengthening operational confidence.",
+      "cta": "Discuss scaling lessons learned",
+      "url": "mailto:info@lxndigital.com?subject=Scaling%20Continuity%20Adoption",
+      "matches": []
+    },
+    {
+      "id": 7,
+      "title": "Team to Win",
+      "microcopy": "Continuity becomes more valuable as more participants adopt it.",
+      "overlay": "Supply chain challenges are a team sport. We help organisations leverage a diffusion-of-innovation approach to influence suppliers, partners, logistics providers, and ecosystem participants so continuity adoption spreads and the rewards grow with the network.",
+      "cta": "Discuss ecosystem adoption",
+      "url": "mailto:info@lxndigital.com?subject=Ecosystem%20Adoption%20and%20Diffusion%20of%20Innovation",
+      "matches": []
+    }
+  ]
+}

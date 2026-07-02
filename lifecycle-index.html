@@ -132,7 +132,7 @@
 
         async function loadData() {
             try {
-                const response = await fetch('lifecycle-index-v2.json');
+                const response = await fetch('data/lifecycle-index-v2.json');
                 const rawData = await response.json();
                 atlasData = rawData.archetypes;
                 renderCards(atlasData);
