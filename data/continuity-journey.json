@@ -1,13 +1,13 @@
 {
   "label": "Continuity journey",
-  "title": "Navigate the continuity journey",
-  "intro": "Use this guide to move from recognising continuity loss to understanding sector relevance, assessing value, proving impact, scaling adoption, and influencing your ecosystem.",
+  "title": "Continuity journey",
+  "intro": "Use this guide to connect operational pressures to a structured path: understand the pattern, locate sector relevance, assess value, prove impact, scale adoption, and influence your ecosystem.",
   "steps": [
     {
       "id": 1,
       "title": "Understand the Situation",
-      "microcopy": "Globalisation fragmented continuity across value chains. The balance sheet is increasingly compensating for operational uncertainty.",
-      "overlay": "The articles explore the loss of continuity different angles: fractured time, weak lifecycle visibility, control tower limitations, working capital absorption, Scope 3 complexity, net-zero coordination, compounded risk, and the hidden cost of fragmented operational truth. Together, they point to the same underlying pattern: organisations are carrying the cost of continuity loss through capital, assurance, reconstruction effort, delay, and decision uncertainty.",
+      "microcopy": "Globalisation fractured continuity across value chains. The balance sheet is increasingly absorbing the cost of operational uncertainty.",
+      "overlay": "The articles explore the loss of continuity from different angles: fractured time, weak lifecycle visibility, control tower limitations, working capital absorption, Scope 3 complexity, financial confidence, compounded risk, and the hidden cost of fragmented operational truth. Each perspective points to the same underlying pattern: organisations are carrying the cost of continuity loss through capital, assurance, reconstruction effort, delay, and decision uncertainty.",
       "cta": "Read the articles",
       "url": "articles.html",
       "matches": ["articles.html"]
@@ -16,7 +16,7 @@
       "id": 2,
       "title": "See What’s Complicating Matters",
       "microcopy": "Traceability obligations are rising faster than many organisations are prepared for.",
-      "overlay": "Compliance requirements are multiplying across jurisdictions, sectors, and trade corridors. The real tension is that organisations treating traceability as a burden may miss the performance advantage available to those who treat it as continuity infrastructure.",
+      "overlay": "Compliance requirements are multiplying across jurisdictions, sectors, and trade corridors. The real tension is that organisations treating traceability as a burden may satisfy reporting obligations while missing the performance advantage available to those who treat it as continuity infrastructure.",
       "cta": "Review the global traceability landscape",
       "url": "global-traceability-landscape.html",
       "matches": ["global-traceability-landscape.html"]
@@ -25,7 +25,7 @@
       "id": 3,
       "title": "See How This Applies to Your Sector",
       "microcopy": "Continuity breaks differently in every industry.",
-      "overlay": "The Lifecycle Continuity Index shows where lifecycle continuity creates strategic, operational, financial and trust-based value across different supply chain archetypes. Although the economic expression varies by industry, the underlying challenge remains consistent: transforming fragmented operational events into continuous, verifiable lifecycle intelligence.",
+      "overlay": "The Lifecycle Continuity Index shows where lifecycle continuity creates strategic, operational, financial, and trust-based value across different supply chain archetypes. Although the economic expression varies by industry, the underlying challenge remains consistent: transforming fragmented operational events into continuous, verifiable lifecycle intelligence.",
       "cta": "Explore your sector",
       "url": "lifecycle-index.html",
       "matches": ["lifecycle-index.html"]
@@ -52,7 +52,7 @@
       "id": 6,
       "title": "Scale the Benefits",
       "microcopy": "Scaling continuity requires more than expanding a pilot.",
-      "overlay": "The scaling challenge is adoption, not just deployment. We help apply practical lessons learned to extend benefits across functions, partners, and the wider ecosystem while reducing friction, improving assurance, and strengthening operational confidence.",
+      "overlay": "The scaling challenge is adoption, not just deployment. We apply lessons learned from standards adoption and scaling projects to extend benefits across functions, partners, and the wider ecosystem while reducing friction, improving assurance, and strengthening operational confidence.",
       "cta": "Discuss scaling lessons learned",
       "url": "mailto:info@lxndigital.com?subject=Scaling%20Continuity%20Adoption",
       "matches": []
@@ -61,10 +61,10 @@
       "id": 7,
       "title": "Team to Win",
       "microcopy": "Continuity becomes more valuable as more participants adopt it.",
-      "overlay": "Supply chain challenges are a team sport. We help organisations leverage a diffusion-of-innovation approach to influence suppliers, partners, logistics providers, and ecosystem participants so continuity adoption spreads and the rewards grow with the network.",
+      "overlay": "Supply chain challenges are a team sport. We help organisations leverage a diffusion-of-innovation approach to influence suppliers, partners, logistics providers, and ecosystem participants so continuity adoption spreads through influence, not mandate. The rewards grow as adoption strengthens across the ecosystem.",
       "cta": "Discuss ecosystem adoption",
       "url": "mailto:info@lxndigital.com?subject=Ecosystem%20Adoption%20and%20Diffusion%20of%20Innovation",
       "matches": []
-    }
+}
   ]
 }
