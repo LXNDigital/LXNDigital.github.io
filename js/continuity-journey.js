@@ -10,7 +10,7 @@
    const launcher=el('button','cj-launcher'); launcher.type='button'; launcher.setAttribute('aria-haspopup','dialog'); launcher.setAttribute('aria-expanded','false'); launcher.innerHTML='<span class="cj-launcher-icon" aria-hidden="true"></span><span>'+data.label+'</span>';
    const backdrop=el('div','cj-backdrop');
    const panel=el('aside','cj-panel'); panel.setAttribute('role','dialog'); panel.setAttribute('aria-modal','true'); panel.setAttribute('aria-label',data.title);
-   panel.innerHTML='<div class="cj-header"><div class="cj-title-row"><div><h2 class="cj-title">'+data.title+'</h2><p class="cj-intro">'+data.intro+'</p><p class="cj-hint"> <i class="bi bi-arrow-right-circle me-2"></i>Select a step to explore the journey and discover the next step.</p></div><button class="cj-close" type="button" aria-label="Close continuity journey">&times;</button></div></div><div class="cj-body"></div>';
+   panel.innerHTML='<div class="cj-header"><div class="cj-title-row"><div><h2 class="cj-title">'+data.title+'</h2><p class="cj-intro">'+data.intro+'</p><p class="cj-hint"> <i class="bi bi-arrow-right-circle me-2"></i>Choose your next step.</p></div><button class="cj-close" type="button" aria-label="Close continuity journey">&times;</button></div></div><div class="cj-body"></div>';
    document.body.appendChild(launcher); document.body.appendChild(backdrop); document.body.appendChild(panel);
    const body=panel.querySelector('.cj-body'); const page=currentPath();
    data.steps.forEach(step=>{
