@@ -14,20 +14,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Operational Continuity Diagnostic Workbench | LXNDigital</title>
     <meta name="title" content="Operational Continuity Diagnostic Workbench | LXNDigital">
-    <meta name="description" content="Download the Operational Continuity Diagnostic Workbench, a practical tool for applying the Operational Continuity Framework through executive pre-assessment, full diagnostic assessment, pattern detection, and reporting.">
+    <meta name="description" content="Download the Operational Continuity Diagnostic Workbench for Windows or macOS, a practical tool for applying the Operational Continuity Framework through assessment, pattern detection, and reporting.">
     <meta name="author" content="Levine Naidoo">
     <link rel="canonical" href="https://www.lxndigital.com/DiagnosticWorkbench-Download.html">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.lxndigital.com/DiagnosticWorkbench-Download.html">
     <meta property="og:title" content="Operational Continuity Diagnostic Workbench | LXNDigital">
-    <meta property="og:description" content="Download the Operational Continuity Diagnostic Workbench and apply the Operational Continuity Framework through structured assessment and executive reporting.">
+    <meta property="og:description" content="Download the Operational Continuity Diagnostic Workbench for Windows or macOS and apply the Operational Continuity Framework through structured assessment and executive reporting.">
     <meta property="og:image" content="https://www.lxndigital.com/assets/img/LXNDigitalOG.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://www.lxndigital.com/DiagnosticWorkbench-Download.html">
     <meta property="twitter:title" content="Operational Continuity Diagnostic Workbench | LXNDigital">
-    <meta property="twitter:description" content="Download the Operational Continuity Diagnostic Workbench and apply the Operational Continuity Framework through structured assessment and executive reporting.">
+    <meta property="twitter:description" content="Download the Operational Continuity Diagnostic Workbench for Windows or macOS and apply the Operational Continuity Framework through structured assessment and executive reporting.">
     <meta property="twitter:image" content="https://www.lxndigital.com/assets/img/LXNDigitalOG.jpg">
 
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
@@ -62,7 +62,20 @@
         .dw-list li { margin-bottom: 0.35rem; }
         .dw-download-panel { background: #ffffff; border: 1px solid #e2e8f0; border-left: 5px solid #07988B; border-radius: 1rem; padding: 2rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
         .dw-release-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
-        .dw-release-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.85rem; padding: 1.35rem; }
+        .dw-release-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.85rem;
+    padding: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.dw-release-card .dw-btn-primary {
+    margin-top: auto;
+    align-self: flex-start;
+}
         .dw-badge { display: inline-block; background: #eef2ff; color: #3730a3; padding: 0.3rem 0.65rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.75rem; }
         .dw-badge-soon { display: inline-block; background: #f1f5f9; color: #475569; padding: 0.3rem 0.65rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.75rem; }
         .dw-cta-row { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 1.75rem; }
@@ -221,13 +234,16 @@
                             <a href="https://lxndigital-my.sharepoint.com/:u:/p/levine/IQCmaHsIYRVYQbe2hF-81NR0AXGS8gtdj_FIaQr4yAt8yIw?e=OpwRgf&download=1" target="_blank" rel="noopener noreferrer" class="dw-btn-primary" onclick="gtag('event', 'diagnostic_workbench_windows_download', {event_category: 'Operational Continuity', event_label: 'Download Page Windows CTA', value: 1});">Access Windows Download</a>
                         </div>
                         <div class="dw-release-card">
-                            <span class="dw-badge-soon">Coming Soon</span>
-                            <h3>macOS Version</h3>
-                            <p>The macOS version is currently under development and will be released in a future update.</p>
-                            <p class="dw-small-note">For now, the supported release is Windows only.</p>
+                            <span class="dw-badge">macOS Release</span>
+                            <h3>Download for macOS</h3>
+                            <p>Download the latest macOS DMG release of the Operational Continuity Diagnostic Workbench for Apple silicon Macs. Open the DMG file, drag the app to Applications, and run it from your Applications folder.</p>
+                            <a href="https://lxndigital-my.sharepoint.com/:u:/p/levine/IQClGH1JjD0eR6S-5Mxxz9BSAVWF1iAaq2uT4Czy7UKrNdE?e=wkQpei&download=1" target="_blank" rel="noopener noreferrer" class="dw-btn-primary" onclick="gtag('event', 'diagnostic_workbench_macos_download', {event_category: 'Operational Continuity', event_label: 'Download Page macOS CTA', value: 1});">Access macOS Download</a>
                         </div>
                     </div>
                     <p>Documentation, release notes, known limitations, privacy information, and support resources are available through the Workbench Help Centre.</p>
+                    <div class="dw-cta-row">
+                        <a href="/support/DiagnosticWorkbench-Help.html" class="dw-btn-secondary">Open Workbench Help Centre</a>
+                    </div>
                 </div>
             </div>
         </section>
