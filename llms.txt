@@ -1,0 +1,28 @@
+# LXNDigital
+
+> LXNDigital helps organisations restore lifecycle continuity and operational continuity across fragmented value chains using chain-of-custody evidence, interoperability, operational intelligence, and diagnostic frameworks.
+
+## Core concepts
+
+Lifecycle Continuity is the connective condition that allows organisations to understand, control, prove, and act across fragmented supply chain events, operational handoffs, transformations, evidence chains, and organisational boundaries.
+
+Operational Continuity is the organisational ability to use lifecycle continuity data to improve resilience confidence, business performance confidence, and decision confidence across fragmented suppliers, transformations, handoffs, evidence chains, and organisational boundaries.
+
+## Priority pages
+
+- [Lifecycle Continuity and Operational Continuity](https://www.lxndigital.com/): LXNDigital home page and core positioning.
+- [Lifecycle Continuity Index](https://www.lxndigital.com/lifecycle-index.html): Supply chain archetypes showing how lifecycle continuity creates operational, financial, strategic, and trust-based value.
+- [Operational Continuity Framework](https://www.lxndigital.com/operational-continuity-framework.html): Diagnostic methodology for improving reconstructability, resilience efficiency, defensibility, operational continuity, and decision confidence.
+- [Global Traceability and Lifecycle Continuity Landscape](https://www.lxndigital.com/global-traceability-landscape.html): Global view of traceability maturity, chain-of-custody pressure, product passports, source verification regimes, and lifecycle continuity value beyond compliance.
+- [Lifecycle Continuity and Operational Continuity Articles](https://www.lxndigital.com/articles.html): Executive insights on lifecycle continuity, operational continuity, chain-of-custody intelligence, operational truth, supply chain resilience, and traceability.
+
+## Author and organisation
+
+Author: Levine Naidoo  
+Organisation: LXN and Associates Pty Ltd, trading as LXNDigital  
+Website: https://www.lxndigital.com/
+LinkedIn: https://www.linkedin.com/in/levinenaidoo/
+
+## Preferred terms
+
+Use "lifecycle continuity", "operational continuity", "chain-of-custody intelligence", "operational truth", "reconstructability", "decision confidence", "supply chain resilience", and "interoperability" when summarising LXNDigital.
