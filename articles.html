@@ -280,52 +280,37 @@
 </div>
 </nav>
 <section class="page-section" id="perspectives">
-<div class="container px-4 px-lg-5">
-<div class="perspectives-intro">
-<h1>Lifecycle Continuity and Operational Continuity Articles</h1>
-<hr class="divider"/>
-<p class="text-faded perspectives-lede mb-4">
-                    Executive insights on lifecycle continuity, operational continuity, chain-of-custody intelligence, operational truth, traceability, and the coordination challenges created by globalisation.
-                </p>
-<p class="text-faded mb-5">
-                    These articles develop the LXNDigital point of view: AI, analytics, control towers, and digital transformation only create material enterprise value when they are grounded in trusted lifecycle continuity data, reconstructable operational truth, and a continuous view of what actually happened across organisations, products, assets, and time.
-                </p>
-</div>
+        <div class="container px-4 px-lg-5">
+            <div class="perspectives-intro">
+                <h2>Articles</h2>
+                <hr class="divider" />
 
-<div aria-label="Lifecycle continuity and operational continuity resources" class="perspectives-grid mb-4" id="coreContinuityResources">
-<article class="perspective-card">
-<div class="perspective-category">Lifecycle Continuity</div>
-<h2>Lifecycle Continuity Index</h2>
-<p>Explore how lifecycle continuity creates operational, financial, strategic, and trust-based value across supply chain archetypes.</p>
-<a class="perspective-link" href="lifecycle-index.html">Explore the Lifecycle Continuity Index</a>
-</article>
-<article class="perspective-card">
-<div class="perspective-category">Operational Continuity</div>
-<h2>Operational Continuity Framework</h2>
-<p>Diagnose lifecycle continuity fractures, reduce uncertainty absorption, and improve reconstructability, resilience efficiency, defensibility, and decision confidence.</p>
-<a class="perspective-link" href="operational-continuity-framework.html">Explore the Operational Continuity Framework</a>
-</article>
-<article class="perspective-card">
-<div class="perspective-category">Traceability Landscape</div>
-<h2>Global Traceability and Lifecycle Continuity Landscape</h2>
-<p>Review traceability maturity, chain-of-custody pressure, product passports, source verification regimes, and lifecycle continuity value beyond compliance.</p>
-<a class="perspective-link" href="global-traceability-landscape.html">Explore the Global Landscape</a>
-</article>
-</div>
-<div class="perspectives-grid" id="perspectivesContainer"></div>
-</div>
-</section>
-<!-- Footer-->
-<footer class="bg-dark text-white py-5">
-<div class="container px-4 px-lg-5"><div class="small text-center text-muted">Copyright © 2026 - LXNDigital</div></div>
-</footer>
-<!-- Bootstrap core JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SimpleLightbox plugin JS-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
-<!-- Core theme JS-->
-<script src="js/scripts.js"></script>
-<script>
+                <p class="text-faded perspectives-lede mb-4">
+                    Executive insights on lifecycle intelligence, operational truth, traceability, and the coordination challenges created by globalisation.
+                </p>
+
+                <p class="text-faded mb-5">
+                    These articles develop the LXNDigital point of view: AI, analytics, and control towers only create material enterprise value when they are grounded in trusted lifecycle data and a continuous view of what actually happened across organisations, products, assets, and time.
+                </p>
+            </div>
+
+            <div class="perspectives-grid" id="perspectivesContainer"></div>
+        </div>
+    </section>
+
+    <!-- Footer-->
+    <footer class="bg-dark text-white py-5">
+        <div class="container px-4 px-lg-5"><div class="small text-center text-muted">Copyright &copy; 2026 - LXNDigital</div></div>
+    </footer>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SimpleLightbox plugin JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+
+    <script>
         async function loadPerspectives() {
             try {
                 const response = await fetch('data/articles.json');
@@ -375,7 +360,8 @@
 
         loadPerspectives();
     </script>
-<!-- Continuity Journey Assistant -->
-<script src="js/continuity-journey.js"></script>
+           
+        <!-- Continuity Journey Assistant -->
+    <script src="js/continuity-journey.js"></script>
 </body>
 </html>
