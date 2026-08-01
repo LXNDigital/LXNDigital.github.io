@@ -1343,8 +1343,8 @@ function seedEmissionsHtml(){
         <div class="row">
           <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(s.scope1)}</span></span>
           <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(s.scope2)}</span></span>
-          <span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(s.scope3Cat1)}</span></span>
-          <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(s.scope3Cat4)}</span></span>
+          <span class="legend-chip"><span class="k">CU.1</span><span class="v">${fmt2(s.scope3Cat1)}</span></span>
+          <span class="legend-chip"><span class="k">CU.4</span><span class="v">${fmt2(s.scope3Cat4)}</span></span>
           <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
         </div>
       </div>
@@ -1451,8 +1451,8 @@ function updateLegend(nodes){
           <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(em.scope1)}</span></span>
           <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(em.scope2)}</span></span>
           ${(em.scope3_cat1 != null || em.scope3_cat4 != null)
-            ? `<span class="legend-chip"><span class="k">S3.1</span><span class="v">${fmt2(em.scope3_cat1)}</span></span>
-               <span class="legend-chip"><span class="k">S3.4</span><span class="v">${fmt2(em.scope3_cat4)}</span></span>`
+            ? `<span class="legend-chip"><span class="k">CU.1</span><span class="v">${fmt2(em.scope3_cat1)}</span></span>
+               <span class="legend-chip"><span class="k">CU.4</span><span class="v">${fmt2(em.scope3_cat4)}</span></span>`
             : `<span class="legend-chip"><span class="k">S3</span><span class="v">${fmt2(em.scope3_declared)}</span></span>`}
           <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(em.total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
         </div></div>` : "";
@@ -1734,8 +1734,8 @@ function renderSeedEmissionsKpi(){
   const chips = [
     { k: "S1",   v: emissionsSeedTotals.scope1 },
     { k: "S2",   v: emissionsSeedTotals.scope2 },
-    { k: "S3.1", v: emissionsSeedTotals.scope3Cat1 },
-    { k: "S3.4", v: emissionsSeedTotals.scope3Cat4 },
+    { k: "CU.1", v: emissionsSeedTotals.scope3Cat1 },
+    { k: "CU.4", v: emissionsSeedTotals.scope3Cat4 },
     { k: "Total", v: (emissionsSeedTotals.total ?? (num2(emissionsSeedTotals.scope1) + num2(emissionsSeedTotals.scope2) + num2(emissionsSeedTotals.scope3Cat1) + num2(emissionsSeedTotals.scope3Cat4))) }
   ];
 
