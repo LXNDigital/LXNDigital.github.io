@@ -51,9 +51,12 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     });
 
-    // Activate SimpleLightbox plugin for portfolio items
-    new SimpleLightbox({
-        elements: '#portfolio a.portfolio-box'
-    });
+    // Activate SimpleLightbox plugin for portfolio items when the dependency is present.
+    const portfolioLinks = document.querySelectorAll('#portfolio a.portfolio-box');
+    if (typeof SimpleLightbox !== 'undefined' && portfolioLinks.length) {
+        new SimpleLightbox({
+            elements: '#portfolio a.portfolio-box'
+        });
+    }
 
 });

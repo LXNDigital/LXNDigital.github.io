@@ -10,17 +10,17 @@ Operational Continuity is the organisational ability to use lifecycle continuity
 
 ## Priority pages
 
-- [Lifecycle Continuity and Operational Continuity](https://lxndigital.com/): LXNDigital home page and core positioning.
-- [Lifecycle Continuity Index](https://lxndigital.com/lifecycle-index.html): Supply chain archetypes showing how lifecycle continuity creates operational, financial, strategic, and trust-based value.
-- [Operational Continuity Framework](https://lxndigital.com/operational-continuity-framework.html): Diagnostic methodology for improving reconstructability, resilience efficiency, defensibility, operational continuity, and decision confidence.
-- [Global Traceability and Lifecycle Continuity Landscape](https://lxndigital.com/global-traceability-landscape.html): Global view of traceability maturity, chain-of-custody pressure, product passports, source verification regimes, and lifecycle continuity value beyond compliance.
-- [Lifecycle Continuity and Operational Continuity Articles](https://lxndigital.com/articles.html): Executive insights on lifecycle continuity, operational continuity, chain-of-custody intelligence, operational truth, supply chain resilience, and traceability.
+- [Lifecycle Continuity and Operational Continuity](https://www.lxndigital.com/): LXNDigital home page and core positioning.
+- [Lifecycle Continuity Index](https://www.lxndigital.com/lifecycle-index.html): Supply chain archetypes showing how lifecycle continuity creates operational, financial, strategic, and trust-based value.
+- [Operational Continuity Framework](https://www.lxndigital.com/operational-continuity-framework.html): Diagnostic methodology for improving reconstructability, resilience efficiency, defensibility, operational continuity, and decision confidence.
+- [Global Traceability and Lifecycle Continuity Landscape](https://www.lxndigital.com/global-traceability-landscape.html): Global view of traceability maturity, chain-of-custody pressure, product passports, source verification regimes, and lifecycle continuity value beyond compliance.
+- [Lifecycle Continuity and Operational Continuity Articles](https://www.lxndigital.com/articles.html): Executive insights on lifecycle continuity, operational continuity, chain-of-custody intelligence, operational truth, supply chain resilience, and traceability.
 
 ## Author and organisation
 
 Author: Levine Naidoo  
 Organisation: LXN and Associates Pty Ltd, trading as LXNDigital  
-Website: https://lxndigital.com/
+Website: https://www.lxndigital.com/
 LinkedIn: https://www.linkedin.com/in/levinenaidoo/
 
 ## Preferred terms

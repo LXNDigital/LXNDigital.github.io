@@ -1,0 +1,701 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetName": "Lifecycle Continuity Disruption Mitigation Workspace",
+  "assetPurpose": "A data-driven practitioner workspace for using lifecycle continuity context to understand disruption consequence, identify decision-critical information and coordinate mitigation.",
+  "lastUpdated": "2026-08-25",
+  "sourceDocument": "Lifecycle_Continuity_Disruption_Mitigation_Practitioner_Handbook_v1.2.docx",
+  "positioningStatement": "Something has changed. The workspace helps practitioners establish what the change touches, what they know, what remains missing or conflicting, what decision is required and what must happen operationally to protect or restore continuity.",
+  "principles": [
+    "External events create the disruption. Lifecycle Continuity determines whether the operational context needed for mitigation can be established quickly enough.",
+    "The workspace should be useful even when an organisation does not yet have mature connected lifecycle data.",
+    "Every data request should state how the data will be used for exposure, applicability, viability, prioritisation, option comparison or approval.",
+    "The website is the presentation and interaction layer. The methodology, content and configuration live in JSON."
+  ],
+  "methodology": {
+    "title": "The disruption mitigation pattern",
+    "summary": "The six-stage pattern below is the organising model for this workspace. It is deliberately reusable. The content of each stage changes by disruption type, but the questions remain stable enough to guide analysis, architecture, governance and response design.",
+    "stages": [
+      {
+        "id": "disruption",
+        "number": 1,
+        "title": "Disruption",
+        "shortTitle": "Disruption",
+        "question": "What changed?",
+        "description": "Record a trigger that can be matched to lifecycle records. Examples: port + terminal; regulation + jurisdiction + effective date; supplier + facility; system + incident window; material + supplier allocation; shipment + transport leg. Record the source and timestamp."
+      },
+      {
+        "id": "lifecycle-context",
+        "number": 2,
+        "title": "Lifecycle Continuity Context",
+        "shortTitle": "LC Context",
+        "question": "What can Lifecycle Continuity data tell us about what the change touches?",
+        "description": "Start from the trigger identifiers and retrieve the connected materials, products, transformations, movements, custody states, evidence, obligations and commitments. Mark the last verified state and any missing or conflicting relationships."
+      },
+      {
+        "id": "other-data",
+        "number": 3,
+        "title": "Other Required Data",
+        "shortTitle": "Other Data",
+        "question": "What other current data is needed?",
+        "description": "Request only the current data needed to interpret the changed condition or compare response options. For each item, record the authoritative source, timestamp or freshness, owner and exactly how it will be used in the decision."
+      },
+      {
+        "id": "decision",
+        "number": 4,
+        "title": "Decision Requirements",
+        "shortTitle": "Decision",
+        "question": "What decision must be made and by whom?",
+        "description": "Write the pending decision as a specific question. Name the decision owner, criteria, trade-offs, approvals and the latest useful decision time."
+      },
+      {
+        "id": "response",
+        "number": 5,
+        "title": "Operational Response",
+        "shortTitle": "Response",
+        "question": "Which systems or people execute it?",
+        "description": "Name the system, team or external party that must execute each action, for example reroute a shipment, submit a declaration, activate a supplier, isolate a system, allocate material or reschedule production."
+      },
+      {
+        "id": "outcome",
+        "number": 6,
+        "title": "Continuity Outcome",
+        "shortTitle": "Outcome",
+        "question": "What continuity outcome are we trying to protect or restore?",
+        "description": "Define the observable completion condition: the commitment is protected or deliberately revised, the operational state is known, required evidence is retained and residual uncertainty has an owner."
+      }
+    ],
+    "roleOfTime": {
+      "title": "The role of time",
+      "description": "The pattern is not strictly sequential in elapsed time. External signals, lifecycle events, business data and operational actions may arrive continuously. The value of the model is to prevent different capabilities from being conflated. A disruption feed should not be mistaken for lifecycle context. A lifecycle history should not be mistaken for a decision engine. A decision should not be mistaken for execution."
+    }
+  },
+  "useModes": [
+    {
+      "id": "before",
+      "title": "Before disruption",
+      "description": "Test readiness and expose where response would depend on reconstruction."
+    },
+    {
+      "id": "during",
+      "title": "During disruption",
+      "description": "Use the activation workflow to establish exposure, uncertainty, decision and execution."
+    },
+    {
+      "id": "after",
+      "title": "After disruption",
+      "description": "Identify where fragmented lifecycle context slowed mitigation or recovery."
+    }
+  ],
+  "lifecycleDomains": [
+    {
+      "title": "Materials and products",
+      "description": "Source materials, batches, lots, components, finished products and handling units that may be touched by the disruption."
+    },
+    {
+      "title": "Transformations",
+      "description": "Processing, assembly, aggregation, disaggregation, blending, inspection or other activity that changes product state or evidence."
+    },
+    {
+      "title": "Movement and location",
+      "description": "Shipments, consignments, carriers, transport modes, facilities, ports, borders, route events and current or planned locations."
+    },
+    {
+      "title": "Custody and responsibility",
+      "description": "Who held, controlled, accepted responsibility for or handed off the material, product, shipment or evidence at each point."
+    },
+    {
+      "title": "Condition and evidence",
+      "description": "Inspection results, certificates, declarations, sensor records, quality state, release status and supporting proof tied to lifecycle events."
+    },
+    {
+      "title": "Organisations and roles",
+      "description": "Suppliers, processors, logistics providers, customers, regulators, internal owners and external parties whose roles affect response."
+    },
+    {
+      "title": "Production and inventory",
+      "description": "Expected, produced, inspected, approved, in-transit, received, allocated, consumed or available quantities across operational systems."
+    },
+    {
+      "title": "Obligations and commitments",
+      "description": "Customer orders, contractual duties, regulatory requirements, production promises, service levels and business commitments at risk."
+    }
+  ],
+  "informationStatuses": [
+    {
+      "id": "verified",
+      "label": "Verified",
+      "description": "The lifecycle event or evidence is attributable, validated and suitable for the current decision."
+    },
+    {
+      "id": "current",
+      "label": "Current",
+      "description": "The external or business data is from a trusted source and current enough for the decision."
+    },
+    {
+      "id": "assumed",
+      "label": "Assumed",
+      "description": "An explicit assumption is being used because required data is not yet available."
+    },
+    {
+      "id": "missing",
+      "label": "Missing",
+      "description": "Decision-relevant data has not been obtained."
+    },
+    {
+      "id": "conflicting",
+      "label": "Conflicting",
+      "description": "Two or more records disagree and the conflict must be owned."
+    }
+  ],
+  "worksheetFields": [
+    {
+      "field": "Disruption trigger",
+      "question": "What exactly changed? Record the affected route, rule, supplier, system, material or shipment, plus source and timestamp."
+    },
+    {
+      "field": "Commitment at risk",
+      "question": "Which production, customer, regulatory, contractual or service commitment could fail, and by when?"
+    },
+    {
+      "field": "Lifecycle entry point",
+      "question": "Which identifier will be used to enter the connected lifecycle and trace exposure?"
+    },
+    {
+      "field": "Lifecycle Continuity context",
+      "question": "Which materials, products, events, parties, evidence, dependencies and commitments must remain connected? What is the last verified state?"
+    },
+    {
+      "field": "How Lifecycle Continuity data is used",
+      "question": "What will the connected history establish: exposure, provenance, last trusted state, dependency path, custody, responsibility or downstream consequence?"
+    },
+    {
+      "field": "Other required data",
+      "question": "Which current external, regulatory, cyber, capacity, inventory, priority, cost or route data must be brought into the decision?"
+    },
+    {
+      "field": "How other data is used",
+      "question": "Will each item establish the changed condition, test applicability, test viability, rank consequence, compare options or support approval?"
+    },
+    {
+      "field": "Decision requirement",
+      "question": "What exact decision must be made, what criteria apply, who owns it and what is the latest useful decision time?"
+    },
+    {
+      "field": "Operational response",
+      "question": "Which systems, partners and people execute each action, and who confirms completion?"
+    },
+    {
+      "field": "Continuity outcome",
+      "question": "What observable state shows that the commitment has been protected, restored or deliberately revised?"
+    }
+  ],
+  "disruptions": [
+    {
+      "id": "geopolitical-chokepoint",
+      "title": "Geopolitical chokepoint instability",
+      "shortTitle": "Geopolitical chokepoints",
+      "subtitle": "Maintaining operational confidence when global trade routes become unpredictable.",
+      "description": "Global trade depends on a relatively small number of strategic corridors. Conflict, sanctions and security events can rapidly alter shipping routes, transit times, insurance conditions, customs obligations and production schedules. The operational consequence extends beyond logistics because a route disruption can affect production, contractual performance, working capital, customer commitments and revenue.",
+      "trigger": "A route, port, border, vessel, carrier, air corridor or jurisdiction becomes constrained, unavailable, sanctioned or subject to changed controls.",
+      "continuityQuestion": "Which products, shipments, obligations and commitments are exposed?",
+      "outcome": "Connected route consequence",
+      "objective": "Identify what the route disruption touches, evaluate viable continuity pathways and coordinate the approved route, carrier or schedule response.",
+      "startKeys": ["Route", "Port", "Border", "Vessel", "Carrier", "Air corridor", "Jurisdiction", "Shipment"],
+      "contextPath": ["Route or jurisdiction", "Shipment", "Material or product", "Custody and responsibility", "Obligations", "Production dependency", "Order", "Customer commitment"],
+      "responseWeaknesses": [
+        "Loss of context: shipment status may be visible while business consequence remains unclear.",
+        "Disconnected obligations: route changes can alter custody, sanctions, customs and insurance requirements.",
+        "Slow reconstruction: teams rebuild dependencies, recovery options and customer exposure after the route changes."
+      ],
+      "sourceReferences": "Reuters/Kpler (2026); UNCTAD, Red Sea Crisis and Implications for Trade Facilitation in Africa (2024).",
+      "pattern": {
+        "disruption": "Use route, port, border, vessel, carrier, air corridor or jurisdiction as the trigger.",
+        "lifecycleContext": "Trace connected shipments and consignments into materials, products, custody states, production requirements, orders and customer commitments.",
+        "otherData": "Confirm changed conditions using government, sanctions, port, border, customs, carrier, AIS or security sources.",
+        "decision": "Decide whether to continue, hold, reroute, change carrier or change mode.",
+        "response": "TMS, ERP, procurement, carrier and partner workflows execute rerouting, booking changes, order changes, production rescheduling and customer communication.",
+        "outcome": "The organisation can identify what the route disruption touches and evaluate viable continuity pathways."
+      },
+      "lifecycleData": [
+        "Goods, materials, batches and products using the affected route",
+        "Shipments and consignments containing them",
+        "Sequence of carriers, transport modes and locations",
+        "Custody and responsibility transitions",
+        "Last known operational state",
+        "Orders, production activities and customer commitments linked to the goods",
+        "Evidence and obligations associated with the original movement",
+        "Diversion or rerouting events already recorded"
+      ],
+      "lifecycleDataUse": "It traces from the affected route, vessel, port, carrier or jurisdiction into the goods, custody states, obligations, production activities and commitments that depend on it, while preserving the last known state and original movement context needed to assess rerouting.",
+      "otherData": [
+        "Government and sanctions notices",
+        "Port and border advisories",
+        "Customs notifications",
+        "Carrier and freight-forwarder status",
+        "AIS and transport-visibility information",
+        "Security intelligence",
+        "Current route and network availability",
+        "Current customs, sanctions and insurance rules",
+        "Alternative route capacity, transit time, cost and service data"
+      ],
+      "otherDataUse": "It establishes what changed and tests the implications. External signals identify the affected route or jurisdiction; customs, sanctions and insurance rules reassess permissibility and obligations; capacity, transit-time, cost and service data compare viable continuity pathways.",
+      "decisionRequirements": "Determine whether the changed route or jurisdiction alters custody, customs, sanctions, insurance or service obligations; compare viable continuity pathways; decide which commitments require protection first; approve the route, carrier or schedule change.",
+      "decisionModel": {
+        "question": "Should the affected movement continue, hold, reroute, change carrier or change mode before exposed commitments fail?",
+        "criteria": [
+          "Authoritative route, port, border, vessel, carrier or jurisdiction status",
+          "Custody, customs, sanctions, insurance and service obligations affected by the change",
+          "Viable route, carrier or mode alternatives",
+          "Commitments that fail first if movement is delayed",
+          "Capacity, transit time, cost and customer consequence"
+        ],
+        "ownerPrompt": "Who has authority to make the route, carrier, mode or hold decision?",
+        "approvalsPrompt": "Which customs, sanctions, insurance, commercial or customer approvals are required?",
+        "decisionTimePrompt": "What is the latest useful decision time before the exposed commitment can no longer be protected?"
+      },
+      "operationalActions": "TMS, ERP, procurement, carrier and partner workflows execute rerouting, booking, purchase-order changes, production rescheduling and customer communication.",
+      "practitionerQuestions": [
+        "Can a route, port, vessel, carrier or jurisdiction be traced into the products and commitments that depend on it?",
+        "Can the organisation establish the last known custody and responsibility state without manual reconciliation?",
+        "Which obligations must be reassessed if the route, carrier or jurisdiction changes?",
+        "Which external signals are trusted to trigger the analysis?",
+        "Which system and decision authority can activate the chosen continuity pathway?"
+      ],
+      "activationCard": {
+        "steps": [
+          {"element": "Confirm trigger", "action": "Confirm the affected route object using a trusted source. Record the precise port, route, vessel, carrier, border or jurisdiction and the time the condition changed.", "record": "Government, port or carrier source; timestamp; affected identifiers."},
+          {"element": "Start lifecycle traversal", "action": "Use the affected route, vessel, port, carrier or jurisdiction as the lifecycle entry point. Trace connected shipments and consignments into materials, products, custody states, production requirements, orders and customer commitments.", "record": "Affected shipments, products and commitments; last known custody state."},
+          {"element": "Reconstruct movement context", "action": "Retrieve the planned route, completed legs, current location, custody and responsibility handoffs, associated customs, insurance and sanctions evidence and any rerouting already recorded.", "record": "Planned versus actual movement; custody owner; evidence set; route history."},
+          {"element": "Request current conditions", "action": "Obtain current sanctions and customs rules, port or border status, carrier capacity, alternative route availability, transit time, insurance restrictions, cost and service information.", "record": "Source and timestamp for each rule or status; option comparison."},
+          {"element": "Make the decision", "action": "Decide whether the shipment can continue, must hold, must reroute or requires another carrier or mode. Prioritise the commitments that fail first if movement is delayed.", "record": "Decision owner; route option; approvals; commitments prioritised."},
+          {"element": "Execute", "action": "TMS and carrier processes rebook or reroute; ERP and planning adjust supply and production; procurement changes orders where needed; customer teams revise commitments.", "record": "Booking or reroute confirmation; changed plan or order; customer notice."},
+          {"element": "Exit criteria", "action": "Close when the new route or hold decision is confirmed, custody and responsibility are clear, changed obligations are addressed, production or customer commitments are updated and decision evidence is retained.", "record": "Confirmed route or state; obligation check; updated commitments; evidence pack."}
+        ],
+        "escalateIf": "No authoritative route status can be established, sanctions or customs permissibility is unresolved, custody is unclear, no viable pathway exists, or decision authority is unavailable before the commitment fails."
+      }
+    },
+    {
+      "id": "regulatory-fragmentation",
+      "title": "Regulatory fragmentation and trade policy volatility",
+      "shortTitle": "Regulatory fragmentation",
+      "subtitle": "Moving from document compliance to evidence-based lifecycle assurance.",
+      "description": "Trade regulation is becoming more fragmented, dynamic and evidence-driven. Organisations may need to demonstrate product origin, supplier identity, tariff classification, sanctions compliance, responsible sourcing and sustainability attributes. The difficult question is not simply whether a certificate exists. It is whether the evidence applies to the actual material, transformation, product and shipment being assessed.",
+      "trigger": "A new or amended tariff, sanction, customs requirement, origin rule, sourcing rule, product requirement or evidence obligation is issued or becomes effective.",
+      "continuityQuestion": "Which materials, products, shipments and evidence obligations are now within scope?",
+      "outcome": "Lifecycle-backed assurance",
+      "objective": "Map the changed requirement to actual lifecycle records, determine evidence sufficiency and coordinate the approved regulatory response.",
+      "startKeys": ["Jurisdiction", "Origin", "Supplier", "Product classification", "Material", "Destination", "Route", "Evidence type", "Effective date"],
+      "contextPath": ["Rule or jurisdiction", "Scope keys", "Supplier or origin", "Material or product", "Transformation", "Shipment", "Evidence", "Commitment"],
+      "responseWeaknesses": [
+        "Document evidence without lifecycle truth: declarations and certificates become detached from operational events.",
+        "Inconsistent identifiers: product, batch, shipment and regulatory records do not align across jurisdictions.",
+        "Late reassessment: route, supplier or policy changes trigger evidence reconstruction after exposure has already emerged."
+      ],
+      "sourceReferences": "White House (2026); National Retail Federation and Hackett Associates, Global Port Tracker (2026); European Commission, Import Control System 2.",
+      "pattern": {
+        "disruption": "Use the rule, requirement, jurisdiction, product class, origin or effective date as the trigger.",
+        "lifecycleContext": "Identify affected suppliers, materials, transformations, products, shipments and commitments. Retrieve linked declarations, certificates, inspections and qualification evidence.",
+        "otherData": "Obtain the authoritative rule or notice, effective date, regulator guidance, sanctions lists, classification and tariff information.",
+        "decision": "Decide what is in scope, whether existing evidence is sufficient and what product, supplier, route, movement or submission must change.",
+        "response": "Compliance, customs, legal, procurement, ERP and partner workflows update declarations, controls, submissions, holds or releases.",
+        "outcome": "Compliance moves from repeated document reconstruction toward evidence that can be tied to actual lifecycle records."
+      },
+      "lifecycleData": [
+        "Supplier identity and material origin",
+        "Batch or lot and transformation activity",
+        "Aggregation and disaggregation relationships",
+        "Finished product, shipment and destination",
+        "Custody transitions",
+        "Declarations, certificates, laboratory and inspection evidence",
+        "Qualification information",
+        "Customer and contractual commitments",
+        "Issuer, validity period, applicability and later supersession of evidence"
+      ],
+      "lifecycleDataUse": "It maps the changed requirement to the exact suppliers, materials, transformations, products and shipments potentially within scope, retrieves the evidence already associated with those records, and exposes gaps, expiry, supersession or other assurance needs.",
+      "otherData": [
+        "Legislation and regulatory notices",
+        "Customs guidance and sanctions lists",
+        "Tariff schedules and trade-policy changes",
+        "Regulator interpretations",
+        "Jurisdictional applicability rules",
+        "Product classification and tariff treatment",
+        "Exemptions and threshold calculations",
+        "Internal compliance-policy updates",
+        "Human legal or compliance judgement where required"
+      ],
+      "otherDataUse": "It defines what changed and how the requirement applies. Classification, tariff treatment, exemptions, thresholds and jurisdictional rules are evaluated against the connected lifecycle context, while legal or compliance judgement resolves ambiguity and determines the required assurance or action.",
+      "decisionRequirements": "Determine whether the changed rule applies to the actual lifecycle, whether existing evidence remains valid and sufficient, what additional assurance is required, and whether the product, route, supplier or submission must change.",
+      "decisionModel": {
+        "question": "What is in scope, is the existing evidence sufficient, and what product, supplier, route, movement or submission must change?",
+        "criteria": [
+          "Applicability of the rule to the actual lifecycle records",
+          "Evidence provenance, validity, expiry, supersession and revocation",
+          "Classification, tariff, sanctions, origin and jurisdictional interpretation",
+          "Affected materials, transformations, products, shipments and commitments",
+          "Submission, hold, release or transition deadlines"
+        ],
+        "ownerPrompt": "Who owns the final applicability and compliance determination?",
+        "approvalsPrompt": "Which legal, compliance, customs, partner or customer approvals are required?",
+        "decisionTimePrompt": "What is the latest useful decision time before a shipment, submission or commitment becomes exposed?"
+      },
+      "operationalActions": "Compliance teams, legal functions, customs and submission systems, ERP and partner workflows execute the resulting regulatory response.",
+      "practitionerQuestions": [
+        "Can a changed rule be mapped to the exact materials, transformations, products and shipments potentially within scope?",
+        "Can the organisation prove which evidence applies to which lifecycle event or asset?",
+        "Is evidence validity, provenance, supersession and revocation visible?",
+        "Which external source establishes the authoritative rule change?",
+        "Who owns the final applicability and compliance determination?"
+      ],
+      "activationCard": {
+        "steps": [
+          {"element": "Confirm trigger", "action": "Record the authoritative rule or notice, issuing authority, jurisdiction, effective date, scope and any transition period.", "record": "Rule or notice reference; authority; effective date; scope."},
+          {"element": "Define scope keys", "action": "Extract the fields needed to map the rule to operations, such as jurisdiction, origin, supplier category, product classification, material, destination, route, evidence type or effective date.", "record": "Scope keys and values; classification used; interpretation owner."},
+          {"element": "Map lifecycle exposure", "action": "Use the scope keys to identify affected suppliers, materials, transformations, products, shipments and commitments. Retrieve evidence already linked to those lifecycle records.", "record": "Affected records; evidence retrieved; gaps; superseded or revoked evidence."},
+          {"element": "Request applicability data", "action": "Obtain current classification, tariff treatment, sanctions lists, thresholds, exemptions, regulator guidance and legal or compliance interpretation.", "record": "Authoritative sources; interpretation; applicability criteria."},
+          {"element": "Make the decision", "action": "Decide which lifecycle records are in scope, whether existing evidence is sufficient, whether movement or production can continue, and what submission, supplier, route or product change is required.", "record": "Applicability decision; evidence sufficiency; approval; required change."},
+          {"element": "Execute", "action": "Compliance and customs teams update declarations or submissions; ERP and procurement change supplier, product or route controls; partners provide missing evidence; operations hold or release affected goods.", "record": "Submission receipt; ERP or procurement change; evidence received; hold or release."},
+          {"element": "Exit criteria", "action": "Close when affected lifecycle records are identified, applicability is documented, evidence gaps are resolved or accepted, required submissions or actions are complete and affected commitments are updated.", "record": "Applicability record; complete evidence set; completed action; revised commitment."}
+        ],
+        "escalateIf": "The authoritative rule is ambiguous, product or origin classification is disputed, evidence provenance is unclear, a shipment is approaching a regulatory deadline, or there is no authorised compliance determination."
+      }
+    },
+    {
+      "id": "sovereign-industrial-fragmentation",
+      "title": "Regional conflict and sovereign industrial fragmentation",
+      "shortTitle": "Sovereign fragmentation",
+      "subtitle": "Understanding dependencies in a world moving from optimisation to resilience.",
+      "description": "Regional conflict, strategic competition, export controls and sovereign industrial policy are reshaping production and sourcing networks. When a processor, material, component or jurisdiction becomes constrained, the resilience question shifts from knowing direct suppliers to understanding which operational dependencies must be preserved and which downstream commitments are exposed.",
+      "trigger": "A supplier, processor, material, component, facility or jurisdiction becomes unavailable, restricted, export-controlled or materially constrained.",
+      "continuityQuestion": "Which upstream dependencies flow into downstream products and commitments?",
+      "outcome": "Dependency-based continuity",
+      "objective": "Trace constrained sources into exposed commitments and determine whether alternative sources are technically, commercially and evidentially viable.",
+      "startKeys": ["Supplier", "Processor", "Material", "Component", "Facility", "Jurisdiction", "Product"],
+      "contextPath": ["Supplier or material", "Source origin", "Processor", "Transformation", "Component", "Finished product", "Shipment", "Customer commitment"],
+      "responseWeaknesses": [
+        "Tier-one visibility can create false confidence while upstream dependencies remain hidden.",
+        "Materials, processors and components are not connected to finished products and commitments.",
+        "Supplier exposure cannot be translated quickly into customer, revenue and continuity consequences.",
+        "Alternative pathways lack readily connected qualification, provenance and compatibility evidence."
+      ],
+      "sourceReferences": "OECD, Inventory of Export Restrictions on Critical Raw Materials (2026); International Energy Agency, Global Critical Minerals Outlook (2026).",
+      "pattern": {
+        "disruption": "Use constrained source, processor, material, component, facility or jurisdiction as the trigger.",
+        "lifecycleContext": "Trace source material through transformation, component, finished product, shipment, production requirement and customer commitment.",
+        "otherData": "Obtain current capacity, inventory, lead time, compatibility, approvals, quality status, transport feasibility and current trade intelligence.",
+        "decision": "Decide whether to substitute, dual-source, redesign, defer production or accept reduced output.",
+        "response": "Procurement, engineering, quality, planning, production and commercial processes activate alternatives and revise commitments.",
+        "outcome": "The organisation can trace upstream disruption into downstream commitments and compare viable continuity pathways."
+      },
+      "lifecycleData": [
+        "Source material and country or location of origin",
+        "Supplier and processor identity",
+        "Transformation, aggregation and disaggregation activity",
+        "Component-to-product relationships",
+        "Finished products and shipments",
+        "Qualification and provenance evidence",
+        "Customer orders and downstream commitments",
+        "Dependency paths from upstream material or processor to downstream promise"
+      ],
+      "lifecycleDataUse": "It traverses from an affected source, processor, component or jurisdiction into downstream materials, products, shipments and commitments, and identifies alternative sources for which qualification or provenance evidence is already connected.",
+      "otherData": [
+        "Supplier capacity and available inventory",
+        "Lead time and commercial terms",
+        "Technical compatibility and manufacturing capability",
+        "Product approval and quality status",
+        "Transport feasibility",
+        "Contractual arrangements",
+        "Production schedules",
+        "Procurement authority",
+        "Current geopolitical and trade intelligence"
+      ],
+      "otherDataUse": "It tests whether an identified alternative is viable now. Capacity, inventory, lead time, compatibility, approval, quality, transport and commercial data are used to compare options, while geopolitical and trade intelligence establishes which sources, jurisdictions or pathways are constrained.",
+      "decisionRequirements": "Assess which exposed dependencies are material, whether a qualified alternative is currently viable, what trade-offs arise from substitution or diversification, and which pathway should be activated.",
+      "decisionModel": {
+        "question": "Which exposed dependency must be preserved, substituted, redesigned, deferred or accepted as constrained?",
+        "criteria": [
+          "Materiality of the exposed supplier, processor, material, component, facility or jurisdiction",
+          "Qualified alternative sources and their current viability",
+          "Compatibility, approval, provenance, quality and customer acceptance requirements",
+          "Capacity, inventory, lead time, transport and commercial trade-offs",
+          "Downstream production, revenue, customer and regulatory commitments exposed by the dependency"
+        ],
+        "ownerPrompt": "Who has authority to activate the substitution, diversification, redesign, deferment or reduced-output pathway?",
+        "approvalsPrompt": "Which technical, quality, commercial, customer or regulatory approvals are required?",
+        "decisionTimePrompt": "What is the latest useful decision time before production, supply or customer commitments are no longer protected?"
+      },
+      "operationalActions": "Procurement, engineering, quality, planning, production and commercial processes activate alternatives, qualify changes, adjust plans and manage commitments.",
+      "practitionerQuestions": [
+        "Can the organisation trace a critical processor or material into every affected component and finished product?",
+        "Are aggregation and disaggregation relationships preserved where one batch feeds several products or several sources feed one product?",
+        "Can qualification and provenance evidence for alternatives be located quickly?",
+        "What current capacity and technical information is needed before an alternative becomes viable?",
+        "Which authority can approve substitution, diversification or redesign?"
+      ],
+      "activationCard": {
+        "steps": [
+          {"element": "Confirm trigger", "action": "Record the constrained supplier, facility, processor, material, component or jurisdiction and the restriction, outage or policy event causing the constraint.", "record": "Affected entity or material; source; timestamp; restriction type."},
+          {"element": "Trace dependency path", "action": "Start from the affected supplier, material or processor and traverse source material to transformation, component, finished product, shipment, production requirement and customer commitment.", "record": "Dependency paths; exposed products; commitments; quantity or time exposure."},
+          {"element": "Retrieve alternative evidence", "action": "Identify alternative sources already present in lifecycle records and retrieve connected qualification, provenance, quality and approval evidence.", "record": "Candidate alternatives; qualification and provenance evidence; known gaps."},
+          {"element": "Request viability data", "action": "Obtain current capacity, inventory, lead time, price, terms, technical compatibility, manufacturing capability, approvals, quality status, transport feasibility and production schedule.", "record": "Capacity or inventory confirmation; compatibility or approval; lead time and cost."},
+          {"element": "Make the decision", "action": "Decide whether to substitute, dual-source, redesign, defer production or accept reduced output. Compare which option protects the most important commitments within the available time and authority.", "record": "Chosen option; trade-offs; decision owner; approvals; commitments protected."},
+          {"element": "Execute", "action": "Procurement activates the source; engineering and quality approve changes; planning reschedules; production changes inputs; commercial teams manage affected commitments.", "record": "Purchase order or supplier activation; approvals; revised plan; production or customer changes."},
+          {"element": "Exit criteria", "action": "Close when the chosen source or pathway is technically and commercially viable, approvals are complete, supply is scheduled or received, and downstream production and customer commitments have been revised.", "record": "Approved source; scheduled or received quantity; revised plan; evidence pack."}
+        ],
+        "escalateIf": "No qualified alternative exists, a critical component has no substitute, required approval cannot be obtained before production stops, or geopolitical or trade restrictions make all known pathways uncertain."
+      }
+    },
+    {
+      "id": "cyber-digital-instability",
+      "title": "Cybersecurity and digital infrastructure instability",
+      "shortTitle": "Cyber instability",
+      "subtitle": "Preserving operational confidence when systems cannot be trusted.",
+      "description": "Supply chains depend on interconnected digital ecosystems. A ransomware incident, platform outage or compromised partner can interrupt production confirmation, shipping records, customs processes, order flows and customer fulfilment. The recovery challenge is not only restoring technology. It is determining which records remain trustworthy and what operational state can safely support continued action.",
+      "trigger": "Ransomware, platform outage, compromised partner, credential compromise, data-integrity alert or another cyber event makes operational records or systems potentially untrustworthy.",
+      "continuityQuestion": "Which lifecycle records remain trustworthy enough to support operational decisions?",
+      "outcome": "Trusted state reconstruction",
+      "objective": "Establish the last trusted operational state, separate compromised or uncertain records and sequence safe operational recovery.",
+      "startKeys": ["Affected system", "Partner", "Credential", "Interface", "Incident time window", "Record set"],
+      "contextPath": ["Incident window", "Affected system or party", "Lifecycle event", "Evidence and provenance", "Last trusted state", "Product or shipment", "Commitment", "Recovery sequence"],
+      "responseWeaknesses": [
+        "System integration exchanges transactions without necessarily preserving shared lifecycle context.",
+        "Trusted operational history fragments across applications, partners and logs.",
+        "Recovery can depend on restoring affected systems before operational state can be reconstructed.",
+        "Conflicting records and data-integrity uncertainty slow decisions even after systems return."
+      ],
+      "sourceReferences": "Verizon, Data Breach Investigations Report (2026); Sophos, State of Ransomware.",
+      "pattern": {
+        "disruption": "Use affected systems, parties, credentials, interfaces and incident time window as the trigger.",
+        "lifecycleContext": "Identify lifecycle events potentially exposed to compromise and reconstruct the last trusted custody, movement, transformation, production or inventory state.",
+        "otherData": "Obtain SIEM, endpoint, identity, network, vulnerability, forensic and incident-response findings.",
+        "decision": "Decide which operational records can be relied on, which activities remain stopped and what criteria must be met before resumption.",
+        "response": "Cybersecurity, identity, infrastructure, business continuity and operational teams isolate, restore, validate and resume in sequence.",
+        "outcome": "Lifecycle Continuity provides trusted operational memory that can reduce dependence on compromised systems during recovery."
+      },
+      "lifecycleData": [
+        "Originating party or system for each lifecycle event",
+        "Time of the event and the material, product or shipment it refers to",
+        "Preceding and subsequent lifecycle relationships",
+        "Supporting evidence and provenance",
+        "Whether the record can still be validated",
+        "Last verified custody, movement, transformation or production state",
+        "Missing, conflicting or questionable later events",
+        "Products, shipments and commitments dependent on affected records"
+      ],
+      "lifecycleDataUse": "It reconstructs the last operational state supported by attributable and verifiable evidence, separates trusted events from missing or conflicting later records, and traces the consequences into affected products, shipments and commitments to support recovery sequencing.",
+      "otherData": [
+        "Security monitoring and SIEM data",
+        "Endpoint and identity information",
+        "Vulnerability-management and network data",
+        "Forensic evidence",
+        "Incident-response findings",
+        "Credential status",
+        "System recovery status",
+        "Technical determination of the cyber boundary of trust"
+      ],
+      "otherDataUse": "It determines the scope of compromise and the technical boundary of trust. Security and forensic evidence identify affected systems, credentials and records; incident and recovery status are then used with the lifecycle state to decide what can be isolated, restored or safely resumed.",
+      "decisionRequirements": "Determine the last operational state that can be trusted, which records or systems must be excluded from decision-making, what operational activities can safely resume and what conditions must be met before wider recovery.",
+      "decisionModel": {
+        "question": "Which operational records can be trusted, which activities remain stopped and what conditions must be met before resumption?",
+        "criteria": [
+          "Cyber boundary of trust across systems, credentials, interfaces and partners",
+          "Last independently attributable and verifiable lifecycle state",
+          "Records, events or systems that must be excluded from operational decision-making",
+          "Technical controls, restoration status and incident-response evidence",
+          "Business approval criteria for safe operational resumption"
+        ],
+        "ownerPrompt": "Who has authority to accept the trusted operational state and approve resumption?",
+        "approvalsPrompt": "Which technical, security, operational or business-continuity approvals are required?",
+        "decisionTimePrompt": "What is the latest useful decision time before operations must be resumed, held or safely bypassed?"
+      },
+      "operationalActions": "Cybersecurity teams isolate compromised infrastructure; identity and infrastructure teams revoke or restore access; technology and business-continuity processes recover applications; operational teams sequence the resumption of activity.",
+      "practitionerQuestions": [
+        "Which lifecycle events remain independently attributable and verifiable if a system is compromised?",
+        "Can the last trusted operational state be reconstructed without relying entirely on the affected application?",
+        "Can missing or conflicting events be identified clearly?",
+        "Which cybersecurity evidence determines what is inside or outside the trusted boundary?",
+        "Who authorises the resumption of operational activity?"
+      ],
+      "activationCard": {
+        "steps": [
+          {"element": "Confirm cyber scope", "action": "Record affected systems, partner organisations, credentials, interfaces and the incident time window from cybersecurity responders.", "record": "Incident ID; affected systems or parties; time window; cyber owner."},
+          {"element": "Set lifecycle trust boundary", "action": "Use the affected system, party or time window to identify lifecycle events potentially exposed to compromise. Separate independently attributable and verifiable records from records inside the uncertain window.", "record": "Trusted or untrusted event boundary; systems or parties involved."},
+          {"element": "Reconstruct last trusted state", "action": "Rebuild the last verified custody, movement, transformation, production or inventory state and trace the products, shipments and commitments depending on it.", "record": "Last verified state; missing or conflicting events; affected commitments."},
+          {"element": "Request cyber evidence", "action": "Use SIEM, endpoint, identity, network, vulnerability, forensic and incident-response findings to establish which systems, credentials and records are compromised and what has been restored.", "record": "Cyber boundary of trust; credential status; recovery status; evidence source."},
+          {"element": "Make the decision", "action": "Decide which operational records can be relied upon, which activities must remain stopped, and what minimum trusted state and technical controls are required before each activity resumes.", "record": "Resumption criteria; decision owner; records accepted or excluded; approval."},
+          {"element": "Execute", "action": "Cyber teams isolate systems and revoke access; infrastructure teams restore services; operational teams resume activities in the approved sequence using the trusted reference state.", "record": "Isolation or restoration evidence; resumption sequence; operational acknowledgement."},
+          {"element": "Exit criteria", "action": "Close when the cyber boundary is understood, the required systems are restored or safely bypassed, operational state is reconciled, questionable records are controlled and authorised activity has resumed.", "record": "Reconciled state; restored or bypassed systems; controlled records; approval."}
+        ],
+        "escalateIf": "No defensible last trusted state can be established, provenance is missing for decision-critical records, cyber scope continues to expand, or operations are being asked to resume before technical and business approval criteria are met."
+      }
+    },
+    {
+      "id": "structural-supply-shortage",
+      "title": "Structural supply-side shortages",
+      "shortTitle": "Supply shortages",
+      "subtitle": "Moving from forecast confidence to verified supply reality.",
+      "description": "Critical materials, specialised components, processing capability and skilled manufacturing capacity can remain exposed to persistent constraint. Shortages create uncertainty around whether supply physically exists, whether production is progressing, whether delivery dates remain credible and how constrained supply should be allocated. The central continuity problem is the quality of operational evidence about state, availability and consequence.",
+      "trigger": "A supplier allocation is cut, production or processing capacity fails, available inventory falls below need, a critical material or component becomes constrained, or expected delivery no longer supports the plan.",
+      "continuityQuestion": "What supply state is verified, what demand is exposed and how should scarce supply be allocated?",
+      "outcome": "Evidence-based allocation",
+      "objective": "Establish verified supply state, trace downstream consequence and support an allocation or substitution decision.",
+      "startKeys": ["Material", "Component", "Supplier", "Facility", "Order", "Inventory location", "Production line"],
+      "contextPath": ["Constrained material", "Expected supply", "Produced or inspected quantity", "In-transit or received state", "Allocated demand", "Production requirement", "Order", "Customer commitment"],
+      "responseWeaknesses": [
+        "Forecast reliance: allocation decisions depend heavily on supplier promises rather than verified lifecycle state.",
+        "Weak state visibility: production progress, inventory and constrained capacity are not connected to commitments.",
+        "Unclear consequence: priority decisions are made without knowing which customers, production lines or obligations are most exposed."
+      ],
+      "sourceReferences": "International Energy Agency, Global Critical Minerals Outlook (2026).",
+      "pattern": {
+        "disruption": "Use constrained material, component, supplier, facility, order or inventory state as the trigger.",
+        "lifecycleContext": "Distinguish expected, committed, produced, inspected, approved, in-transit, received, allocated and consumed supply.",
+        "otherData": "Obtain supplier actuals, MES, ERP, WMS, inventory, quality, customer priority, contractual priority, criticality and substitution data.",
+        "decision": "Decide allocation rule, protected demand, substitution acceptability and revised commitments.",
+        "response": "Planning, ERP, procurement, production, order management and customer teams execute allocation and commitment changes.",
+        "outcome": "Decisions are grounded in connected lifecycle state and downstream consequence rather than promise alone."
+      },
+      "lifecycleData": [
+        "Expected and committed supply where those events are available",
+        "Produced, inspected and approved supply",
+        "In-transit and received supply",
+        "Allocated and consumed supply",
+        "Source, production and transformation activity",
+        "Inventory locations and batches",
+        "Finished products and orders",
+        "Production requirements and customer commitments"
+      ],
+      "lifecycleDataUse": "It distinguishes expected supply from supply that has actually progressed through production, inspection, approval, movement, receipt, allocation or consumption, then traces constrained quantities into the products, orders and customer commitments that depend on them.",
+      "otherData": [
+        "Supplier production-system actuals",
+        "MES, ERP, WMS and production-planning data",
+        "Inventory and quality status",
+        "Order-management data",
+        "Customer criticality and contractual priority",
+        "Production-line and public-service criticality",
+        "Regulatory importance",
+        "Revenue or margin consequence",
+        "Inventory cover and substitution feasibility"
+      ],
+      "otherDataUse": "Operational actuals refresh the current supply state. Criticality, contractual, regulatory, financial, inventory-cover and substitution data are then used to compare downstream consequences, apply prioritisation policy and test allocation or substitution options.",
+      "decisionRequirements": "Determine which constrained supply is genuinely available, which downstream consequences matter most, what prioritisation policy applies, whether substitution is viable and how scarce material should be allocated.",
+      "decisionModel": {
+        "question": "Which constrained supply is genuinely available, which demand is protected and how should scarce supply be allocated?",
+        "criteria": [
+          "Verified supply state across expected, produced, approved, in-transit, received, allocated and consumed quantities",
+          "Downstream production, order, customer, regulatory and public-service consequences",
+          "Applicable allocation policy and priority rules",
+          "Substitution, rescheduling, inventory cover and quality feasibility",
+          "Residual shortage and revised commitment ownership"
+        ],
+        "ownerPrompt": "Who has authority to make the allocation, substitution or revised-commitment decision?",
+        "approvalsPrompt": "Which allocation, customer, quality, regulatory or public-service approvals are required?",
+        "decisionTimePrompt": "What is the latest useful decision time before scarce supply can no longer protect the affected commitment?"
+      },
+      "operationalActions": "Management and planning processes set allocation policy. ERP, production-planning, procurement and order-management systems execute allocation, rescheduling, substitution and commitment changes.",
+      "practitionerQuestions": [
+        "Can the organisation distinguish expected, produced, approved, in-transit, received, allocated and consumed supply?",
+        "Are the source operational events connected to the products and commitments that depend on them?",
+        "Which business policies determine priority when supply is constrained?",
+        "What data must remain current for the allocation decision to be credible?",
+        "Which systems execute the final allocation and communicate the changed commitments?"
+      ],
+      "activationCard": {
+        "steps": [
+          {"element": "Confirm shortage", "action": "Record the constrained material or component, supplier or facility, expected quantity and date, revised quantity and date and the source of the shortfall.", "record": "Material or part ID; supplier or facility; expected versus revised supply; timestamp."},
+          {"element": "Establish verified supply state", "action": "Trace expected and committed supply into produced, inspected, approved, in-transit, received, allocated and consumed quantities where those events exist.", "record": "Verified quantity by state; location; quality or release status."},
+          {"element": "Trace downstream consequence", "action": "Connect constrained quantities to production requirements, finished products, orders and customer or regulatory commitments.", "record": "Exposed lines, products and orders; quantity gap; date consequence."},
+          {"element": "Request current priority data", "action": "Obtain supplier actuals, MES, ERP and WMS state, inventory cover, quality status, customer or contractual priority, regulatory or public-service criticality, margin or revenue consequence and substitution feasibility.", "record": "Current actuals; criticality and priorities; inventory cover; substitute options."},
+          {"element": "Make the decision", "action": "Decide the allocation rule, which demand is protected, whether substitution or rescheduling is acceptable and which commitments will be changed.", "record": "Allocation policy; decision owner; protected or deferred commitments; approvals."},
+          {"element": "Execute", "action": "Planning and ERP allocate material; procurement activates substitute supply; production reschedules; order management revises fulfilment; customer teams communicate changed commitments.", "record": "Allocation transaction; revised production plan; purchase order or change; customer update."},
+          {"element": "Exit criteria", "action": "Close when scarce supply is allocated, affected production and orders are updated, substitute actions are confirmed where used, and residual shortages and customer impacts are explicitly owned.", "record": "Final allocation; revised plans or orders; residual gap owner; evidence."}
+        ],
+        "escalateIf": "Verified supply state cannot be established, competing critical commitments exceed available quantity, allocation policy is unclear, or a safety, regulatory or public-service requirement is at risk."
+      }
+    },
+    {
+      "id": "logistics-network-volatility",
+      "title": "Logistics network volatility",
+      "shortTitle": "Logistics volatility",
+      "subtitle": "Transforming movement visibility into operational decision intelligence.",
+      "description": "Global logistics networks face persistent volatility from congestion, extreme weather, labour disruption, geopolitical route changes and carrier outages. Modern platforms generate extensive location data, but knowing where a shipment is does not by itself explain operational significance, recovery priority or effect on customer commitments.",
+      "trigger": "A shipment misses a connection, exceeds a delay threshold, is rolled, diverted, held, damaged, exposed to a carrier outage, or is affected by port congestion, weather, labour action or network failure.",
+      "continuityQuestion": "Which logistics exceptions matter most because of downstream consequence?",
+      "outcome": "Consequence-led response",
+      "objective": "Translate movement disruption into business consequence, compare recovery paths and coordinate the selected recovery action.",
+      "startKeys": ["Shipment", "Consignment", "Handling unit", "Transport leg", "Carrier", "Location", "Exception"],
+      "contextPath": ["Shipment or leg", "Product or batch", "Movement history", "Custody and condition", "Inventory or production dependency", "Compliance obligation", "Order", "Customer commitment"],
+      "responseWeaknesses": [
+        "Location without meaning: movement data is disconnected from production, compliance, inventory and customer context.",
+        "Custody ambiguity: handoffs obscure responsibility, condition and evidence.",
+        "Exception overload: disruptions are reviewed individually rather than prioritised by business consequence.",
+        "Manual coordination: response depends on emails, calls and repeated reconciliation."
+      ],
+      "sourceReferences": "Sea-Intelligence, Global Schedule Reliability Drops to 62.6% in June 2026; IATA, Middle East Disruption Impacts Cargo Markets (2026).",
+      "pattern": {
+        "disruption": "Use shipment, consignment, handling unit, transport leg, carrier or network exception as the trigger.",
+        "lifecycleContext": "Trace product and batch contents, movement history, current custody, responsibility, condition evidence, next handoff and expected destination.",
+        "otherData": "Obtain inventory cover, production schedules, customer priority, deadlines, penalties, substitute stock, network availability and recovery cost.",
+        "decision": "Decide whether to wait, expedite, reroute, change carrier or mode, substitute inventory or reschedule production.",
+        "response": "TMS, carrier, ERP, planning, order management, customer and partner workflows book and coordinate recovery.",
+        "outcome": "Visibility progresses from tracking movement to understanding which logistics disruptions require action first."
+      },
+      "lifecycleData": [
+        "Shipment and consignment identifiers",
+        "Products, batches and handling units",
+        "Movement events, origins and destinations",
+        "Carrier and logistics-party identities",
+        "Physical possession, recorded control and responsibility",
+        "Custody transitions and handoffs",
+        "Inspections, condition information and sensor evidence",
+        "Warehouses, ports and border crossings",
+        "Links to production, inventory, compliance and customer commitments"
+      ],
+      "lifecycleDataUse": "It translates a movement exception into operational consequence by tracing the affected shipment or handoff into the exact material, product, production activity, evidence and customer commitment involved, while custody and condition records establish responsibility and the supported operational state.",
+      "otherData": [
+        "Inventory cover and production schedules",
+        "Production criticality and customer priority",
+        "Contractual and regulatory deadlines",
+        "Penalties and revenue exposure",
+        "Available substitutes",
+        "Alternative transport capacity and rerouting options",
+        "Current lead times and recovery costs",
+        "Dynamic carrier and network availability"
+      ],
+      "otherDataUse": "It interprets severity and recoverability. Business context determines consequence and priority; alternative capacity, rerouting options, lead times, network availability and recovery costs are used to compare feasible recovery paths.",
+      "decisionRequirements": "Translate the logistics exception into business consequence, determine which events threaten operational continuity, rank recovery priority, select the viable recovery path and coordinate the parties that must act.",
+      "decisionModel": {
+        "question": "Which logistics exception requires action first, and which recovery path should be executed?",
+        "criteria": [
+          "Operational consequence of the affected shipment, consignment, handoff or transport leg",
+          "Custody, responsibility, condition and evidence state",
+          "Inventory, production, regulatory, customer and contractual deadlines",
+          "Viable recovery paths, lead times, capacity, cost and risk",
+          "Priority when multiple exceptions compete for the same recovery capacity"
+        ],
+        "ownerPrompt": "Who has authority to select and activate the recovery pathway?",
+        "approvalsPrompt": "Which carrier, customer, regulatory, cost or partner approvals are required?",
+        "decisionTimePrompt": "What is the latest useful decision time before the logistics exception becomes an unrecoverable commitment failure?"
+      },
+      "operationalActions": "TMS, ERP, planning, carrier and customer-management workflows book alternatives, change routes, reschedule production, allocate inventory, amend commitments and communicate with customers.",
+      "practitionerQuestions": [
+        "Can a logistics exception be connected to the exact material, product, production activity and customer commitment affected?",
+        "Is custody, responsibility and condition visible across handoffs?",
+        "What additional business data is required to translate delay into consequence?",
+        "Which rules determine recovery priority?",
+        "Which operational systems and parties must coordinate the recovery?"
+      ],
+      "activationCard": {
+        "steps": [
+          {"element": "Confirm exception", "action": "Record shipment, consignment or handling-unit ID, affected transport leg, location, carrier, event time, exception type and source.", "record": "Shipment or leg ID; carrier; location; exception; timestamp or source."},
+          {"element": "Reconstruct logistics state", "action": "Trace product or batch contents, movement history, current custody or responsibility, condition or inspection evidence, next handoff and expected destination.", "record": "Contents; last event; custody owner; condition; next planned event."},
+          {"element": "Translate into consequence", "action": "Trace the shipment into inventory, production requirements, compliance obligations, orders and customer commitments. Identify the date or threshold at which the logistics exception becomes a business failure.", "record": "Affected production or orders; inventory dependency; consequence date."},
+          {"element": "Request recovery data", "action": "Obtain inventory cover, production schedules, customer priority, contractual or regulatory deadlines, penalties, substitute stock, alternative capacity or routes, network availability, lead times and recovery costs.", "record": "Priority and consequence data; route or capacity options; cost and time comparison."},
+          {"element": "Make the decision", "action": "Decide whether to wait, expedite, reroute, change carrier or mode, substitute inventory or reschedule production. Rank the exception against other open disruptions by downstream consequence.", "record": "Recovery option; rank; decision owner; approvals; expected recovery time."},
+          {"element": "Execute", "action": "TMS and carrier workflows book the change; ERP and planning update inventory and production; order management revises commitments; customer teams communicate; partners confirm new handoffs.", "record": "Booking; plan or order update; customer notice; partner acknowledgement."},
+          {"element": "Exit criteria", "action": "Close when the shipment or substitute pathway is under controlled movement, custody and condition are known, affected plans and commitments are updated, and the recovery priority no longer requires escalation.", "record": "Controlled movement; custody and condition; updated commitments; closure evidence."}
+        ],
+        "escalateIf": "Custody or condition is unknown, no viable transport pathway exists before a critical commitment fails, regulatory deadlines will be missed, or multiple exceptions compete for the same scarce recovery capacity."
+      }
+    }
+  ]
+}

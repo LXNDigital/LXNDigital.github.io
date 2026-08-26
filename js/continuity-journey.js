@@ -9,7 +9,7 @@
    const data=await res.json();
    const launcher=el('button','cj-launcher'); launcher.type='button'; launcher.setAttribute('aria-haspopup','dialog'); launcher.setAttribute('aria-expanded','false'); launcher.innerHTML='<span class="cj-launcher-icon" aria-hidden="true"></span><span>'+data.label+'</span>';
    const backdrop=el('div','cj-backdrop');
-   const panel=el('aside','cj-panel'); panel.setAttribute('role','dialog'); panel.setAttribute('aria-modal','true'); panel.setAttribute('aria-label',data.title);
+	   const panel=el('aside','cj-panel'); panel.setAttribute('role','dialog'); panel.setAttribute('aria-modal','true'); panel.setAttribute('aria-label',data.title); panel.setAttribute('aria-hidden','true');
    panel.innerHTML='<div class="cj-header"><div class="cj-title-row"><div><h2 class="cj-title">'+data.title+'</h2><p class="cj-intro">'+data.intro+'</p><p class="cj-hint"> <i class="bi bi-arrow-right-circle me-2"></i>Choose your next step.</p></div><button class="cj-close" type="button" aria-label="Close continuity journey">&times;</button></div></div><div class="cj-body"></div>';
    document.body.appendChild(launcher); document.body.appendChild(backdrop); document.body.appendChild(panel);
    const body=panel.querySelector('.cj-body'); const page=currentPath();
@@ -22,8 +22,28 @@
     link.addEventListener('click',()=>track('continuity_journey_cta_click',step.title+' → '+step.cta));
     body.appendChild(item);
    });
-   function open(){launcher.setAttribute('aria-expanded','true');backdrop.classList.add('open');panel.classList.add('open');track('continuity_journey_open',page);}
-   function close(){launcher.setAttribute('aria-expanded','false');backdrop.classList.remove('open');panel.classList.remove('open');track('continuity_journey_close',page);}
+	   function setPanelInteractivity(isOpen){
+	    panel.setAttribute('aria-hidden',String(!isOpen));
+	    if('inert' in panel){
+	     panel.inert=!isOpen;
+	     return;
+	    }
+	    panel.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(node=>{
+	     if(isOpen){
+	      const previous=node.getAttribute('data-cj-tabindex');
+	      if(previous!==null){
+	       if(previous==='')node.removeAttribute('tabindex');else node.setAttribute('tabindex',previous);
+	       node.removeAttribute('data-cj-tabindex');
+	      }
+	     }else{
+	      if(!node.hasAttribute('data-cj-tabindex'))node.setAttribute('data-cj-tabindex',node.getAttribute('tabindex')||'');
+	      node.setAttribute('tabindex','-1');
+	     }
+	    });
+	   }
+	   setPanelInteractivity(false);
+	   function open(){launcher.setAttribute('aria-expanded','true');setPanelInteractivity(true);backdrop.classList.add('open');panel.classList.add('open');const closeButton=panel.querySelector('.cj-close');if(closeButton)closeButton.focus({preventScroll:true});track('continuity_journey_open',page);}
+	   function close(){const focusWasInside=panel.contains(document.activeElement);launcher.setAttribute('aria-expanded','false');backdrop.classList.remove('open');panel.classList.remove('open');setPanelInteractivity(false);if(focusWasInside)launcher.focus({preventScroll:true});track('continuity_journey_close',page);}
    launcher.addEventListener('click',open); backdrop.addEventListener('click',close); panel.querySelector('.cj-close').addEventListener('click',close);
    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))close();});
   }catch(e){console.error('Continuity journey failed to initialise:',e);}
