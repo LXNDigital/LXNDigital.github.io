@@ -456,7 +456,7 @@ body {
 
 .dmg-method-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
 }
 
@@ -1549,6 +1549,50 @@ body {
     font-size: .9rem;
     font-weight: 900;
     margin: 0 0 .55rem;
+}
+
+.dmg-domain-checks {
+    display: grid;
+    gap: .8rem;
+    margin-top: .75rem;
+}
+
+.dmg-domain-check {
+    display: grid;
+    gap: .45rem;
+}
+
+.dmg-domain-check-group {
+    display: grid;
+    gap: .6rem;
+}
+
+.dmg-domain-check-group > strong {
+    color: var(--dmg-teal);
+    font-size: .78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.dmg-domain-check h6 {
+    color: var(--dmg-ink) !important;
+    font-size: .84rem;
+    font-weight: 900;
+    margin: 0;
+}
+
+.dmg-domain-check-source {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.35rem;
+    margin-right: .45rem;
+    padding: .1rem .38rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--dmg-muted);
+    font-size: .68rem;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .dmg-summary-block p {

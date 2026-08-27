@@ -15,13 +15,22 @@
         '#dmgResetStates',
         '#dmgSearchInput'
     ].join(',');
+    const DOMAIN_CHECK_KEYWORDS = {
+        'Materials and products': ['material', 'product', 'goods', 'batch', 'batches', 'lot', 'component', 'components', 'handling unit', 'finished product', 'source origin', 'origin', 'constrained material'],
+        'Transformations': ['transformation', 'transformations', 'processing', 'assembly', 'aggregation', 'disaggregation', 'blending', 'inspection', 'inspected', 'produced', 'manufacturing', 'processor'],
+        'Movement and location': ['route', 'shipment', 'shipments', 'consignment', 'consignments', 'carrier', 'transport', 'movement', 'location', 'locations', 'port', 'border', 'vessel', 'leg', 'destination', 'origin', 'warehouse', 'warehouses', 'in-transit', 'received', 'reroute', 'rerouting', 'network', 'air corridor', 'jurisdiction', 'customs'],
+        'Custody and responsibility': ['custody', 'responsibility', 'possession', 'control', 'controlled', 'handoff', 'handoffs', 'held', 'carrier', 'logistics-party'],
+        'Condition and evidence': ['condition', 'evidence', 'certificate', 'certificates', 'declaration', 'declarations', 'sensor', 'quality', 'release', 'inspection', 'inspected', 'provenance', 'qualification', 'valid', 'validated', 'verified', 'trust', 'trusted', 'record', 'records', 'forensic', 'monitoring', 'siem', 'endpoint', 'credential', 'cyber'],
+        'Organisations and roles': ['supplier', 'suppliers', 'processor', 'processors', 'carrier', 'carriers', 'logistics', 'customer', 'customers', 'regulator', 'regulators', 'internal', 'owner', 'owners', 'party', 'parties', 'issuer', 'authority', 'authorities', 'legal', 'compliance', 'procurement'],
+        'Production and inventory': ['production', 'inventory', 'supply', 'quantity', 'quantities', 'capacity', 'available', 'allocated', 'consumed', 'produced', 'mes', 'erp', 'wms', 'planning', 'schedule', 'schedules', 'line', 'lead time', 'inventory cover'],
+        'Obligations and commitments': ['obligation', 'obligations', 'commitment', 'commitments', 'customer', 'customers', 'order', 'orders', 'regulatory', 'contract', 'contractual', 'deadline', 'deadlines', 'penalty', 'penalties', 'service', 'promise', 'promises', 'approval', 'approvals', 'sanctions', 'tariff', 'compliance']
+    };
     const app = document.querySelector('[data-workspace-app]');
     const loadingState = document.getElementById('dmgLoadingState');
     const listEl = document.getElementById('dmgDisruptionList');
     const searchEl = document.getElementById('dmgSearchInput');
     const resetEl = document.getElementById('dmgResetStates');
     const methodOverviewEl = document.getElementById('dmgMethodOverview');
-    const domainGridEl = document.getElementById('dmgDomainGrid');
     const useModesEl = document.getElementById('dmgUseModes');
     const workspaceHelpButton = document.getElementById('dmgWorkspaceHelpButton');
     const workspaceHelpPanel = document.getElementById('dmgWorkspaceHelp');
@@ -279,19 +288,6 @@
     }
 
     function renderStaticSections() {
-        if (domainGridEl) {
-            domainGridEl.innerHTML = workspaceData.lifecycleDomains.map(function (domain) {
-                const title = typeof domain === 'string' ? domain : domain.title;
-                const description = typeof domain === 'string' ? '' : domain.description;
-                return `
-                    <button class="dmg-domain-pill" type="button" aria-label="${escapeHtml(title)}: ${escapeHtml(description)}">
-                        <strong>${escapeHtml(title)}</strong>
-                        <span>${escapeHtml(description)}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
         if (methodOverviewEl) {
             methodOverviewEl.innerHTML = `
                 <div class="dmg-method-summary">
@@ -348,6 +344,149 @@
                 `;
             }).join('');
         }
+    }
+
+    function getLifecycleDomainLabels() {
+        return (workspaceData.lifecycleDomains || []).map(function (domain) {
+            return typeof domain === 'string' ? domain : domain.title;
+        }).filter(Boolean);
+    }
+
+    function getLifecycleDomainByTitle(title) {
+        return (workspaceData.lifecycleDomains || []).find(function (domain) {
+            return (typeof domain === 'string' ? domain : domain.title) === title;
+        });
+    }
+
+    function getDomainsToCheckGroups(disruption) {
+        const configured = disruption.domainsToCheck || {};
+        const groups = [
+            { label: 'Primary domains to check', titles: configured.primary || [] },
+            { label: 'Secondary domains to check', titles: configured.secondary || [] }
+        ].map(function (group) {
+            return {
+                label: group.label,
+                titles: group.titles.filter(Boolean)
+            };
+        }).filter(function (group) {
+            return group.titles.length;
+        });
+
+        if (groups.length) return groups;
+
+        return [{
+            label: 'Relationship prompts',
+            titles: getLifecycleDomainLabels()
+        }];
+    }
+
+    function normalizeDomainCheckText(value) {
+        return String(value == null ? '' : value).toLowerCase();
+    }
+
+    function matchesDomainCheck(domainTitle, value) {
+        const text = normalizeDomainCheckText(value);
+        const keywords = DOMAIN_CHECK_KEYWORDS[domainTitle] || [domainTitle];
+        return keywords.some(function (keyword) {
+            return text.includes(normalizeDomainCheckText(keyword));
+        });
+    }
+
+    function addDomainCheckPrompt(prompts, prompt) {
+        const key = prompt.text.toLowerCase();
+        if (prompts.some(function (item) { return item.text.toLowerCase() === key; })) return;
+        prompts.push(prompt);
+    }
+
+    function buildDomainPromptList(disruption, domainTitle) {
+        const sources = [
+            { label: 'Traversal path', items: disruption.contextPath || [] },
+            { label: 'Lifecycle Continuity data', group: 'lifecycleData', items: disruption.lifecycleData || [] },
+            { label: 'Other required data', group: 'otherData', items: disruption.otherData || [] }
+        ];
+        const prompts = [];
+
+        sources.forEach(function (source) {
+            source.items.forEach(function (item, index) {
+                if (!matchesDomainCheck(domainTitle, item)) return;
+                const status = source.group ? getStatus(disruption.id, source.group, index) : '';
+                addDomainCheckPrompt(prompts, {
+                    source: source.label,
+                    text: item,
+                    statusLabel: status ? getStatusLabel(status) : ''
+                });
+            });
+        });
+
+        const domain = getLifecycleDomainByTitle(domainTitle);
+        if (!prompts.length && domain && typeof domain !== 'string' && domain.description) {
+            addDomainCheckPrompt(prompts, {
+                source: 'Relationship prompt',
+                text: domain.description,
+                statusLabel: ''
+            });
+        }
+
+        return prompts;
+    }
+
+    function buildLifecycleDomainChecks(disruption) {
+        return getDomainsToCheckGroups(disruption).map(function (group) {
+            return {
+                label: group.label,
+                checks: group.titles.map(function (title) {
+                    return {
+                        title: title,
+                        prompts: buildDomainPromptList(disruption, title)
+                    };
+                }).filter(function (check) {
+                    return check.title && check.prompts.length;
+                })
+            };
+        }).filter(function (group) {
+            return group.checks.length;
+        });
+    }
+
+    function renderDomainCheckPrompts(check) {
+        return `
+            <div class="dmg-domain-check">
+                <h6>${escapeHtml(check.title)}</h6>
+                <ul class="dmg-list">
+                    ${check.prompts.map(function (prompt) {
+                        return `
+                            <li>
+                                <span class="dmg-domain-check-source">${escapeHtml(prompt.source)}</span>
+                                ${prompt.statusLabel ? `<span class="dmg-status-tag">${escapeHtml(prompt.statusLabel)}</span>` : ''}
+                                ${escapeHtml(prompt.text)}
+                            </li>
+                        `;
+                    }).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    function renderLifecycleDomainChecks(disruption) {
+        const groups = buildLifecycleDomainChecks(disruption);
+        if (!groups.length) return '';
+
+        return `
+            <section class="dmg-summary-block dmg-full">
+                <h5>Lifecycle relationship domains to check for this pathway</h5>
+                <p>These are prompts derived from the selected disruption pathway, using its Lifecycle Continuity context and other required data checklist. They are not conclusions about what the disruption has touched. Use them to test whether the response has traced the right lifecycle relationships before closing the disruption.</p>
+                <div class="dmg-domain-checks">
+                    ${groups.map(function (group) {
+                        return `
+                            <div class="dmg-domain-check-group">
+                                <strong>${escapeHtml(group.label)}</strong>
+                                ${group.checks.map(renderDomainCheckPrompts).join('')}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </section>
+        `;
     }
 
     function setActiveMethodStage(stageId) {
@@ -859,6 +998,7 @@
                         <h5>Continuity objective</h5>
                         <p><strong>${escapeHtml(disruption.outcome)}:</strong> ${escapeHtml(disruption.objective)}</p>
                     </section>
+                    ${renderLifecycleDomainChecks(disruption)}
                 </div>
             </section>
         `;
@@ -923,6 +1063,26 @@
             'Continuity objective',
             disruption.outcome + ': ' + disruption.objective
         );
+
+        const lifecycleDomainChecks = buildLifecycleDomainChecks(disruption);
+        if (lifecycleDomainChecks.length) {
+            lines.push(
+                '',
+                'Lifecycle relationship domains to check for this pathway',
+                'These are prompts derived from the selected disruption pathway, using its Lifecycle Continuity context and other required data checklist. They are not conclusions about what the disruption has touched. Use them to test whether the response has traced the right lifecycle relationships before closing the disruption.'
+            );
+
+            lifecycleDomainChecks.forEach(function (group) {
+                lines.push('', group.label);
+                group.checks.forEach(function (check) {
+                    lines.push(check.title);
+                    check.prompts.forEach(function (prompt) {
+                        const statusText = prompt.statusLabel ? ' [' + prompt.statusLabel + ']' : '';
+                        lines.push('- [' + prompt.source + ']' + statusText + ' ' + prompt.text);
+                    });
+                });
+            });
+        }
 
         return lines.join('\n');
     }

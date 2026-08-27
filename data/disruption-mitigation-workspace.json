@@ -202,6 +202,10 @@
       "objective": "Identify what the route disruption touches, evaluate viable continuity pathways and coordinate the approved route, carrier or schedule response.",
       "startKeys": ["Route", "Port", "Border", "Vessel", "Carrier", "Air corridor", "Jurisdiction", "Shipment"],
       "contextPath": ["Route or jurisdiction", "Shipment", "Material or product", "Custody and responsibility", "Obligations", "Production dependency", "Order", "Customer commitment"],
+      "domainsToCheck": {
+        "primary": ["Movement and location", "Custody and responsibility", "Obligations and commitments"],
+        "secondary": ["Materials and products", "Production and inventory", "Organisations and roles", "Condition and evidence"]
+      },
       "responseWeaknesses": [
         "Loss of context: shipment status may be visible while business consequence remains unclear.",
         "Disconnected obligations: route changes can alter custody, sanctions, customs and insurance requirements.",
@@ -286,6 +290,10 @@
       "objective": "Map the changed requirement to actual lifecycle records, determine evidence sufficiency and coordinate the approved regulatory response.",
       "startKeys": ["Jurisdiction", "Origin", "Supplier", "Product classification", "Material", "Destination", "Route", "Evidence type", "Effective date"],
       "contextPath": ["Rule or jurisdiction", "Scope keys", "Supplier or origin", "Material or product", "Transformation", "Shipment", "Evidence", "Commitment"],
+      "domainsToCheck": {
+        "primary": ["Condition and evidence", "Materials and products", "Transformations", "Organisations and roles", "Obligations and commitments"],
+        "secondary": ["Movement and location", "Custody and responsibility"]
+      },
       "responseWeaknesses": [
         "Document evidence without lifecycle truth: declarations and certificates become detached from operational events.",
         "Inconsistent identifiers: product, batch, shipment and regulatory records do not align across jurisdictions.",
@@ -371,6 +379,10 @@
       "objective": "Trace constrained sources into exposed commitments and determine whether alternative sources are technically, commercially and evidentially viable.",
       "startKeys": ["Supplier", "Processor", "Material", "Component", "Facility", "Jurisdiction", "Product"],
       "contextPath": ["Supplier or material", "Source origin", "Processor", "Transformation", "Component", "Finished product", "Shipment", "Customer commitment"],
+      "domainsToCheck": {
+        "primary": ["Organisations and roles", "Materials and products", "Transformations", "Obligations and commitments"],
+        "secondary": ["Production and inventory", "Condition and evidence", "Movement and location"]
+      },
       "responseWeaknesses": [
         "Tier-one visibility can create false confidence while upstream dependencies remain hidden.",
         "Materials, processors and components are not connected to finished products and commitments.",
@@ -456,6 +468,10 @@
       "objective": "Establish the last trusted operational state, separate compromised or uncertain records and sequence safe operational recovery.",
       "startKeys": ["Affected system", "Partner", "Credential", "Interface", "Incident time window", "Record set"],
       "contextPath": ["Incident window", "Affected system or party", "Lifecycle event", "Evidence and provenance", "Last trusted state", "Product or shipment", "Commitment", "Recovery sequence"],
+      "domainsToCheck": {
+        "primary": ["Condition and evidence", "Custody and responsibility", "Organisations and roles"],
+        "secondary": ["Movement and location", "Production and inventory", "Materials and products", "Obligations and commitments", "Transformations"]
+      },
       "responseWeaknesses": [
         "System integration exchanges transactions without necessarily preserving shared lifecycle context.",
         "Trusted operational history fragments across applications, partners and logs.",
@@ -540,6 +556,10 @@
       "objective": "Establish verified supply state, trace downstream consequence and support an allocation or substitution decision.",
       "startKeys": ["Material", "Component", "Supplier", "Facility", "Order", "Inventory location", "Production line"],
       "contextPath": ["Constrained material", "Expected supply", "Produced or inspected quantity", "In-transit or received state", "Allocated demand", "Production requirement", "Order", "Customer commitment"],
+      "domainsToCheck": {
+        "primary": ["Production and inventory", "Materials and products", "Obligations and commitments"],
+        "secondary": ["Transformations", "Organisations and roles", "Movement and location", "Condition and evidence"]
+      },
       "responseWeaknesses": [
         "Forecast reliance: allocation decisions depend heavily on supplier promises rather than verified lifecycle state.",
         "Weak state visibility: production progress, inventory and constrained capacity are not connected to commitments.",
@@ -624,6 +644,10 @@
       "objective": "Translate movement disruption into business consequence, compare recovery paths and coordinate the selected recovery action.",
       "startKeys": ["Shipment", "Consignment", "Handling unit", "Transport leg", "Carrier", "Location", "Exception"],
       "contextPath": ["Shipment or leg", "Product or batch", "Movement history", "Custody and condition", "Inventory or production dependency", "Compliance obligation", "Order", "Customer commitment"],
+      "domainsToCheck": {
+        "primary": ["Movement and location", "Custody and responsibility", "Materials and products", "Obligations and commitments"],
+        "secondary": ["Condition and evidence", "Organisations and roles", "Production and inventory"]
+      },
       "responseWeaknesses": [
         "Location without meaning: movement data is disconnected from production, compliance, inventory and customer context.",
         "Custody ambiguity: handoffs obscure responsibility, condition and evidence.",
