@@ -73,17 +73,17 @@
     {
       "id": "before",
       "title": "Before disruption",
-      "description": "Test readiness and expose where response would depend on reconstruction."
+      "description": "Test readiness and expose where response would depend on reconstruction. It helps teams identify where lifecycle continuity needs to be strengthened, which relationships should be traceable, what evidence should be available, and where value-chain information gaps could increase risk"
     },
     {
       "id": "during",
       "title": "During disruption",
-      "description": "Use the activation workflow to establish exposure, uncertainty, decision and execution."
+      "description": "Use the activation workflow to establish exposure, uncertainty, decision and execution. It gives practitioners a structured way to work from the changed condition into the lifecycle context: what the disruption touches, what information is missing, what other data is required, what decision must be made, who must act, and what continuity outcome is being protected."
     },
     {
       "id": "after",
       "title": "After disruption",
-      "description": "Identify where fragmented lifecycle context slowed mitigation or recovery."
+      "description": "Identify where fragmented lifecycle context slowed mitigation or recovery. It supports root cause analysis by showing whether the response was constrained by missing lifecycle data, unclear ownership, weak evidence, poor traceability, delayed decision rights or gaps in value-chain coordination."
     }
   ],
   "lifecycleDomains": [
