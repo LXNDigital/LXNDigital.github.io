@@ -31,14 +31,20 @@
       "matches": ["lifecycle-index.html"]
     },
     {
-      "id": 4,
-      "title": "See the Continuity Value to You",
-      "microcopy": "Continuity loss has a measurable cost. Continuity confidence has a measurable lift.",
-      "overlay": "The diagnostic helps identify where continuity is leaking through excess inventory, firefighting, rework, disputes, delays, and planning instability — and where value can be reclaimed through smoother flow, faster decisions, lower working capital, stronger assurance, and more predictable lifecycle performance.",
-      "cta": "Explore the self-diagnostic",
-      "url": "DiagnosticWorkbench-Download.html",
-      "matches": ["operational-continuity-framework.html", "DiagnosticWorkbench-Download.html"]
-    },
+  "id": 4,
+  "title": "Put Continuity to Work",
+  "microcopy": "Continuity loss has a measurable cost. Continuity confidence has a measurable lift.",
+  "overlay": "Explore where continuity is being lost, what that uncertainty is costing the organisation, and how connected lifecycle evidence can strengthen decisions when operations are under pressure. Assess the opportunity through the Operational Continuity diagnostic, or explore how Lifecycle Continuity supports disruption mitigation in practice.",
+  "cta": "Explore the self-diagnostic",
+  "url": "DiagnosticWorkbench-Download.html",
+  "cta2": "Explore disruption mitigation",
+  "url2": "disruption-mitigation-workspace.html",
+  "matches": [
+    "operational-continuity-framework.html",
+    "DiagnosticWorkbench-Download.html",
+    "disruption-mitigation-workspace.html"
+  ]
+   },
     {
       "id": 5,
       "title": "Prove the Value",

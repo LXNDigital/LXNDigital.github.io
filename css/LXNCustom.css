@@ -794,3 +794,60 @@ header.masthead .hero-resolution-copy p {
 #aboutus .about-text p:last-child {
     margin-bottom: 0;
 }
+
+/* hero tension arrows*/
+.hero-tension-step {
+    position: relative;
+}
+
+/*
+ * Desktop arrow
+ */
+.hero-tension-arrow {
+    position: absolute;
+    top: 0.12rem;
+    right: 0;
+    transform: translateX(50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.2rem;
+    height: 1.2rem;
+
+    font-size: 1.2 rem;
+    font-weight: 500;
+    line-height: 1;
+
+    color: #55c0a9;
+
+    pointer-events: none;
+    z-index: 2;
+}
+
+.hero-tension-arrow::before {
+    content: "\2192"; /* Right arrow */
+}
+
+/*
+ * Mobile layout
+ *
+ * Bootstrap's col-md breakpoint is 768px, so the arrow
+ * changes direction when the columns begin stacking.
+ */
+@media (max-width: 767.98px) {
+    .hero-tension-arrow {
+        top: auto;
+        right: auto;
+        bottom: -0.65rem;
+        left: 50%;
+        transform: translate(-50%, 50%);
+        font-size: 1.05 rem;
+
+    }
+
+    .hero-tension-arrow::before {
+        content: "\2193"; /* Down arrow */
+    }
+}
