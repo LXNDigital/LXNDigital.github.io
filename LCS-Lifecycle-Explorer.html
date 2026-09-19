@@ -1,0 +1,3497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LCS Lifecycle Continuity Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root{
+      --fg:#0f172a; --bg:#fff; --muted:#64748b; --grid:#e9ecef; --edge:#9aa0a6;
+      --fade:0.3; --node-radius:8; --lane-gap:80; --same-time-step:4;
+      --banner-err:#fda29b; --banner-ok:#8de4d8; --panel:#f8fafc; --panel-border:#e2e8f0;
+      --lineage:#64748b;
+      --lxn-navy:#001624; --lxn-navy-2:#071927; --lxn-teal:#07988b; --lxn-teal-dark:#05756b;
+      --lxn-teal-soft:#f0fdfa; --lxn-ink:#0f172a; --lxn-text:#334155;
+
+      /* NEW: layout variables */
+      --header-h:58px;
+      --ribbon-h:74px; /* updated at runtime */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans','Liberation Sans',sans-serif;color:var(--fg);background:var(--bg)}
+    header{
+      display:grid;grid-template-columns:minmax(280px,1fr) auto;gap:12px;align-items:center;
+      padding:8px 12px;border-bottom:1px solid #163545;background:var(--lxn-navy);color:#fff;
+      position:sticky;top:0;z-index:10
+    }
+    #titleBlock{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
+    h1{display:flex;align-items:baseline;min-width:0;font-size:15px;margin:0;font-weight:700;white-space:nowrap}
+    #seedTag{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#9fb3c0;font-size:11px;margin-left:8px;font-weight:500}
+    #controls{display:flex;gap:6px;align-items:center;justify-self:end;white-space:nowrap}
+    .btn,.control-menu summary{
+      border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#fff;
+      padding:5px 8px;border-radius:8px;cursor:pointer;font:inherit;font-size:12px;line-height:1.2
+    }
+    .btn:hover,.control-menu summary:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.36)}
+    .btn:focus-visible,.control-menu summary:focus-visible{outline:3px solid rgba(7,152,139,.45);outline-offset:1px}
+    #toggleMode{background:var(--lxn-teal);border-color:var(--lxn-teal);font-weight:800}
+    #toggleMode:hover{background:var(--lxn-teal-dark);border-color:var(--lxn-teal-dark)}
+    .file-control{position:relative;overflow:hidden;font-weight:800}
+    .file-control input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .control-menu{position:relative}
+    .control-menu summary{list-style:none;user-select:none}
+    .control-menu summary::-webkit-details-marker{display:none}
+    .control-menu[open] summary{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.42)}
+    .control-menu-panel{
+      position:absolute;right:0;top:calc(100% + 7px);z-index:30;display:grid;gap:5px;min-width:176px;
+      padding:7px;background:#fff;border:1px solid var(--panel-border);border-radius:8px;
+      box-shadow:0 16px 36px rgba(15,23,42,.18)
+    }
+    .control-menu-panel .btn{width:100%;text-align:left;color:var(--lxn-text);background:#fff;border-color:transparent}
+    .control-menu-panel .btn:hover{color:var(--lxn-teal-dark);background:var(--lxn-teal-soft);border-color:rgba(7,152,139,.22)}
+    #banner{width:100%;padding:0;font-size:11px;display:none;background:transparent;border:none;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #banner.ok{color:var(--banner-ok);display:block}
+    #banner.err{color:var(--banner-err);display:block}
+
+    /* KPI strip */
+    #kpiBar{
+      display:grid;grid-template-columns:1fr;
+      gap:6px;align-items:stretch;
+      padding:6px 10px;
+      border-bottom:1px solid var(--panel-border);
+      background:var(--panel);position:sticky;top:var(--header-h);z-index:9;
+    }
+    .sustainability-summary-row{
+      display:grid;grid-template-columns:repeat(5,minmax(92px,1fr)) minmax(310px,2.6fr);gap:6px;align-items:start
+    }
+    .sustainability-summary-row.has-temperature{
+      grid-template-columns:repeat(5,minmax(82px,.8fr)) minmax(280px,2.2fr) minmax(220px,1.4fr)
+    }
+    .time-summary-row,.lifecycle-insights-row{
+      display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px
+    }
+    .ribbon-section-label{
+      min-height:44px;display:flex;align-items:center;padding:5px 8px;border-radius:8px;
+      color:var(--lxn-teal-dark);background:var(--lxn-teal-soft);border:1px solid rgba(7,152,139,.28);font-size:10px;font-weight:800;
+      letter-spacing:.05em;text-transform:uppercase
+    }
+    .kpi{
+      border:1px solid var(--panel-border); border-radius:8px; background:#fff;
+      padding:6px 8px; display:flex; flex-direction:column; justify-content:center; gap:1px;
+      min-height:44px;
+    }
+    .kpi .label{font-size:10px;color:var(--muted);line-height:1.2}
+    .kpi .value{font-size:14px;font-weight:800;line-height:1.15;color:var(--lxn-ink);font-variant-numeric:tabular-nums}
+    .seed-emissions{position:relative;display:block;padding:0;overflow:visible}
+    .seed-emissions-static{display:flex;padding:6px 8px}
+    .seed-emissions summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;min-height:44px;padding:6px 8px;cursor:pointer;list-style:none}
+    .seed-emissions summary::-webkit-details-marker{display:none}
+    .seed-emissions summary:hover{background:var(--lxn-teal-soft)}
+    .seed-emissions[open]{border-color:rgba(7,152,139,.45);box-shadow:inset 3px 0 0 var(--lxn-teal)}
+    .seed-emissions-summary{min-width:0}
+    .seed-emissions-summary .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .seed-emissions-total{text-align:right;white-space:nowrap}
+    .seed-emissions-total .value{display:block}
+    .seed-emissions-total .u{font-size:10px;color:var(--muted);font-weight:500}
+    .seed-emissions-toggle{font-size:10px;color:var(--lxn-teal-dark);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+    .seed-emissions-breakdown{
+      position:fixed;right:292px;top:calc(var(--header-h) + var(--ribbon-h) + 6px);z-index:25;
+      width:min(520px,calc(100vw - 320px));
+      padding:9px 10px;background:#fff;border:1px solid var(--panel-border);border-left:3px solid var(--lxn-teal);
+      border-radius:8px;box-shadow:0 16px 36px rgba(15,23,42,.16)
+    }
+    .seed-emissions-breakdown .sub{line-height:1.35}
+    #kpiTemp{
+      display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto 18px;column-gap:8px;align-items:center;
+      padding:5px 8px;border:1px solid var(--panel-border);border-radius:8px;background:#fff;min-height:44px;
+    }
+    #kpiTemp .label{grid-column:1;grid-row:1;font-size:10px;color:var(--muted)}
+    #kpiTemp .temperature-value{grid-column:2;grid-row:1;text-align:right;font-size:11px;font-weight:800;color:var(--lxn-ink);white-space:nowrap}
+    #kpiTemp svg{grid-column:1/3;grid-row:2;width:100%;height:18px;display:block;color:var(--lxn-teal)}
+    .time-summary-row .kpi .sub,.lifecycle-insights-row .kpi .sub{display:none}
+    @media (max-width:1200px){
+      header{grid-template-columns:minmax(220px,1fr) auto}
+      .sustainability-summary-row,.sustainability-summary-row.has-temperature{grid-template-columns:repeat(3,minmax(110px,1fr))}
+      .seed-emissions{grid-column:span 2}
+      .time-summary-row,.lifecycle-insights-row{grid-template-columns:repeat(3,minmax(110px,1fr))}
+      .ribbon-section-label{grid-column:1/-1;min-height:32px}
+    }
+    @media (max-width:820px){
+      header{grid-template-columns:1fr;gap:6px}
+      #controls{justify-self:start;flex-wrap:wrap}
+      .sustainability-summary-row,.sustainability-summary-row.has-temperature,.time-summary-row,.lifecycle-insights-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .seed-emissions,#kpiTemp{grid-column:1/-1}
+      .seed-emissions-breakdown{right:10px;width:calc(100vw - 20px)}
+    }
+
+    /* NEW: main area now uses CSS vars for heights */
+    #main{display:grid;grid-template-columns:1fr 280px;gap:0;height:calc(100vh - var(--header-h) - var(--ribbon-h))}
+    #stage{position:relative;height:100%;width:100%}
+    #legendPane{border-left:1px solid var(--panel-border);background:var(--panel);padding:12px;overflow:auto}
+    #legendPane h2{margin:8px 0 10px 0;font-size:12px;font-weight:800;color:var(--lxn-ink);text-transform:uppercase;letter-spacing:.04em}
+    #legend{display:flex;flex-direction:column;gap:10px}
+    .legend-item{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:center;font-size:12px;color:var(--lxn-text);line-height:1.25;cursor:pointer;border:1px solid transparent;border-radius:8px;padding:6px}
+    .legend-item:hover{background:#fff;border-color:var(--panel-border)}
+    .legend-item.active{outline:0;border-color:var(--lxn-teal);box-shadow:inset 3px 0 0 var(--lxn-teal);background:var(--lxn-teal-soft)}
+    .legend-swatch{width:14px;height:14px;border:1px solid #cfd3d7;border-radius:3px}
+    .legend-key{color:var(--muted);font-size:11px}
+    .legend-badge-key{font-size:11px;color:#475569;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;padding:7px 8px;line-height:1.45}
+
+    /* Legend emissions mini-chips */
+    .legend-emissions{margin-top:4px; font-size:11px; color:#334155}
+    .legend-emissions .row{display:flex; flex-wrap:wrap; gap:6px}
+    .legend-chip{display:inline-flex; align-items:center; gap:4px; padding:2px 6px;
+      border:1px solid #e2e8f0; border-radius:6px; background:#f8fafc}
+    .legend-chip .k{color:#64748b}
+    .legend-chip .v{font-variant-numeric:tabular-nums; font-weight:600}
+    .legend-chip .u{color:#64748b}
+
+    /* Time-centric mode */
+    .node.va circle,
+    .node.nva circle,
+    .node.unknownva circle{ stroke:#ffffff; stroke-width:2px; }
+    .legend-times{margin-top:6px;font-size:11px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+    .legend-timechip{display:inline-flex;gap:4px;align-items:baseline;padding:2px 6px;border:1px solid var(--panel-border);border-radius:999px;background:#fff}
+    .legend-timechip .k{font-weight:600;color:#111}
+    .legend-timechip .v{color:#111}
+    .legend-timechip .u{color:var(--muted)}
+    .kpi .sub{font-size:11px;color:#6b7280;margin-top:2px}
+    button.insight-kpi{font:inherit;text-align:left;color:inherit;cursor:pointer;width:100%}
+    button.insight-kpi:hover:not(:disabled){border-color:#64748b;background:#f8fafc;transform:translateY(-1px)}
+    button.insight-kpi:focus-visible{outline:3px solid #60a5fa;outline-offset:1px}
+    button.insight-kpi.active{border-color:#111;box-shadow:0 0 0 1px #111;background:#f8fafc}
+    button.insight-kpi:disabled{cursor:default;opacity:.68;background:#f8fafc}
+    .time-badge{
+      pointer-events:none;
+      dominant-baseline:middle;
+      text-anchor:middle;
+      font-size:12px;
+      font-weight:700;
+      fill:#111;
+      stroke:none;
+    }
+    .time-badge.hidden{display:none}
+    .emissions-badge{
+      pointer-events:none;text-anchor:middle;dominant-baseline:middle;
+      font-size:9px;font-weight:800;fill:#111;paint-order:stroke;
+      stroke:#fff;stroke-width:3px;stroke-linejoin:round;
+    }
+    .emissions-badge.hidden{display:none}
+
+    svg{
+      width:100%;height:100%;display:block;
+      background:
+        linear-gradient(to right, transparent 0 20px, var(--grid) 20px 21px) repeat-x,
+        linear-gradient(to bottom, transparent calc(var(--lane-gap) - 1px), var(--grid) var(--lane-gap)) repeat-y;
+      background-size:40px 100%, 100% var(--lane-gap)
+    }
+    svg.spread-active{background:linear-gradient(180deg,#ffffff 0%,#f8fafc 50%,#ffffff 100%)}
+    .axis path,.axis line{stroke:var(--muted)}
+    .axis text{fill:var(--muted);font-size:12px}
+    .axis.hidden{display:none}
+    .time-guides.hidden,.chronology-rails.hidden,.parent-arcs.hidden,.time-callout.hidden{display:none}
+    .time-guide line{stroke:#94a3b8;stroke-width:1;stroke-dasharray:2 7;opacity:.42;pointer-events:none}
+    .time-guide text{fill:#64748b;font-size:11px;font-weight:600;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+    .time-flow-label{fill:#64748b;font-size:10px;font-weight:700;letter-spacing:.12em;paint-order:stroke;stroke:#fff;stroke-width:4px;pointer-events:none}
+    .chronology-rail{fill:none;stroke:#64748b;stroke-width:1.2;opacity:.55;pointer-events:none}
+    .chronology-tick{stroke:#64748b;stroke-width:1;opacity:.45;pointer-events:none}
+    .chronology-rail-label{fill:#475569;font-size:9px;font-weight:700;letter-spacing:.03em;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+    .parent-arc{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+    .parent-arc-halo{stroke-width:18;opacity:.055}
+    .parent-arc-line{stroke-width:1.5;stroke-dasharray:1 7;opacity:.24}
+    .parent-arc-label{font-size:11px;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;pointer-events:none}
+    .time-callout{pointer-events:none}
+    .time-callout line{stroke:#64748b;stroke-width:1;opacity:.6}
+    .time-callout rect{fill:#0f172a;stroke:#fff;stroke-width:1.5;rx:8;ry:8;filter:drop-shadow(0 3px 8px #0004)}
+    .time-callout text{fill:#fff;font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:middle;stroke:none;paint-order:normal}
+    .edge{stroke:var(--edge);color:var(--edge);stroke-width:2;fill:none;opacity:0.9;pointer-events:none}
+    .lineage-edge{
+      stroke:var(--lineage);
+      color:var(--lineage);
+      stroke-width:2;
+      fill:none;opacity:0.95;
+      stroke-dasharray:none;
+      pointer-events:none
+    }
+    .lineage-hidden{display:none !important}
+    .node circle{stroke-width:2;cursor:grab;filter:drop-shadow(0 1px 1px #0002)}
+    .node text{font-size:12px;dominant-baseline:middle;pointer-events:none;fill:#000;paint-order:stroke;stroke:#fff;stroke-width:3px}
+    .node .badge{font-size:11px;font-weight:700;fill:#fff;stroke:none;paint-order:stroke;dominant-baseline:middle;text-anchor:middle}
+    .faded{opacity:var(--fade)}
+    .active-node circle,
+    .node.active-node circle,
+    .node.group-selected circle,
+    .group-selected circle{stroke:#111 !important;stroke-width:3 !important}
+    .active-lineage{stroke-dasharray:0;stroke-width:2.4;opacity:1}
+    .node.insight-node circle{stroke:#111 !important;stroke-width:4 !important;filter:drop-shadow(0 0 5px #38bdf8)}
+    .edge.insight-edge{stroke:#0f172a;stroke-width:3.5;opacity:1}
+    .hidden-shiprecv{display:none}
+
+    .tooltip{
+      position:absolute;display:none;min-width:300px;max-width:520px;padding:10px 12px;border-radius:10px;background:#111;color:#fff;
+      box-shadow:0 8px 24px #0006;font-size:12px;line-height:1.35;z-index:20;white-space:pre-wrap; pointer-events:none;
+    }
+    .tooltip h3{margin:0 0 6px 0;font-size:13px;font-weight:600}
+    .tooltip .kv{color:#cbd5e1}
+    .tooltip code{display:block;white-space:pre-wrap;background:#0b0b0b;border:1px solid #222;border-radius:6px;padding:8px;margin-top:6px;color:#e2e8f0;overflow-x:auto}
+
+    .event-panel{font-size:12px;line-height:1.4;color:#111}
+    .event-panel h3{margin:0 0 8px 0;font-size:13px;font-weight:700;color:#111}
+    .event-panel .kv{color:#334155;margin-bottom:4px}
+    .event-panel code{display:block;white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border:1px solid #1e293b;border-radius:8px;padding:8px;margin-top:6px;overflow-x:auto}
+    .panel-empty{font-size:12px;color:var(--muted);padding:4px 2px}
+  </style>
+</head>
+<body>
+<header>
+  <div id="titleBlock">
+    <h1>Lifecycle Continuity Explorer <span id="seedTag"></span></h1>
+    <div id="banner"></div>
+  </div>
+  <div id="controls">
+    <label class="btn file-control">Open D3<input type="file" id="fileInput" accept=".json,application/json" /></label>
+    <button id="toggleMode" class="btn" title="Switch legend and ribbon between sustainability and time views">Mode: Sustainability</button>
+    <button id="toggleSpread" class="btn" title="Spread or compact nodes">Spread</button>
+    <button id="toggleRibbon" class="btn" title="Show/Hide the KPI ribbon">Hide Ribbon</button>
+    <details class="control-menu">
+      <summary>View</summary>
+      <div class="control-menu-panel">
+        <button id="toggleAxis" class="btn" title="Show or hide the timeline">Hide Timeline</button>
+        <button id="toggleLineage" class="btn" title="Alternate lineage relationships between dotted and solid">Lineage: Dotted</button>
+        <button id="toggleShipRecvPaths" class="btn" title="Hide/Show Ship→Recv paths and cross-parent links">Hide Ship→Recv Paths</button>
+        <button id="toggleEventTooltip" class="btn" title="Switch the right-side pane between legend and event data">Show Event Data</button>
+      </div>
+    </details>
+    <details class="control-menu">
+      <summary>Layout</summary>
+      <div class="control-menu-panel">
+        <button id="resetZoom" class="btn" title="Reset zoom/pan">Reset view</button>
+        <button id="unpinAll" class="btn" title="Clear all pinned nodes">Unpin all</button>
+        <button id="saveLayout" class="btn" title="Save current node layout to a .loc file">Save Layout</button>
+        <button id="restoreLayout" class="btn" title="Restore node layout from a .loc file">Restore Layout</button>
+      </div>
+    </details>
+    <input type="file" id="layoutInput" accept=".loc,application/json" style="display:none" />
+  </div>
+</header>
+
+<!-- KPI STRIP -->
+<section id="kpiBar"></section>
+
+<div id="main">
+  <div id="stage">
+    <svg id="svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 12 10" markerUnits="userSpaceOnUse" refX="22" refY="5" markerWidth="8" markerHeight="6" orient="auto">
+          <path d="M0,0 L12,5 L0,10 Z" fill="currentColor"></path>
+        </marker>
+        <marker id="railArrow" viewBox="0 0 10 8" markerUnits="userSpaceOnUse" refX="9" refY="4" markerWidth="7" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,4 L0,8 Z" fill="#64748b"></path>
+        </marker>
+      </defs>
+      <g id="viewport">
+        <g id="timeGuides" class="time-guides hidden"></g>
+        <g id="chronologyRails" class="chronology-rails hidden"></g>
+        <g id="parentArcs" class="parent-arcs hidden"></g>
+        <g class="axis" id="timeAxis"></g>
+        <g id="edges"></g>
+        <g id="lineage"></g>
+        <g id="nodes"></g>
+        <g id="timeCallout" class="time-callout hidden" aria-hidden="true">
+          <line></line>
+          <rect></rect>
+          <text></text>
+        </g>
+      </g>
+    </svg>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <aside id="legendPane">
+    <h2 id="sidePaneTitle">Legend — Ultimate Parent</h2>
+    <div id="legend"></div>
+  </aside>
+</div>
+
+<script>
+/* -------------------- Utilities -------------------- */
+function fnv1a(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193);h>>>=0}return h>>>0}
+function hslToHex(h,s,l){const a=s*Math.min(l,1-l);const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(Math.min(k-3,9-k,1),-1);return Math.round(255*c)};return "#"+[f(0),f(8),f(4)].map(x=>x.toString(16)).map(s=>s.padStart(2,'0')).join('')}
+function shortBizStep(uri){
+  if(!uri || typeof uri!=="string") return "";
+  const clean=uri.replace(/\/+$/, "");
+  const i=Math.max(clean.lastIndexOf(":"), clean.lastIndexOf("/"), clean.lastIndexOf("#"));
+  return i>=0 ? clean.slice(i+1) : clean;
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function pretty(obj){ try{return JSON.stringify(obj,null,2)}catch{return String(obj)} }
+function orgKeyFromSGLN(sgln){ if(!sgln||typeof sgln!=='string')return null; const m=sgln.match(/^urn:epc:id:sgln:([0-9]+)\./); return m?`urn:epc:id:sgln:${m[1]}.0.0`:null; }
+function hashColorForKey(key){ const h=fnv1a(key)%360; return hslToHex(h,0.55,0.52); }
+
+
+
+/* ---------------- Preferred palette (stable, high-contrast) ---------------- */
+const PREFERRED_PALETTE = [
+  "#2F5597", // blue
+  "#FF9300", // orange
+  "#70AD47", // green
+  "#9D90A0", // purple
+  "#B71E42", // red
+  "#14B8A6", // teal
+  "#ED7D31", // amber
+  "#EB91BB", // pink
+  "#64748B", // slate
+  "#84CC16", // lime
+  "#5B9BD5", // light blue
+  "#F43F5E", // rose
+  "#1D4ED8", // royal blue
+  "#D97706", // burnt orange
+  "#15803D", // forest green
+  "#7C3AED", // violet
+  "#BE123C", // crimson
+  "#0F766E", // deep teal
+  "#C2410C", // rust
+  "#A21CAF", // magenta
+  "#475569", // blue grey
+  "#65A30D", // olive
+  "#0284C7", // azure
+  "#B45309", // ochre
+  "#E11D48"  // raspberry
+];
+
+const ORG_COLOR_STORAGE_KEY = "vci_orgColorAlloc_v2";
+let orgColorAllocMap = new Map();
+
+function colorIndexForHex(col){
+  return PREFERRED_PALETTE.findIndex(x => String(x).toLowerCase() === String(col).toLowerCase());
+}
+
+function generateDistinctColor(index){
+  const hue = (index * 137.508) % 360;
+  const lightness = (index % 2 === 0) ? 0.48 : 0.58;
+  return hslToHex(hue, 0.65, lightness);
+}
+
+function loadOrgColorAlloc(){
+  try{
+    const raw = localStorage.getItem(ORG_COLOR_STORAGE_KEY);
+    if(!raw) return;
+    const obj = JSON.parse(raw);
+    if(obj && typeof obj === "object"){
+      orgColorAllocMap = new Map(Object.entries(obj));
+    }
+  }catch(e){ /* ignore */ }
+}
+function saveOrgColorAlloc(){
+  try{
+    const obj = Object.fromEntries(orgColorAllocMap.entries());
+    localStorage.setItem(ORG_COLOR_STORAGE_KEY, JSON.stringify(obj));
+  }catch(e){ /* ignore */ }
+}
+
+function allocateColorForOrgKey(orgKey, used){
+  const n = PREFERRED_PALETTE.length;
+  const start = fnv1a(orgKey) % n;
+  const step = 7;
+  let idx = start;
+  for(let tries=0; tries<n; tries++){
+    if(!used.has(idx)){
+      used.add(idx);
+      return PREFERRED_PALETTE[idx];
+    }
+    idx = (idx + step) % n;
+  }
+
+  let extra = n;
+  while(used.has(extra)) extra++;
+  used.add(extra);
+  return generateDistinctColor(extra);
+}
+
+function ensureOrgColors(orgKeys){
+  if(!orgKeys || !orgKeys.length) return;
+  const used = new Set();
+  for(const col of orgColorAllocMap.values()){
+    const ix = colorIndexForHex(col);
+    if(ix >= 0) used.add(ix);
+  }
+  for(const k of orgKeys){
+    if(!k || typeof k !== "string") continue;
+    if(orgColorAllocMap.has(k)) continue;
+    const col = allocateColorForOrgKey(k, used);
+    orgColorAllocMap.set(k, col);
+  }
+  saveOrgColorAlloc();
+}
+
+function getOrgColor(orgKey){
+  if(!orgKey) return "#94a3b8";
+  // Respect masterData-provided org colours if present
+  if(orgColorByKey && orgColorByKey.has(orgKey)) return orgColorByKey.get(orgKey);
+  if(orgColorAllocMap && orgColorAllocMap.has(orgKey)) return orgColorAllocMap.get(orgKey);
+
+  // lazy allocation
+  const used = new Set();
+  for(const col of orgColorAllocMap.values()){
+    const ix = colorIndexForHex(col);
+    if(ix >= 0) used.add(ix);
+  }
+  const col = allocateColorForOrgKey(orgKey, used);
+  orgColorAllocMap.set(orgKey, col);
+  saveOrgColorAlloc();
+  return col;
+}
+
+loadOrgColorAlloc();
+
+/* Numeric helpers (deterministic formatting) */
+function num2(n){ return (typeof n === "number" && isFinite(n)) ? n : 0; }
+function fmt2(n){ return (n == null || !isFinite(n)) ? "—" : n.toFixed(2); }
+function fmtFixed(n,precision=2){ return (n == null || !isFinite(n)) ? "—" : n.toFixed(precision); }
+function additiveDisplayPrecision(values,total,minPrecision=2,maxPrecision=6){
+  const numericValues=values.map(value=>num2(value));
+  if(total == null || !isFinite(total)) return minPrecision;
+  for(let precision=minPrecision;precision<=maxPrecision;precision+=1){
+    const scale=10**precision;
+    const roundedParts=numericValues.reduce((sum,value)=>sum+Math.round(value*scale),0);
+    if(roundedParts===Math.round(total*scale)) return precision;
+  }
+  return maxPrecision;
+}
+function formatHoursCompact(hours){
+  if(hours == null || !isFinite(hours)) return "—";
+  const minutes=Math.round(hours*60);
+  if(minutes<60) return `${minutes} min`;
+  const whole=Math.floor(minutes/60), remainder=minutes%60;
+  return remainder ? `${whole} h ${remainder} min` : `${whole} h`;
+}
+
+/* ------------ masterData lookups (legend names & sensor vehicle info) --------- */
+function buildOrgLookups(masterData){
+  const nameByKey = new Map();
+  const colorByKey = new Map();
+  if(!masterData || typeof masterData !== "object") return { nameByKey, colorByKey };
+
+  const looksLikeUrn = v => typeof v === "string" && v.startsWith("urn:");
+  const pickName = (attrs) => {
+    if (!attrs || typeof attrs !== "object") return null;
+    const candidates = [
+      "urn:epcglobal:cbv:mda#name",
+      "urn:epcglobal:cbv:mda:name",
+      "urn:epcglobal:cbv:mda#partyName",
+      "urn:epcglobal:cbv:mda#siteName",
+      "urn:epcglobal:cbv:mda:description",
+      "cbv:mda:name",
+      "name"
+    ];
+    for (const k of candidates) {
+      const v = attrs[k];
+      if (v != null) return Array.isArray(v) ? String(v[0]) : String(v);
+    }
+    return null;
+  };
+
+  if (Array.isArray(masterData.orgs)) {
+    for (const o of masterData.orgs) {
+      const key = o?.key || (o?.sgln ? orgKeyFromSGLN(o.sgln) : null);
+      if (!key) continue;
+      if (o?.displayName && !looksLikeUrn(o.displayName)) nameByKey.set(key, String(o.displayName));
+      if (o?.color) colorByKey.set(key, String(o.color));
+    }
+  }
+
+  if (Array.isArray(masterData.raw)) {
+    for (const vocab of masterData.raw) {
+      if (!String(vocab?.type || "").endsWith(":Location")) continue;
+      const key = orgKeyFromSGLN(vocab?.id);
+      if (!key) continue;
+      const nm = pickName(vocab.attributes);
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, nm);
+    }
+  }
+
+  const locs = masterData.locations;
+  if (Array.isArray(locs)) {
+    for (const loc of locs) {
+      const key = loc?.orgKey || (loc?.sgln ? orgKeyFromSGLN(loc.sgln) : null);
+      if (!key) continue;
+      const attrs = loc.attributes || {};
+      const nm = pickName(attrs) || loc.name;
+      if (nm && (!nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, String(nm));
+    }
+  } else if (locs && typeof locs === "object") {
+    for (const [sgln, rec] of Object.entries(locs)) {
+      const key = orgKeyFromSGLN(sgln);
+      if (!key) continue;
+      const attrs = rec?.attributes || rec;
+      const nm = pickName(attrs);
+      if (nm && (sgln === key || !nameByKey.has(key) || looksLikeUrn(nameByKey.get(key)))) nameByKey.set(key, String(nm));
+    }
+  }
+
+  const parties = masterData.parties;
+  if (parties && typeof parties === "object" && !Array.isArray(parties)) {
+    for (const [pgln, rec] of Object.entries(parties)) {
+      const match = String(pgln).match(/^urn:epc:id:pgln:([0-9]+)\./);
+      if (!match) continue;
+      const key = `urn:epc:id:sgln:${match[1]}.0.0`;
+      const nm = pickName(rec?.attributes || rec);
+      const currentName = nameByKey.get(key);
+      if (nm && (!currentName || looksLikeUrn(currentName) || /^Controlled demo location\b/i.test(currentName))) nameByKey.set(key, String(nm));
+    }
+  }
+
+  return { nameByKey, colorByKey };
+}
+
+let orgNameByKey=new Map(), orgColorByKey=new Map();
+
+/* ---------- Sensor vehicle helpers (label, color from owner, badge) ---------- */
+function lookupMasterDataDescription(epc){
+  const md = current.masterData || {};
+  const assets = getMasterAssets(md);
+  const products = md.products || {};
+  const rec = (assets && assets[epc]) || (products && products[epc]);
+  if (rec && typeof rec === "object"){
+    const attrs = rec.attributes || rec;
+    const desc = assetDescription(rec) || attrs.description;
+    if (desc) return String(desc);
+  }
+  return null;
+}
+function findVehicleEpcForNode(d){
+  if (!d || typeof d !== "object") return null;
+  const lcs = d.lcs || {};
+  const ilmd = d.ilmd || {};
+  const explicit = [
+    lcs.transportVehicle,
+    ilmd["lcs:transportVehicle"],
+    ilmd["cbvmda:transportVehicle"],
+    ilmd["cbvmda:vehicleID"],
+    ilmd["cbvmda:vehicle"]
+  ];
+  for (const v of explicit){
+    if (typeof v === "string" && v.startsWith("urn:epc:id:")) return v;
+  }
+  const assets = getMasterAssets(current.masterData);
+  if (typeof d.readPoint === "string" && /:(?:grai|giai):/.test(d.readPoint) && assets?.[d.readPoint]){
+    return d.readPoint;
+  }
+  if (lcs.movementSubjectClassification === "TRANSPORT_ASSET" && Array.isArray(d.epcs) && assets && typeof assets === "object"){
+    for (const epc of d.epcs){
+      if (/:(?:grai|giai):/.test(epc) && assets[epc]) return epc;
+    }
+  }
+  return null;
+}
+function orgKeyFromAssetIdentifier(epc){
+  const match = String(epc || "").match(/^urn:epc:id:(?:grai|giai):([0-9]+)\./);
+  return match ? `urn:epc:id:sgln:${match[1]}.0.0` : null;
+}
+function vehicleOwnerOrgKey(vehEpc){
+  const rec = getMasterAssets(current.masterData)?.[vehEpc];
+  const owner = assetOwner(rec);
+  if (owner && typeof owner === "string") return orgKeyFromSGLN(owner);
+  return orgKeyFromAssetIdentifier(vehEpc);
+}
+function isSensorVehicleNode(d){
+  return shortBizStep(d.bizStep)==="sensor_reporting" && !!findVehicleEpcForNode(d);
+}
+function labelForNode(d){
+  const step = shortBizStep(d.bizStep);
+  if (step === "sensor_reporting"){
+    const vehEpc = findVehicleEpcForNode(d);
+    const desc = vehEpc ? lookupMasterDataDescription(vehEpc) : null;
+    return desc ? `sensor_reporting — ${desc}` : "sensor_reporting";
+  }
+  if (step === "loading" || step === "unloading"){
+    const parent = Array.isArray(d.parentIds) ? (d.parentIds[0] || "") : "";
+    const vehicle = /:grai:|:giai:/.test(parent);
+    const container = /:sscc:/.test(parent);
+    if (step === "loading" && vehicle) return "loading · onto vehicle";
+    if (step === "loading" && container) return "loading · into container";
+    if (step === "unloading" && vehicle) return "unloading · from vehicle";
+    if (step === "unloading" && container) return "unloading · from container";
+  }
+  return step || (d.eventId || "");
+}
+
+function nodeOrgKey(d){
+  if (isSensorVehicleNode(d)){
+    const vehicle = findVehicleEpcForNode(d);
+    const owner = vehicle ? vehicleOwnerOrgKey(vehicle) : null;
+    if (owner) return owner;
+  }
+  return orgKeyFromSGLN(d?.bizLocation) || "__nogroup__";
+}
+
+/* -------------------- Node color -------------------- */
+function colorForNode(d){
+  if (isSensorVehicleNode(d)){
+    const vehEpc = findVehicleEpcForNode(d);
+    const key = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
+    if (key){
+      return getOrgColor(key);
+    }
+  }
+  const key = orgKeyFromSGLN(d.bizLocation);
+  if (key){
+    return getOrgColor(key);
+  }
+  return "#94a3b8";
+}
+
+/* -------------------- Sorting (canonical) -------------------- */
+const bizRank=new Map([
+  ["commissioning",0],["packing",1],["shipping",2],["loading",3],
+  ["departing",4],["arriving",5],["unloading",6],["receiving",7],
+  ["unpacking",8],["transforming",9],["sensor_reporting",5.5]
+]);
+function sortNodesDeterministically(nodes){
+  return nodes.slice().sort((a,b)=>{
+    if(Number.isInteger(a.sequenceIndex) && Number.isInteger(b.sequenceIndex) && a.sequenceIndex!==b.sequenceIndex){
+      return a.sequenceIndex-b.sequenceIndex;
+    }
+    const ta=new Date(a.eventTime||a.recordTime||0).getTime();
+    const tb=new Date(b.eventTime||b.recordTime||0).getTime();
+    if(ta!==tb) return ta-tb;
+    const ra=a.recordTime?new Date(a.recordTime).getTime():-Infinity;
+    const rb=b.recordTime?new Date(b.recordTime).getTime():-Infinity;
+    if(ra!==rb) return ra-rb;
+    const ba=bizRank.get(shortBizStep(a.bizStep)) ?? 999;
+    const bb=bizRank.get(shortBizStep(b.bizStep)) ?? 999;
+    if(ba!==bb) return ba-bb;
+    return (a.id||"").localeCompare(b.id||"");
+  });
+}
+
+/* -------------------- Layout & spread -------------------- */
+function baseLayout(nodes,width,height){
+  const margin={top:40,right:40,bottom:60,left:40};
+  const innerW=width - margin.left - margin.right;
+  const innerH=height - margin.top - margin.bottom;
+
+  const times=nodes.map(n=>new Date(n.eventTime).getTime());
+  const tMin=d3.min(times), tMax=d3.max(times);
+  const pad=(tMax-tMin)*0.04 || 6e5;
+  const x=d3.scaleUtc().domain([new Date(tMin-pad), new Date(tMax+pad)]).range([margin.left, margin.left+innerW]);
+
+  const laneKeys=Array.from(new Set(nodes.map(n=>n.lane||"lane0")));
+  const yBase=d3.scalePoint().domain(laneKeys).range([margin.top, margin.top+innerH]).padding(0.5);
+
+  const groups=new Map();
+  nodes.forEach(n=>{
+    const lane=n.lane||"lane0";
+    const key=`${lane}|${new Date(n.eventTime).toISOString()}`;
+    if(!groups.has(key)) groups.set(key,[]);
+    groups.get(key).push(n);
+  });
+  for(const arr of groups.values()){
+    arr.sort((a,b)=>(a.sequenceIndex??Number.MAX_SAFE_INTEGER)-(b.sequenceIndex??Number.MAX_SAFE_INTEGER) || (a.eventId||"").localeCompare(b.eventId||""));
+    arr.forEach((n,i)=>{ n._sameTimeIndex=i; n._sameTimeCount=arr.length; });
+  }
+
+  nodes.forEach(n=>{
+    n.x_time=x(new Date(n.eventTime));
+    const sameTimeStep=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--same-time-step'))||4;
+    const sameTimeOffset=(n._sameTimeIndex-(n._sameTimeCount-1)/2)*sameTimeStep;
+    n.x=n.x_time+sameTimeOffset;
+    n.y=yBase(n.lane||"lane0");
+    n.x_spread=n.x;
+    n.y_spread=n.y;
+    n._arcSign=0;
+    n._labelDx=12;
+    n._labelDy=0;
+    n._labelAnchor="start";
+    delete n.fx; delete n.fy;
+  });
+
+  return {x,yBase,margin,width,height};
+}
+function parentGroupsInDisplayOrder(nodes) {
+  const groups = new Map();
+  for (const n of nodes) {
+    const key = nodeOrgKey(n);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(n);
+  }
+
+  const orderedKeys = (Array.isArray(legendOrder) && legendOrder.length)
+    ? legendOrder.filter(k => groups.has(k)).concat(Array.from(groups.keys()).filter(k => !legendOrder.includes(k)))
+    : Array.from(groups.keys()).sort((a,b)=>{
+        const ai = d3.min(groups.get(a), d => Number.isInteger(d.sequenceIndex) ? d.sequenceIndex : Number.MAX_SAFE_INTEGER);
+        const bi = d3.min(groups.get(b), d => Number.isInteger(d.sequenceIndex) ? d.sequenceIndex : Number.MAX_SAFE_INTEGER);
+        if (ai !== bi) return ai - bi;
+        const ax = d3.mean(groups.get(a), d => d.x) ?? 0;
+        const bx = d3.mean(groups.get(b), d => d.x) ?? 0;
+        return ax - bx || a.localeCompare(b);
+      });
+  return { groups, orderedKeys };
+}
+
+function orderedNodesForArc(nodes){
+  return nodes.slice().sort((a,b)=>
+    (a.sequenceIndex??Number.MAX_SAFE_INTEGER)-(b.sequenceIndex??Number.MAX_SAFE_INTEGER) ||
+    (a.eventTime || "").localeCompare(b.eventTime || "") ||
+    (a.eventId || a.id || "").localeCompare(b.eventId || b.id || "")
+  );
+}
+
+const TRANSPORT_ARC_STEPS=new Set([
+  "loading","departing","transporting","arriving","unloading","sensor_reporting","storing","holding"
+]);
+
+function arcParentKey(arc){ return arc?.parentKey || arc?.key || "__nogroup__"; }
+function nodeIdForLayout(node){ return node?.id || node?.eventId || ""; }
+
+function journeySegmentsForParent(nodes,parentKey){
+  const ordered=orderedNodesForArc(nodes);
+  if(ordered.length<2 || !Array.isArray(current.links) || !current.links.length){
+    return [{key:`${parentKey}::journey:0`,parentKey,nodes:ordered,incomingNodes:[],outgoingNodes:[],connector:false}];
+  }
+  const ids=new Set(ordered.map(nodeIdForLayout));
+  const adjacency=new Map(ordered.map(node=>[nodeIdForLayout(node),new Set()]));
+  const incoming=new Map(ordered.map(node=>[nodeIdForLayout(node),[]]));
+  const outgoing=new Map(ordered.map(node=>[nodeIdForLayout(node),[]]));
+  for(const edge of current.links){
+    const source=typeof edge.source==="string"?edge.source:edge.source?.id;
+    const target=typeof edge.target==="string"?edge.target:edge.target?.id;
+    const sourceInside=ids.has(source),targetInside=ids.has(target);
+    if(sourceInside && targetInside){
+      adjacency.get(source)?.add(target);
+      adjacency.get(target)?.add(source);
+    } else if(!sourceInside && targetInside){
+      const external=current.byId.get(source);
+      if(external) incoming.get(target)?.push(external);
+    } else if(sourceInside && !targetInside){
+      const external=current.byId.get(target);
+      if(external) outgoing.get(source)?.push(external);
+    }
+  }
+
+  const components=[];
+  const visited=new Set();
+  for(const node of ordered){
+    const start=nodeIdForLayout(node);
+    if(visited.has(start)) continue;
+    const stack=[start],componentIds=[];
+    visited.add(start);
+    while(stack.length){
+      const id=stack.pop();
+      componentIds.push(id);
+      for(const neighbor of adjacency.get(id)||[]){
+        if(!visited.has(neighbor)){ visited.add(neighbor); stack.push(neighbor); }
+      }
+    }
+    const componentNodes=orderedNodesForArc(componentIds.map(id=>current.byId.get(id)).filter(Boolean));
+    const incomingNodes=componentIds.flatMap(id=>incoming.get(id)||[]);
+    const outgoingNodes=componentIds.flatMap(id=>outgoing.get(id)||[]);
+    components.push({nodes:componentNodes,incomingNodes,outgoingNodes});
+  }
+
+  const transportShare=ordered.filter(node=>TRANSPORT_ARC_STEPS.has(shortBizStep(node.bizStep))).length/ordered.length;
+  const orgName=String(orgNameByKey.get(parentKey)||"").toLowerCase();
+  const namedTransportParent=/(?:3pl|carrier|dhl|freight|logistics|transport|terminal|port)/.test(orgName);
+  const anchored=components.filter(component=>component.incomingNodes.length || component.outgoingNodes.length);
+  const slotKeys=new Set(anchored.map(component=>{
+    const before=Array.from(new Set(component.incomingNodes.map(nodeOrgKey))).sort().join(",");
+    const after=Array.from(new Set(component.outgoingNodes.map(nodeOrgKey))).sort().join(",");
+    return `${before}->${after}`;
+  }));
+  const split=components.length>1 && anchored.length>1 && slotKeys.size>1 && (transportShare>=.55 || namedTransportParent);
+  const selected=split ? components : [{nodes:ordered,incomingNodes:[],outgoingNodes:[]}];
+  return selected
+    .sort((left,right)=>(left.nodes[0]?.sequenceIndex??0)-(right.nodes[0]?.sequenceIndex??0))
+    .map((component,index)=>({
+      key:`${parentKey}::journey:${index}`,
+      parentKey,
+      nodes:component.nodes,
+      incomingNodes:component.incomingNodes,
+      outgoingNodes:component.outgoingNodes,
+      connector:split,
+      segmentIndex:index,
+      segmentCount:selected.length
+    }));
+}
+
+function meanLayoutPoint(nodes,fieldX="x_spread",fieldY="y_spread"){
+  const valid=(nodes||[]).filter(Boolean);
+  if(!valid.length) return null;
+  return {
+    x:d3.mean(valid,node=>Number.isFinite(node[fieldX])?node[fieldX]:node.x)??0,
+    y:d3.mean(valid,node=>Number.isFinite(node[fieldY])?node[fieldY]:node.y)??0
+  };
+}
+
+function quadraticPoint(start,control,end,t){
+  const u=1-t;
+  return {x:u*u*start.x+2*u*t*control.x+t*t*end.x,y:u*u*start.y+2*u*t*control.y+t*t*end.y};
+}
+
+function arcApexFromPoints(points){
+  if(!points.length) return null;
+  if(points.length<3) return points[Math.floor((points.length-1)/2)];
+  const first=points[0],last=points.at(-1);
+  const dx=last.x-first.x,dy=last.y-first.y;
+  const span=Math.hypot(dx,dy)||1;
+  return points.reduce((best,point)=>{
+    const offset=Math.abs((point.x-first.x)*dy-(point.y-first.y)*dx)/span;
+    const bestOffset=Math.abs((best.x-first.x)*dy-(best.y-first.y)*dx)/span;
+    return offset>bestOffset?point:best;
+  },points[0]);
+}
+
+function positionNodesOnParentArc(nodes,key,sign,strength,height,width,margin,parentKey=key){
+  const sorted=orderedNodesForArc(nodes);
+  if(!sorted.length) return null;
+  if(sorted.length===1){
+    const node=sorted[0];
+    node.x_spread=node.x;
+    node.y_spread=node.y;
+    node._arcSign=sign;
+    node._labelDx=12;
+    node._labelDy=0;
+    node._labelAnchor="start";
+    node._journeySegmentKey=key;
+    node._journeySegmentParent=parentKey;
+    node._journeyConnector=false;
+    return {key,parentKey,connector:false,sign,rotation:sign<0?"clockwise":"anticlockwise",baselineY:node.y,centerX:node.x,centerY:node.y,radius:0,amplitude:0,points:[{x:node.x,y:node.y,node}],xMin:node.x,xMax:node.x,apex:{x:node.x,y:node.y,node}};
+  }
+
+  const originalCx=d3.mean(sorted,node=>node.x) ?? width/2;
+  const cy=d3.mean(sorted,node=>node.y) ?? height/2;
+  const spreadStrength=Math.max(1,strength||1);
+  const naturalRadius=12+(sorted.length*10*spreadStrength);
+  const verticalRoom=sign<0
+    ? Math.max(48,cy-margin.top-34)
+    : Math.max(48,height-margin.bottom-34-cy);
+  const horizontalRoom=Math.max(90,(width-margin.left-margin.right-48)/2);
+  const radius=Math.max(48,Math.min(naturalRadius,verticalRoom,horizontalRoom));
+  const cx=Math.max(margin.left+radius+24,Math.min(width-margin.right-radius-24,originalCx));
+  const arcPadding=Math.min(Math.PI/10,Math.PI/Math.max(sorted.length+1,3));
+  const start=sign<0?Math.PI+arcPadding:arcPadding;
+  const end=sign<0?(2*Math.PI)-arcPadding:Math.PI-arcPadding;
+  const denom=Math.max(sorted.length-1,1);
+  const points=[];
+
+  sorted.forEach((node,index)=>{
+    const tBase=index/denom;
+    const t=sign<0?tBase:1-tBase;
+    const angle=start+(end-start)*t;
+    const cos=Math.cos(angle);
+    node.x_spread=cx+radius*cos;
+    node.y_spread=cy+radius*Math.sin(angle);
+    node._arcSign=sign;
+    node._labelAnchor="start";
+    node._labelDx=12;
+    node._labelDy=sign*12;
+    node._journeySegmentKey=key;
+    node._journeySegmentParent=parentKey;
+    node._journeyConnector=false;
+    points.push({x:node.x_spread,y:node.y_spread,node,angle});
+  });
+
+  const xMin=d3.min(points,point=>point.x)??cx;
+  const xMax=d3.max(points,point=>point.x)??cx;
+  const apex=points.reduce((best,point)=>Math.abs(point.y-cy)>Math.abs(best.y-cy)?point:best,points[0]);
+  return {
+    key,parentKey,connector:false,sign,rotation:sign<0?"clockwise":"anticlockwise",baselineY:cy,centerX:cx,centerY:cy,
+    radius,amplitude:Math.abs(apex.y-cy),points,xMin,xMax,apex,
+    startTime:new Date(sorted[0].eventTime),endTime:new Date(sorted.at(-1).eventTime)
+  };
+}
+
+function positionNodesOnConnectorArc(segment,strength,height,width,margin,obstacleNodes){
+  const sorted=orderedNodesForArc(segment.nodes);
+  const fallback=meanLayoutPoint(sorted,"x","y")||{x:width/2,y:height/2};
+  let source=meanLayoutPoint(segment.incomingNodes)||{x:Math.max(margin.left,fallback.x-90),y:fallback.y};
+  let target=meanLayoutPoint(segment.outgoingNodes)||{x:Math.min(width-margin.right,fallback.x+90),y:fallback.y};
+  let dx=target.x-source.x,dy=target.y-source.y;
+  let distance=Math.hypot(dx,dy);
+  if(distance<80){
+    const midpoint={x:(source.x+target.x)/2,y:(source.y+target.y)/2};
+    source={x:Math.max(margin.left+18,midpoint.x-90),y:midpoint.y};
+    target={x:Math.min(width-margin.right-18,midpoint.x+90),y:midpoint.y};
+    dx=target.x-source.x;
+    dy=target.y-source.y;
+    distance=Math.max(1,Math.hypot(dx,dy));
+  }
+  const ux=dx/distance,uy=dy/distance;
+  const inset=Math.min(54,Math.max(26,distance*.12));
+  const start={x:source.x+ux*inset,y:source.y+uy*inset};
+  const end={x:target.x-ux*inset,y:target.y-uy*inset};
+  const midpoint={x:(start.x+end.x)/2,y:(start.y+end.y)/2};
+  const normal={x:-uy,y:ux};
+  const bulge=Math.min(92,Math.max(28,18+sorted.length*7*Math.max(1,strength||1)));
+  const canvasPenalty=point=>{
+    const left=Math.max(0,margin.left+24-point.x);
+    const right=Math.max(0,point.x-(width-margin.right-24));
+    const top=Math.max(0,margin.top+24-point.y);
+    const bottom=Math.max(0,point.y-(height-margin.bottom-24));
+    return (left+right+top+bottom)*100;
+  };
+  const obstaclePenalty=(control,orientation)=>{
+    let penalty=canvasPenalty(control);
+    const samples=[.25,.5,.75].map(t=>quadraticPoint(start,control,end,t));
+    for(const sample of samples){
+      for(const node of obstacleNodes||[]){
+        const p={x:node.x_spread??node.x,y:node.y_spread??node.y};
+        const gap=Math.hypot(sample.x-p.x,sample.y-p.y);
+        if(gap<58) penalty+=(58-gap)*(58-gap);
+      }
+    }
+    return penalty+(orientation===((segment.segmentIndex%2)?-1:1)?0:1);
+  };
+  const candidates=[-1,1].map(orientation=>({
+    orientation,
+    control:{x:midpoint.x+normal.x*bulge*orientation,y:midpoint.y+normal.y*bulge*orientation}
+  }));
+  candidates.sort((a,b)=>obstaclePenalty(a.control,a.orientation)-obstaclePenalty(b.control,b.orientation));
+  const chosen=candidates[0];
+  const sign=chosen.control.y<midpoint.y?-1:1;
+  const points=[];
+  sorted.forEach((node,index)=>{
+    const t=(index+1)/(sorted.length+1);
+    const point=quadraticPoint(start,chosen.control,end,t);
+    node.x_spread=Math.max(margin.left+18,Math.min(width-margin.right-18,point.x));
+    node.y_spread=Math.max(margin.top+18,Math.min(height-margin.bottom-18,point.y));
+    node._arcSign=sign;
+    node._labelAnchor="start";
+    node._labelDx=12;
+    node._labelDy=sign*11;
+    node._journeySegmentKey=segment.key;
+    node._journeySegmentParent=segment.parentKey;
+    node._journeyConnector=true;
+    points.push({x:node.x_spread,y:node.y_spread,node,t});
+  });
+  const xMin=d3.min(points,point=>point.x)??midpoint.x;
+  const xMax=d3.max(points,point=>point.x)??midpoint.x;
+  const apex=arcApexFromPoints(points)||points[0];
+  return {
+    key:segment.key,parentKey:segment.parentKey,connector:true,segmentIndex:segment.segmentIndex,segmentCount:segment.segmentCount,
+    sign,rotation:"journey-direction",baselineY:midpoint.y,centerX:midpoint.x,centerY:midpoint.y,
+    radius:Math.hypot(end.x-start.x,end.y-start.y)/2,amplitude:bulge,points,xMin,xMax,apex,
+    startTime:new Date(sorted[0].eventTime),endTime:new Date(sorted.at(-1).eventTime)
+  };
+}
+
+function applyParentArcLayout(nodes,params={strength:1,height:null}){
+  const height=params.height||svg.node()?.clientHeight||600;
+  const layout=current.layout||{};
+  const width=layout.width||svg.node()?.clientWidth||1100;
+  const margin=layout.margin||{top:40,right:40,bottom:60,left:40};
+  const {groups,orderedKeys}=parentGroupsInDisplayOrder(nodes);
+  const arcs=[];
+  const connectorSegments=[];
+  orderedKeys.forEach((key,index)=>{
+    const group=groups.get(key)||[];
+    if(!group.length) return;
+    const segments=journeySegmentsForParent(group,key);
+    if(segments.length>1 && segments.every(segment=>segment.connector)){
+      connectorSegments.push(...segments);
+      return;
+    }
+    const sign=index%2===0?-1:1;
+    const segment=segments[0];
+    const arc=positionNodesOnParentArc(group,segment.key,sign,params.strength||1,height,width,margin,key);
+    if(arc) arcs.push(arc);
+  });
+  const obstacleNodes=nodes.filter(node=>!connectorSegments.some(segment=>segment.nodes.includes(node)));
+  connectorSegments.forEach(segment=>{
+    const arc=positionNodesOnConnectorArc(segment,params.strength||1,height,width,margin,obstacleNodes);
+    if(arc){
+      arcs.push(arc);
+      obstacleNodes.push(...segment.nodes);
+    }
+  });
+  const byParent=d3.group(arcs,arc=>arcParentKey(arc));
+  for(const parentArcs of byParent.values()){
+    const labelled=parentArcs.reduce((best,arc)=>{
+      if(!best) return arc;
+      if(arc.points.length!==best.points.length) return arc.points.length>best.points.length?arc:best;
+      return (arc.xMax-arc.xMin)>(best.xMax-best.xMin)?arc:best;
+    },null);
+    parentArcs.forEach(arc=>{ arc.showLabel=arc===labelled; });
+  }
+  return arcs;
+}
+function usePositions(nodes,spreadMode){
+  nodes.forEach(n=>{
+    const X=spreadMode ? (n.x_spread ?? n.x) : n.x;
+    const Y=spreadMode ? (n.y_spread ?? n.y) : n.y;
+    n.fx = n.fx ?? X; n.fy = n.fy ?? Y;
+  });
+}
+
+/* -------------------- Rendering -------------------- */
+const svg=d3.select("#svg");
+const viewport=d3.select("#viewport");
+const gTimeGuides=d3.select("#timeGuides");
+const gChronologyRails=d3.select("#chronologyRails");
+const gParentArcs=d3.select("#parentArcs");
+const gEdges=d3.select("#edges");
+const gLineage=d3.select("#lineage");
+const gNodes=d3.select("#nodes");
+const gAxis=d3.select("#timeAxis");
+const gTimeCallout=d3.select("#timeCallout");
+const tooltip=d3.select("#tooltip");
+const banner=d3.select("#banner");
+const seedTag=d3.select("#seedTag");
+const legendDiv=document.getElementById("legend");
+const sidePaneTitle=document.getElementById("sidePaneTitle");
+
+/* Selection / group-drag state */
+let selectedGroupKey=null;
+let selectedGroupSet=new Set();
+
+/* Local parent spread state */
+let localGroupSpread = new Map();
+let localGroupOriginalPositions = new Map();
+let legendOrder=null;
+
+/* Data state */
+let current={ nodes:[], links:[], custodyLinks:[], lineageLinks:[], parentArcs:[], byId:new Map(), layout:null, masterData:null, coverage:null, indices:null, emissionsData:null, emissionsEvaluation:null, timeEvaluation:null, lifecycleInsights:null, planningProfile:null, schemaVersion:null };
+let currentSourceFileName = null;
+let activeInsightKey = null;
+let dirtyChronologyArcs = new Set();
+
+function getBaseName(filename){
+  if(!filename) return "layout";
+  const i = filename.lastIndexOf(".");
+  return i > 0 ? filename.slice(0, i) : filename;
+}
+function getSuggestedLocName(filename){
+  return `${getBaseName(filename || "layout")}.loc`;
+}
+function buildLayoutPayload(){
+  const viewportTransform=d3.zoomTransform(document.getElementById("svg"));
+  return {
+    type: "vci-layout",
+    version: 2,
+    sourceFile: currentSourceFileName || null,
+    savedAt: new Date().toISOString(),
+    view: {
+      spreadIndex,
+      spreadMode,
+      timelineOverride,
+      viewportTransform: {
+        x: viewportTransform.x,
+        y: viewportTransform.y,
+        k: viewportTransform.k
+      }
+    },
+    nodes: (current.nodes || []).map(n => {
+      const x = Number.isFinite(n.fx) ? n.fx : (Number.isFinite(n.x) ? n.x : null);
+      const y = Number.isFinite(n.fy) ? n.fy : (Number.isFinite(n.y) ? n.y : null);
+      return { id: n.id, x, y };
+    }).filter(n => n.id != null && n.x != null && n.y != null)
+  };
+}
+function downloadTextFile(filename, text, mimeType="application/json"){
+  const blob = new Blob([text], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function saveLayoutToLocFile(){
+  if(!current.nodes || !current.nodes.length){
+    setBanner("No graph loaded, nothing to save.", false);
+    return;
+  }
+  const payload = buildLayoutPayload();
+  const filename = getSuggestedLocName(currentSourceFileName || "layout.json");
+  downloadTextFile(filename, JSON.stringify(payload, null, 2), "application/json");
+  setBanner(`Layout saved as ${filename}`, true);
+}
+function normalizeLayoutNodes(layoutObj){
+  if(Array.isArray(layoutObj?.nodes)) return layoutObj.nodes;
+  if(layoutObj?.nodes && typeof layoutObj.nodes === "object") {
+    return Object.entries(layoutObj.nodes).map(([id, p]) => ({ id, x: p?.x, y: p?.y }));
+  }
+  return [];
+}
+function applyRestoredLayout(layoutObj){
+  if(!layoutObj || !current.nodes?.length) return { applied: 0, missing: 0 };
+  const restoredNodes = normalizeLayoutNodes(layoutObj);
+  const byId = new Map(restoredNodes.map(n => [n.id, n]));
+  let applied = 0, missing = 0;
+
+  current.nodes.forEach(n => {
+    const hit = byId.get(n.id);
+    if(hit && Number.isFinite(hit.x) && Number.isFinite(hit.y)){
+      n.fx = hit.x;
+      n.fy = hit.y;
+      applied++;
+    } else {
+      missing++;
+    }
+  });
+
+  gNodes.selectAll("g.node").each(function(d){
+    const x = Number.isFinite(d.fx) ? d.fx : d.x;
+    const y = Number.isFinite(d.fy) ? d.fy : d.y;
+    if (d._circle) d3.select(d._circle).attr("cx", x).attr("cy", y);
+    if (d._marker){
+      const rr = +d3.select(d._circle).attr("r");
+      d3.select(d._marker)
+        .attr("d", markerSymbolPathForNode(d, rr))
+        .attr("transform", markerTransformForNode(d, x, y));
+    }
+    if (d._label) d3.select(d._label).attr("x", x + (d._labelDx ?? 12)).attr("y", y + (d._labelDy ?? 0)).attr("text-anchor",d._labelAnchor ?? "start");
+    if (d._badge) d3.select(d._badge).attr("x", x).attr("y", y);
+    if (d._timeBadge) d3.select(d._timeBadge).attr("x", x).attr("y", y);
+    if (d._emissionsBadge) d3.select(d._emissionsBadge).attr("x", x + 9).attr("y", y - 9);
+});
+
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(e.u || current.byId.get(e.source), e.v || current.byId.get(e.target)));
+
+  return { applied, missing };
+}
+function applyRestoredViewState(layoutObj){
+  const view=layoutObj?.view;
+  if(view && typeof view==="object"){
+    const requestedIndex=Number.isInteger(view.spreadIndex)
+      ? Math.max(0,Math.min(SPREAD_LEVELS.length-1,view.spreadIndex))
+      : (view.spreadMode ? Math.max(1,spreadIndex) : 0);
+    spreadMode=typeof view.spreadMode==="boolean" ? view.spreadMode : requestedIndex>0;
+    spreadIndex=spreadMode ? Math.max(1,requestedIndex) : 0;
+    timelineOverride=(view.timelineOverride===null || typeof view.timelineOverride==="boolean")
+      ? view.timelineOverride
+      : timelineOverride;
+  }else{
+    // Version-1 files contain positions only. Treat them as a restored spread
+    // so their parent arcs and chronology rails remain useful.
+    spreadIndex=Math.max(1,spreadIndex);
+    spreadMode=true;
+  }
+  localGroupSpread.clear();
+  localGroupOriginalPositions.clear();
+  selectedGroupKey=null;
+  selectedGroupSet=new Set();
+  dirtyChronologyArcs.clear();
+}
+function restoreViewportTransform(layoutObj){
+  const transform=layoutObj?.view?.viewportTransform;
+  if(!transform || ![transform.x,transform.y,transform.k].every(Number.isFinite) || transform.k<=0) return;
+  const restored=d3.zoomIdentity.translate(transform.x,transform.y).scale(transform.k);
+  d3.select(svgNode).call(zoom.transform,restored);
+}
+async function handleRestoreLayoutFile(file){
+  if(!file) return;
+  try{
+    const txt = await file.text();
+    const layoutObj = JSON.parse(txt);
+    if(layoutObj?.type !== "vci-layout"){
+      setBanner("Selected file is not a valid VCI layout (.loc) file.", false);
+      return;
+    }
+    if(!current.nodes || !current.nodes.length){
+      setBanner("Load a JSON graph before restoring a layout.", false);
+      return;
+    }
+    if(layoutObj.sourceFile && currentSourceFileName && layoutObj.sourceFile !== currentSourceFileName){
+      const proceed = window.confirm(`This layout was saved for "${layoutObj.sourceFile}" but the current graph is "${currentSourceFileName}". Restore anyway?`);
+      if(!proceed) return;
+    }
+    const result = applyRestoredLayout(layoutObj);
+    applyRestoredViewState(layoutObj);
+    current.parentArcs=spreadMode ? rebuildParentArcsFromCurrentPositions(current.nodes) : [];
+    current.nodes.forEach(syncNodeVisualPosition);
+    renderParentArcBackdrops();
+    updateGraphPaths();
+    updateTimelinePresentation();
+    updateSpreadButtonLabel();
+    applyGroupSelectionState();
+    restoreViewportTransform(layoutObj);
+    const timelineCount=chronologyRailData().length;
+    setBanner(`Layout restored: ${result.applied} node(s) applied · ${current.parentArcs.length} arc(s) · ${timelineCount} timeline(s).`, true);
+  }catch(err){
+    setBanner("Failed to restore layout: " + (err?.message || err), false);
+    console.error(err);
+  }
+}
+/* Emissions (optional) */
+let emissionsByOrg = new Map();
+let emissionsUnit = "kgCO2e";
+let emissionsSeedTotals = null;
+let emissionsEvaluation = null;
+
+/* Time-centric aggregates */
+let timeByOrg = new Map();
+
+/* View state */
+let rendererMode = "sustainability"; // "sustainability" | "time"
+let showRibbon = true;
+let sidePaneMode = "legend"; // "legend" | "event"
+let selectedEventNodeId = null;
+
+let timelineOverride=null;
+let showLineage=true;
+let lineageDashed=false;
+let spreadMode=false;
+let animateNextLayout=false;
+
+const SPREAD_LEVELS = [
+  { label: "Spread",             strength: 0 },
+  { label: "Spread: Compact",    strength: 1.00 },
+  { label: "Spread: Balanced",   strength: 1.25 },
+  { label: "Spread: Cinematic",  strength: 1.55 },
+];
+let spreadIndex=0;
+
+/* Ship→Recv view state
+   0 = show all events
+   1 = hide events between shipping and receiving
+   2 = show only shipping→receiving corridors, inclusive
+*/
+let shipRecvViewMode = 0;
+let hideShipRecvPaths = false; // retained for compatibility with older logic
+
+function showTooltip(){ return; }
+function hideTooltip(){ tooltip.style("display","none"); }
+
+function setSelectedEventNode(node){
+  selectedEventNodeId = node?.id || null;
+  updateTimeCallout();
+}
+function getSelectedEventNode(){
+  return selectedEventNodeId ? (current.byId.get(selectedEventNodeId) || null) : null;
+}
+function hasActiveSpread(){
+  if (spreadMode) return true;
+  for (const level of localGroupSpread.values()) if (level > 0) return true;
+  return false;
+}
+function hasSelectedDiagonalSpread(){
+  for (const level of localGroupSpread.values()) if (level > 0) return true;
+  return false;
+}
+function fullTimelineVisible(){
+  if (hasActiveSpread()) return false;
+  if (timelineOverride !== null) return !!timelineOverride;
+  return true;
+}
+function formatGuideTimestamp(date){
+  if (!current.layout?.x) return "";
+  const [a,b] = current.layout.x.domain();
+  const span = Math.abs(+b - +a);
+  return span > 3 * 864e5 ? d3.utcFormat("%e %b")(date) : d3.utcFormat("%e %b · %H:%M")(date);
+}
+function formatEventTimestamp(node){
+  const raw = String(node?.eventTime || "");
+  const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?(Z|[+-]\d{2}:\d{2})?/);
+  if (!m) return raw || "Timestamp unavailable";
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const zone = node?.eventTimeZoneOffset || (m[6] === "Z" ? "UTC" : (m[6] || ""));
+  return `${Number(m[3])} ${months[Number(m[2])-1]} ${m[1]} · ${m[4]}:${m[5]}${zone ? ` ${zone}` : ""}`;
+}
+function renderTimeGuides(){
+  gTimeGuides.classed("hidden",true).selectAll("*").remove();
+}
+function compactRailTimestamp(node){
+  const date=new Date(node?.eventTime || 0);
+  return Number.isFinite(+date) ? d3.utcFormat("%e %b %H:%M")(date) : "";
+}
+function chronologyRailData(){
+  if(!spreadMode) return [];
+  const raw=(current.parentArcs||[]).filter(arc=>
+    arc.points.length>1 && !dirtyChronologyArcs.has(arc.key)
+  ).map(arc=>{
+    const first=arc.points[0],last=arc.points.at(-1);
+    const dx=last.x-first.x,dy=last.y-first.y;
+    const span=Math.hypot(dx,dy);
+    const normal=span>0?{x:-dy/span,y:dx/span}:{x:0,y:1};
+    const midpoint={x:(first.x+last.x)/2,y:(first.y+last.y)/2};
+    const apex=arc.apex||midpoint;
+    const arcSide=(apex.x-midpoint.x)*normal.x+(apex.y-midpoint.y)*normal.y;
+    const labelNormal=arcSide>=0?{x:-normal.x,y:-normal.y}:normal;
+    const ticks=[
+      {key:"start",t:0,time:new Date(first.node.eventTime)},
+      ...(span>=300?[{key:"middle",t:.5,time:new Date((+new Date(first.node.eventTime)+ +new Date(last.node.eventTime))/2)}]:[]),
+      {key:"end",t:1,time:new Date(last.node.eventTime)}
+    ];
+    return {key:arc.key,arc,start:{x:first.x,y:first.y},end:{x:last.x,y:last.y},span,normal,labelNormal,ticks};
+  });
+  const accepted=[];
+  return raw.map(rail=>{
+    const offsets=[0,18,36,54,72];
+    let placed=null;
+    for(const offset of offsets){
+      const shift={x:rail.labelNormal.x*offset,y:rail.labelNormal.y*offset};
+      const start={x:rail.start.x+shift.x,y:rail.start.y+shift.y};
+      const end={x:rail.end.x+shift.x,y:rail.end.y+shift.y};
+      const box={
+        x1:Math.min(start.x,end.x)-66,x2:Math.max(start.x,end.x)+66,
+        y1:Math.min(start.y,end.y)-18,y2:Math.max(start.y,end.y)+18
+      };
+      const overlaps=accepted.some(other=>!(box.x2<other.x1 || box.x1>other.x2 || box.y2<other.y1 || box.y1>other.y2));
+      placed={...rail,start,end,box,offset};
+      if(!overlaps) break;
+    }
+    accepted.push(placed.box);
+    placed.ticks=placed.ticks.map(tick=>({
+      ...tick,
+      x:placed.start.x+(placed.end.x-placed.start.x)*tick.t,
+      y:placed.start.y+(placed.end.y-placed.start.y)*tick.t,
+      anchor:tick.key==="middle"?"middle":((tick.key==="start")===(placed.end.x>=placed.start.x)?"start":"end")
+    }));
+    return placed;
+  });
+}
+function renderChronologyRails(){
+  const rails=chronologyRailData();
+  gChronologyRails.classed("hidden",!rails.length);
+  const groups=gChronologyRails.selectAll("g.chronology-arc").data(rails,d=>d.key);
+  groups.exit().remove();
+  const entered=groups.enter().append("g").attr("class","chronology-arc");
+  entered.append("path").attr("class","chronology-rail").attr("marker-end","url(#railArrow)");
+  entered.append("g").attr("class","chronology-ticks");
+  const merged=entered.merge(groups);
+  merged.select("path.chronology-rail")
+    .attr("stroke",rail=>arcParentKey(rail.arc)==="__nogroup__"?"#64748b":getOrgColor(arcParentKey(rail.arc)))
+    .attr("d",rail=>`M${rail.start.x},${rail.start.y} L${rail.end.x},${rail.end.y}`);
+  merged.each(function(rail){
+    const group=d3.select(this);
+    const ticks=group.select("g.chronology-ticks").selectAll("g.chronology-tick-group").data(rail.ticks,tick=>tick.key);
+    ticks.exit().remove();
+    const tickEnter=ticks.enter().append("g").attr("class","chronology-tick-group");
+    tickEnter.append("line").attr("class","chronology-tick");
+    tickEnter.append("text").attr("class","chronology-rail-label");
+    const tickMerged=tickEnter.merge(ticks);
+    tickMerged.select("line")
+      .attr("x1",tick=>tick.x-rail.normal.x*4).attr("x2",tick=>tick.x+rail.normal.x*4)
+      .attr("y1",tick=>tick.y-rail.normal.y*4).attr("y2",tick=>tick.y+rail.normal.y*4);
+    tickMerged.select("text")
+      .attr("x",tick=>tick.x+rail.labelNormal.x*10)
+      .attr("y",tick=>tick.y+rail.labelNormal.y*10+4)
+      .attr("text-anchor",tick=>tick.anchor)
+      .text(tick=>d3.utcFormat("%e %b · %H:%M")(tick.time));
+  });
+}
+function hideChronologyRailForGroup(groupKey,nodeId=null){
+  if(!groupKey) return;
+  const matches=(current.parentArcs||[]).filter(arc=>
+    arcParentKey(arc)===groupKey && (!nodeId || arc.points.some(point=>nodeIdForLayout(point.node)===nodeId))
+  );
+  if(matches.length) matches.forEach(arc=>dirtyChronologyArcs.add(arc.key));
+  else dirtyChronologyArcs.add(groupKey);
+  renderChronologyRails();
+}
+function clearDirtyChronologyForParent(groupKey){
+  for(const key of Array.from(dirtyChronologyArcs)){
+    if(key===groupKey || key.startsWith(`${groupKey}::`)) dirtyChronologyArcs.delete(key);
+  }
+}
+function updateTimeCallout(){
+  const node = getSelectedEventNode();
+  if (!node || !hasActiveSpread() || !current.layout){
+    gTimeCallout.classed("hidden",true).attr("aria-hidden","true");
+    return;
+  }
+  const p = getNodeCurrentPos(node);
+  const {margin,width,height} = current.layout;
+  const outward = node._arcSign || (p.y < height/2 ? -1 : 1);
+  const label = formatEventTimestamp(node);
+  const text = gTimeCallout.classed("hidden",false).attr("aria-hidden","false").select("text").text(label);
+  const measured = text.node()?.getComputedTextLength?.() || label.length * 6.2;
+  const pillW = Math.max(128, measured + 20);
+  const cx = Math.max(margin.left + pillW/2, Math.min(width-margin.right-pillW/2, p.x));
+  const cy = Math.max(margin.top+14, Math.min(height-margin.bottom-14, p.y + outward*38));
+  text.attr("x",cx).attr("y",cy);
+  gTimeCallout.select("rect")
+    .attr("x",cx-pillW/2).attr("y",cy-12).attr("width",pillW).attr("height",24);
+  gTimeCallout.select("line")
+    .attr("x1",p.x).attr("y1",p.y + outward*10)
+    .attr("x2",cx).attr("y2",cy - outward*12);
+}
+function updateTimelinePresentation(){
+  const spread = hasActiveSpread();
+  const full = fullTimelineVisible();
+  svg.classed("spread-active",spread);
+  gAxis.classed("hidden",!full);
+  renderTimeGuides();
+  renderChronologyRails();
+  updateTimeCallout();
+  const btn=document.getElementById("toggleAxis");
+  if (btn){
+    btn.disabled=spread;
+    btn.textContent=spread ? "Arc Timelines" : (full ? "Hide Timeline" : "Show Timeline");
+    btn.setAttribute("aria-pressed",full ? "true" : "false");
+  }
+}
+function renderParentArcBackdrops(){
+  const arcs = (current.parentArcs || []).filter(a=>a.points.length>1 && (spreadMode || (localGroupSpread.get(arcParentKey(a))||0)>0));
+  gParentArcs.classed("hidden",!arcs.length);
+  const line = d3.line().x(d=>d.x).y(d=>d.y).curve(d3.curveCatmullRom.alpha(.5));
+  const groups=gParentArcs.selectAll("g.parent-arc-group").data(arcs,d=>d.key);
+  groups.exit().transition("arc").duration(220).style("opacity",0).remove();
+  const enter=groups.enter().append("g").attr("class","parent-arc-group").style("opacity",0);
+  enter.append("path").attr("class","parent-arc parent-arc-halo");
+  enter.append("path").attr("class","parent-arc parent-arc-line");
+  enter.append("text").attr("class","parent-arc-label");
+  const merged=enter.merge(groups);
+  merged.transition("arc").duration(520).style("opacity",1);
+  merged.selectAll("path")
+    .attr("stroke",d=>arcParentKey(d)==="__nogroup__" ? "#94a3b8" : getOrgColor(arcParentKey(d)))
+    .transition("arc-shape").duration(620).ease(d3.easeCubicInOut)
+    .attr("d",d=>line(d.points));
+  merged.select("text")
+    .attr("x",d=>d.apex.x)
+    .attr("y",d=>Math.max(18,Math.min((current.layout?.height||600)-18,d.apex.y + d.sign*38)))
+    .attr("fill",d=>arcParentKey(d)==="__nogroup__" ? "#64748b" : getOrgColor(arcParentKey(d)))
+    .text(d=>arcParentKey(d)==="__nogroup__" ? "" : (orgNameByKey.get(arcParentKey(d)) || arcParentKey(d)))
+    .style("display",d=>(d.showLabel!==false && arcParentKey(d)!=="__nogroup__" && d.points.length>=3 && d.xMax-d.xMin>=28) ? null : "none");
+}
+function arcRecordFromCurrentPositions(groupKey,key,nodes,existing=null,connector=false){
+  const points=orderedNodesForArc(nodes).map(node=>{
+    const p=getNodeCurrentPos(node);
+    return {x:p.x,y:p.y,node};
+  });
+  const baselineY=existing?.baselineY ?? d3.mean(points,point=>point.y) ?? current.layout?.height/2 ?? 300;
+  const centerX=existing?.centerX ?? d3.mean(points,point=>point.x) ?? 0;
+  const centerY=existing?.centerY ?? baselineY;
+  const xMin=d3.min(points,point=>point.x) ?? centerX;
+  const xMax=d3.max(points,point=>point.x) ?? centerX;
+  const apex=arcApexFromPoints(points)||points[0];
+  const endpointMidY=points.length>1 ? (points[0].y+points.at(-1).y)/2 : baselineY;
+  const inferredSign=Math.abs(apex.y-endpointMidY)>2 ? (apex.y<endpointMidY?-1:1) : (d3.mean(points,point=>point.node._arcSign)||-1);
+  const sign=existing?.sign ?? inferredSign;
+  return {
+    key,parentKey:groupKey,connector,showLabel:true,sign,
+    rotation:existing?.rotation || (connector?"journey-direction":(sign<0?"clockwise":"anticlockwise")),
+    baselineY,centerX,centerY,
+    radius:existing?.radius ?? d3.max(points,point=>Math.hypot(point.x-centerX,point.y-centerY)) ?? 0,
+    amplitude:Math.abs(apex.y-baselineY),points,xMin,xMax,apex,
+    startTime:new Date(points[0].node.eventTime),endTime:new Date(points.at(-1).node.eventTime)
+  };
+}
+function rebuildParentArcsFromCurrentPositions(nodes=current.nodes){
+  const {groups,orderedKeys}=parentGroupsInDisplayOrder(nodes||[]);
+  const arcs=[];
+  orderedKeys.forEach(parentKey=>{
+    const group=groups.get(parentKey)||[];
+    if(!group.length) return;
+    const segments=journeySegmentsForParent(group,parentKey);
+    const split=segments.length>1 && segments.every(segment=>segment.connector);
+    segments.forEach(segment=>{
+      segment.nodes.forEach(node=>{
+        node._journeySegmentKey=segment.key;
+        node._journeySegmentParent=parentKey;
+        node._journeyConnector=split;
+      });
+      const arc=arcRecordFromCurrentPositions(parentKey,segment.key,segment.nodes,null,split);
+      arc.segmentIndex=segment.segmentIndex;
+      arc.segmentCount=segment.segmentCount;
+      segment.nodes.forEach(node=>{
+        node._arcSign=arc.sign;
+        node._labelAnchor="start";
+        node._labelDx=12;
+        node._labelDy=arc.sign*11;
+      });
+      arcs.push(arc);
+    });
+  });
+  const byParent=d3.group(arcs,arc=>arcParentKey(arc));
+  for(const parentArcs of byParent.values()){
+    const labelled=parentArcs.reduce((best,arc)=>{
+      if(!best) return arc;
+      if(arc.points.length!==best.points.length) return arc.points.length>best.points.length?arc:best;
+      return (arc.xMax-arc.xMin)>(best.xMax-best.xMin)?arc:best;
+    },null);
+    parentArcs.forEach(arc=>{ arc.showLabel=arc===labelled; });
+  }
+  return arcs;
+}
+function refreshParentArcFromCurrentPositions(groupKey,groupNodes){
+  if (!groupKey || !groupNodes.length) return;
+  const existingForParent=(current.parentArcs||[]).filter(arc=>arcParentKey(arc)===groupKey);
+  const diagonal=(localGroupSpread.get(groupKey)||0)>0;
+  let replacements=[];
+  if(diagonal){
+    replacements=[arcRecordFromCurrentPositions(groupKey,`${groupKey}::selected`,groupNodes,existingForParent[0],false)];
+  } else {
+    const segmentGroups=d3.group(groupNodes,node=>node._journeySegmentKey||`${groupKey}::journey:0`);
+    replacements=Array.from(segmentGroups,([key,segmentNodes])=>{
+      const existing=existingForParent.find(arc=>arc.key===key);
+      return arcRecordFromCurrentPositions(groupKey,key,segmentNodes,existing,segmentNodes.some(node=>node._journeyConnector));
+    });
+    const labelled=replacements.reduce((best,arc)=>!best || arc.points.length>best.points.length?arc:best,null);
+    replacements.forEach(arc=>{ arc.showLabel=arc===labelled; });
+  }
+  const others=(current.parentArcs||[]).filter(arc=>arcParentKey(arc)!==groupKey);
+  current.parentArcs=others.concat(replacements);
+  renderParentArcBackdrops();
+  renderChronologyRails();
+}
+function primaryPathBetween(sourceId,targetId){
+  if (!sourceId || !targetId) return {nodeIds:new Set(),edgeKeys:new Set()};
+  const adjacency=new Map();
+  current.links.forEach(edge=>{
+    if (!adjacency.has(edge.source)) adjacency.set(edge.source,[]);
+    adjacency.get(edge.source).push(edge.target);
+  });
+  const queue=[sourceId];
+  const previous=new Map([[sourceId,null]]);
+  while(queue.length && !previous.has(targetId)){
+    const currentId=queue.shift();
+    for(const next of adjacency.get(currentId)||[]){
+      if(previous.has(next)) continue;
+      previous.set(next,currentId);
+      queue.push(next);
+    }
+  }
+  const nodeIds=new Set([sourceId,targetId]);
+  const edgeKeys=new Set();
+  if(previous.has(targetId)){
+    let cursor=targetId;
+    while(previous.get(cursor)){
+      const prior=previous.get(cursor);
+      nodeIds.add(prior);
+      edgeKeys.add(`${prior}->${cursor}`);
+      cursor=prior;
+    }
+  }
+  return {nodeIds,edgeKeys};
+}
+function lifecycleInsightFocusSets(key){
+  const nodeIds=new Set();
+  const edgeKeys=new Set();
+  const insights=current.lifecycleInsights || {};
+  const addPath=(source,target)=>{
+    const path=primaryPathBetween(source,target);
+    path.nodeIds.forEach(id=>nodeIds.add(id));
+    path.edgeKeys.forEach(id=>edgeKeys.add(id));
+  };
+  if(key === "dwellConcentration"){
+    for(const interval of insights.dwellConcentration?.largestContributor?.intervals || []){
+      addPath(interval.source,interval.target);
+    }
+  } else if(key === "handoffLatency"){
+    const maximum=insights.handoffLatency?.maximum;
+    addPath(maximum?.source,maximum?.target);
+  } else if(key === "delayOrigin"){
+    const origin=insights.delayOrigin || {};
+    addPath(origin.source,origin.target);
+  } else if(key === "delayAmplification"){
+    for(const segment of insights.delayAmplification?.segmentEvaluations || []){
+      if(segment.materialDelay || segment.cumulativeVarianceHours > segment.toleranceHours) addPath(segment.source,segment.target);
+    }
+  } else if(key === "conditionExposure"){
+    for(const excursion of insights.conditionExposure?.excursions || []){
+      nodeIds.add(excursion.eventId);
+      if(excursion.nextEventId) addPath(excursion.eventId,excursion.nextEventId);
+    }
+  }
+  return {nodeIds,edgeKeys};
+}
+function clearLifecycleInsightFocus(renderPanel=true){
+  activeInsightKey=null;
+  gNodes.selectAll("g.node").classed("insight-node",false).classed("faded",false);
+  gEdges.selectAll("path.edge").classed("insight-edge",false).classed("faded",false);
+  gLineage.selectAll("path.lineage-edge").classed("faded",false);
+  if(renderPanel){
+    sidePaneMode="legend";
+    renderSidePanel(current.nodes);
+    renderKpiBar();
+  }
+}
+function lifecycleInsightPanelHtml(key){
+  const insights=current.lifecycleInsights || {};
+  if(key === "dwellConcentration"){
+    const insight=insights.dwellConcentration || {};
+    const largest=insight.largestContributor || {};
+    const intervals=(largest.intervals || []).map(interval=>{
+      const source=current.byId.get(interval.source), target=current.byId.get(interval.target);
+      return `<div class="kv"><b>${esc(labelForNode(source || {}))}</b> → ${esc(labelForNode(target || {}))}<br>${fmt2(interval.durationHours)} h</div>`;
+    }).join("");
+    return `<div class="event-panel">
+      <h3>Largest dwell contributor</h3>
+      <div class="kv"><b>${esc(masterDataLabel("locations",largest.location))}</b></div>
+      <div class="kv">${fmt2(largest.durationHours)} h · ${fmt2(largest.shareOfNvaPercent)}% of seed NVA time</div>
+      <div class="kv">Ultimate parent: ${esc(orgNameByKey.get(largest.ultimateParent) || largest.ultimateParent || "Unknown")}</div>
+      <div class="kv">${esc(insight.basis || "")}</div>
+      ${intervals ? `<h3>Contributing intervals</h3>${intervals}` : ""}
+    </div>`;
+  }
+  if(key === "handoffLatency"){
+    const insight=insights.handoffLatency || {};
+    const maximum=insight.maximum || {};
+    const from=orgNameByKey.get(maximum.fromUltimateParent) || masterDataLabel("locations",maximum.fromLocation);
+    const to=orgNameByKey.get(maximum.toUltimateParent) || masterDataLabel("locations",maximum.toLocation);
+    const source=current.byId.get(maximum.source), target=current.byId.get(maximum.target);
+    return `<div class="event-panel">
+      <h3>Longest custody-transfer elapsed time</h3>
+      <div class="kv"><b>${fmt2(maximum.durationHours)} h</b></div>
+      <div class="kv">${esc(from)} → ${esc(to)}</div>
+      <div class="kv">${esc(labelForNode(source || {}))} → ${esc(labelForNode(target || {}))}</div>
+      <div class="kv">${esc(insight.basis || "")}</div>
+    </div>`;
+  }
+  if(key === "delayOrigin"){
+    const insight=insights.delayOrigin || {};
+    const source=current.byId.get(insight.source), target=current.byId.get(insight.target);
+    return `<div class="event-panel">
+      <h3>Delay origin</h3>
+      <div class="kv"><b>+${fmt2(insight.delayHours)} h</b> against plan</div>
+      <div class="kv">${esc(insight.label || `${labelForNode(source || {})} → ${labelForNode(target || {})}`)}</div>
+      <div class="kv">Expected ${fmt2(insight.expectedHours)} h · observed ${fmt2(insight.observedHours)} h</div>
+      <div class="kv">Residual at final seed event: ${fmt2(insight.finalResidualHours)} h</div>
+      <div class="kv">Planning profile: ${esc(current.planningProfile?.file || insights.expectedLifecycleProfileRef || "Unknown")}</div>
+    </div>`;
+  }
+  if(key === "delayAmplification"){
+    const insight=insights.delayAmplification || {};
+    const rows=(insight.segmentEvaluations || []).filter(item=>Math.abs(item.varianceHours)>item.toleranceHours).map(item=>
+      `<div class="kv"><b>${esc(item.label || "Lifecycle segment")}</b><br>${item.varianceHours>=0?"+":""}${fmt2(item.varianceHours)} h · cumulative ${fmt2(item.cumulativeVarianceHours)} h</div>`
+    ).join("");
+    return `<div class="event-panel">
+      <h3>Delay propagation</h3>
+      <div class="kv"><b>${fmt2(insight.factor)}× · ${esc((insight.interpretation || "").replaceAll("-"," "))}</b></div>
+      <div class="kv">Initial delay ${fmt2(insight.initialDelayHours)} h · final residual ${fmt2(insight.finalResidualHours)} h</div>
+      ${insight.recovery ? `<div class="kv">Recovered after ${fmt2(insight.recovery.recoveryHours)} h</div>` : ""}
+      ${rows}
+    </div>`;
+  }
+  if(key === "conditionExposure"){
+    const insight=insights.conditionExposure || {};
+    const range=insight.permittedRange || {};
+    const rows=(insight.excursions || []).map(item=>
+      `<div class="kv"><b>${fmt2(item.value)} ${esc(item.uom || "")}</b> · ${formatHoursCompact(item.durationHours)}<br>${esc(formatEventTimestamp(current.byId.get(item.eventId)))}</div>`
+    ).join("");
+    return `<div class="event-panel">
+      <h3>Condition exposure</h3>
+      <div class="kv"><b>${formatHoursCompact(insight.exposureHours || 0)}</b> outside ${fmt2(range.minValue)}–${fmt2(range.maxValue)} ${esc(range.uom || "")}</div>
+      <div class="kv">${insight.observationCount || 0} observations · ${insight.excursionCount || 0} excursions</div>
+      <div class="kv">Observed ${fmt2(insight.observedMin)}–${fmt2(insight.observedMax)} ${esc(insight.uom || "")}</div>
+      ${rows || `<div class="kv">All observed values remained within the planned range.</div>`}
+    </div>`;
+  }
+  const insight=insights[key] || {};
+  return `<div class="event-panel"><h3>Lifecycle insight</h3><div class="kv">${esc(insight.reason || "Not evaluated")}</div></div>`;
+}
+function focusLifecycleInsight(key){
+  if(activeInsightKey === key){ clearLifecycleInsightFocus(true); return; }
+  const insight=current.lifecycleInsights?.[key];
+  if(!insight || insight.status !== "complete") return;
+  activeInsightKey=key;
+  clearLineageFocus();
+  const {nodeIds,edgeKeys}=lifecycleInsightFocusSets(key);
+  gNodes.selectAll("g.node")
+    .classed("insight-node",node=>nodeIds.has(node.id))
+    .classed("faded",node=>nodeIds.size>0 && !nodeIds.has(node.id));
+  gEdges.selectAll("path.edge")
+    .classed("insight-edge",edge=>edgeKeys.has(`${edge.source}->${edge.target}`))
+    .classed("faded",edge=>edgeKeys.size>0 && !edgeKeys.has(`${edge.source}->${edge.target}`));
+  gLineage.selectAll("path.lineage-edge").classed("faded",true);
+  sidePaneMode="event";
+  sidePaneTitle.textContent="Lifecycle insight";
+  legendDiv.innerHTML=lifecycleInsightPanelHtml(key);
+  renderKpiBar();
+}
+function renderEventPanel(){
+  const n = getSelectedEventNode();
+  if (!n){
+    legendDiv.innerHTML = `<div class="panel-empty">Click a node to view event data.</div>`;
+    return;
+  }
+  legendDiv.innerHTML = `<div class="event-panel">${nodeTooltip(n)}</div>`;
+}
+function renderSidePanel(nodes=current.nodes){
+  if (sidePaneMode === "event" && activeInsightKey) {
+    sidePaneTitle.textContent = "Lifecycle insight";
+    legendDiv.innerHTML = lifecycleInsightPanelHtml(activeInsightKey);
+    return;
+  }
+  if (sidePaneMode === "legend") {
+    sidePaneTitle.textContent = "Legend — Ultimate Parent";
+    updateLegend(nodes || []);
+  } else {
+    sidePaneTitle.textContent = "Event Data";
+    renderEventPanel();
+  }
+}
+
+/* Ship→Recv computations */
+function computeShipRecvPathSets(){
+  const pathNodeIds = new Set();
+  const interiorNodeIds = new Set();
+  const pathEdgeKeys = new Set();
+  const keyEdge = (u, v) => `${u}->${v}`;
+
+  const adj = new Map();
+  current.links.forEach(e => {
+    if (!adj.has(e.source)) adj.set(e.source, []);
+    adj.get(e.source).push(e.target);
+  });
+
+  const shippingNodes = current.nodes.filter(n => shortBizStep(n.bizStep) === "shipping");
+  const idToNode = current.byId;
+
+  for (const ship of shippingNodes){
+    const q = [ship.id];
+    const prev = new Map();
+    const seen = new Set([ship.id]);
+    let recvId = null;
+
+    while (q.length){
+      const u = q.shift();
+      const nbrs = adj.get(u) || [];
+      for (const v of nbrs){
+        if (seen.has(v)) continue;
+        seen.add(v);
+        prev.set(v, u);
+        const vNode = idToNode.get(v);
+        if (shortBizStep(vNode?.bizStep) === "receiving"){
+          recvId = v; q.length = 0; break;
+        }
+        q.push(v);
+      }
+    }
+
+    if (!recvId) continue;
+
+    const path = [];
+    let cur = recvId;
+    while (cur){
+      path.push(cur);
+      if (cur === ship.id) break;
+      cur = prev.get(cur);
+    }
+    path.reverse();
+
+    if (path.length <= 1) continue;
+
+    path.forEach(id => pathNodeIds.add(id));
+    for (let i = 1; i < path.length - 1; i++){ interiorNodeIds.add(path[i]); }
+    for (let i = 0; i < path.length - 1; i++){ pathEdgeKeys.add(keyEdge(path[i], path[i+1])); }
+  }
+
+  return { pathNodeIds, interiorNodeIds, pathEdgeKeys };
+}
+function computeShipRecvHideSets(){
+  const { interiorNodeIds, pathEdgeKeys } = computeShipRecvPathSets();
+  return { hiddenNodeIds: interiorNodeIds, hiddenEdgeKeys: pathEdgeKeys };
+}
+function updateShipRecvButtonLabel(){
+  const btn = document.getElementById("toggleShipRecvPaths");
+  if (!btn) return;
+  btn.textContent =
+    shipRecvViewMode === 0 ? "Hide Ship→Recv Paths" :
+    shipRecvViewMode === 1 ? "Show Only Ship→Recv Paths" :
+    "Show All Events";
+}
+function applyShipRecvHiding(){
+  hideShipRecvPaths = shipRecvViewMode === 1;
+
+  if (shipRecvViewMode === 0){
+    gNodes.selectAll("g.node").classed("hidden-shiprecv", false);
+    gEdges.selectAll("path.edge").classed("hidden-shiprecv", false);
+    gLineage.selectAll("path.lineage-edge").classed("hidden-shiprecv", false);
+    return;
+  }
+
+  const { pathNodeIds, interiorNodeIds, pathEdgeKeys } = computeShipRecvPathSets();
+  const isCrossParentEdge = (e) => {
+    const u = current.byId.get(e.source);
+    const v = current.byId.get(e.target);
+    if (!u || !v) return false;
+    const ku = orgKeyFromSGLN(u.bizLocation);
+    const kv = orgKeyFromSGLN(v.bizLocation);
+    return !!ku && !!kv && ku !== kv;
+  };
+
+  if (shipRecvViewMode === 1){
+    // Existing behaviour: hide everything between shipping and receiving.
+    // Also hide any edge connected to a hidden interior node, not just the exact path edges.
+    gNodes.selectAll("g.node").classed("hidden-shiprecv", d => interiorNodeIds.has(d.id));
+    gEdges.selectAll("path.edge").classed("hidden-shiprecv", d =>
+      interiorNodeIds.has(d.source) ||
+      interiorNodeIds.has(d.target) ||
+      pathEdgeKeys.has(`${d.source}->${d.target}`) ||
+      isCrossParentEdge(d)
+    );
+    gLineage.selectAll("path.lineage-edge").classed("hidden-shiprecv", d =>
+      interiorNodeIds.has(d.source) || interiorNodeIds.has(d.target)
+    );
+    return;
+  }
+
+  if (shipRecvViewMode === 2){
+    // Corridor-only behaviour: show only shipping→receiving paths, including shipping and receiving endpoints.
+    // Hide every edge unless BOTH endpoints are visible and the edge belongs to a detected shipping→receiving path.
+    gNodes.selectAll("g.node").classed("hidden-shiprecv", d => !pathNodeIds.has(d.id));
+    gEdges.selectAll("path.edge").classed("hidden-shiprecv", d =>
+      !pathNodeIds.has(d.source) ||
+      !pathNodeIds.has(d.target) ||
+      !pathEdgeKeys.has(`${d.source}->${d.target}`)
+    );
+    gLineage.selectAll("path.lineage-edge").classed("hidden-shiprecv", d =>
+      !pathNodeIds.has(d.source) || !pathNodeIds.has(d.target)
+    );
+  }
+}
+
+/* Banner helpers */
+function setBanner(msg, ok=false){ banner.attr("class", ok?"ok":"err").text(msg).style("display","block"); }
+function clearBanner(){ banner.attr("class","").style("display","none").text(""); }
+
+/* -------------------- Validation -------------------- */
+function isSgln(x){
+  return typeof x === 'string'
+    && /^urn:epc:id:sgln:[0-9]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(x);
+}
+function isEpc(x){ return typeof x==='string' && /^urn:epc:(?:id|class):/.test(x); }
+function isUriReference(value){
+  if(typeof value!=="string") return false;
+  const candidate=value.trim();
+  if(!candidate || /[\u0000-\u0020<>"{}|\\^`]/.test(candidate) || /%(?![0-9A-Fa-f]{2})/.test(candidate)) return false;
+  if(/^[A-Za-z][A-Za-z0-9+.-]*:/.test(candidate)) return true;
+  const firstSegment=candidate.split(/[/?#]/,1)[0];
+  return !firstSegment.includes(":");
+}
+
+function nodeInputs(n){
+  if (!n || typeof n !== "object") return [];
+  return Array.isArray(n.inputEPCList) ? n.inputEPCList : (Array.isArray(n.inputs) ? n.inputs : []);
+}
+function nodeOutputs(n){
+  if (!n || typeof n !== "object") return [];
+  return Array.isArray(n.outputEPCList) ? n.outputEPCList : (Array.isArray(n.outputs) ? n.outputs : []);
+}
+function nodeIdentityEpcs(n){
+  return []
+    .concat(Array.isArray(n?.epcs) ? n.epcs : [])
+    .concat(Array.isArray(n?.parentIds) ? n.parentIds : [])
+    .concat(Array.isArray(n?.childIds) ? n.childIds : [])
+    .concat(nodeInputs(n))
+    .concat(nodeOutputs(n));
+}
+function emissionsBadgeText(n){
+  const kinds = new Set((n?.eventEmissions?.records || []).map(r => r?.kind));
+  const relativeLogistics = (emissionsEvaluation?.contributions || []).some(
+    rec => rec?.eventId === n?.id && rec?.perspectiveBucket === "postCheckpointLogistics"
+  );
+  if (kinds.has("checkpoint") && (kinds.has("logisticsContribution") || relativeLogistics)) return "C+L";
+  if (kinds.has("checkpoint")) return "C";
+  if (kinds.has("logisticsContribution") || relativeLogistics) return "L";
+  return "";
+}
+function getMasterAssets(md){
+  return (md && (md.assets || md.returnableAssets)) || {};
+}
+function assetDescription(rec){
+  if (!rec || typeof rec !== "object") return null;
+  const attrs = rec.attributes || rec;
+  return attrs["https://lxndigital.com/ns/lcs/1.0/mda/assetName"] || attrs["urn:epcglobal:cbv:mda#descriptionShort"] || attrs["urn:epcglobal:cbv:mda#tradeItemDescription"] || attrs.description || null;
+}
+function assetOwner(rec){
+  if (!rec || typeof rec !== "object") return null;
+  const attrs = rec.attributes || rec;
+  return attrs.owner || null;
+}
+
+function validate2_2_15(json){
+  const errors=[];
+  const isVNext = json?.schemaVersion === "vci-d3-trace-2.0.0";
+  const need=["seedEpc","masterData","nodes","links","custodyLinks","indices","lineageLinks","coverage","lifecycleInsights","planningProfile"];
+  for(const k of need) if(!(k in json)) errors.push(`Missing top-level '${k}'`);
+
+  if(!Array.isArray(json.nodes)||json.nodes.length<2) errors.push("At least 2 nodes required");
+  if(!Array.isArray(json.links)||json.links.length<1) errors.push("At least 1 link required");
+
+if(!json.masterData || typeof json.masterData !== "object") errors.push("masterData must be an object");
+  else {
+    ["locations","assets","products"].forEach(k => {
+      if(!(k in json.masterData)) errors.push(`masterData.${k} missing`);
+      else if(typeof json.masterData[k] !== "object" || Array.isArray(json.masterData[k])) errors.push(`masterData.${k} must be a keyed object`);
+    });
+  }
+  if(!json.indices?.xform) errors.push("indices.xform missing");
+
+  for(const n of (json.nodes||[])){
+    if(!n.id) errors.push("node.id missing");
+    if(!n.eventTime) errors.push(`node.eventTime missing for ${n.id||'?'}`);
+    if(Number.isNaN(Date.parse(n.eventTime))) errors.push(`node.eventTime not ISO date for ${n.id}`);
+    if(!n.type) errors.push(`node.type missing for ${n.id||'?'}`);
+    if(n.bizStep && !/^\w[\w+.-]*:/.test(n.bizStep)) errors.push(`bizStep must be an absolute URI (${n.id})`);
+    if(n.disposition && !/^urn:epcglobal:cbv:disp:/.test(n.disposition)) errors.push(`disposition must be a CBV URI (${n.id})`);
+    if(n.bizLocation && !isSgln(n.bizLocation)) errors.push(`bizLocation must be an SGLN URN (${n.id})`);
+    ["epcs","parentIds","childIds","inputEPCList","outputEPCList"].forEach(f=>{
+      if(Array.isArray(n[f]) && !n[f].every(isEpc)) errors.push(`${f} contains non-EPC URNs (${n.id})`);
+    });
+    if(n.type === "TransformationEvent" && (!Array.isArray(n.inputEPCList) || !Array.isArray(n.outputEPCList))){
+      errors.push(`TransformationEvent must use inputEPCList and outputEPCList (${n.id})`);
+    }
+  }
+
+  const byId=new Map((json.nodes||[]).map(n=>[n.id,n]));
+  for(const e of (json.links||[])){
+    const u=byId.get(e.source), v=byId.get(e.target);
+    if(!u||!v){ errors.push(`link references unknown node: ${e.source}->${e.target}`); continue; }
+    if(new Date(u.eventTime)>new Date(v.eventTime)) errors.push(`Back-in-time edge ${u.id} -> ${v.id}`);
+    if(Number.isInteger(u.sequenceIndex) && Number.isInteger(v.sequenceIndex) && u.sequenceIndex>=v.sequenceIndex) errors.push(`Non-forward semantic sequence edge ${u.id} -> ${v.id}`);
+  }
+
+  for(const ll of (json.lineageLinks||[])){
+    if(!ll || (ll.role!=="xform-input" && ll.role!=="xform-output")) errors.push("lineageLinks.role must be 'xform-input' or 'xform-output'");
+    if(!isEpc(ll.epc)) errors.push("lineageLinks.epc must be an EPC URN");
+    if(!(byId.has(ll.source) && byId.has(ll.target))) errors.push(`lineage link refs unknown node ${ll.source} -> ${ll.target}`);
+  }
+
+  if(!(json.indices && json.indices.byEpc)) errors.push("indices.byEpc missing");
+  else {
+    for(const [epc,arr] of Object.entries(json.indices.byEpc)){
+      if(!isEpc(epc) || !Array.isArray(arr) || !arr.every(id=>typeof id==="string")){
+        errors.push(`indices.byEpc['${epc}'] must be array of node IDs`); continue;
+      }
+      for(const id of arr){ if(!byId.has(id)) errors.push(`indices.byEpc['${epc}'] has unknown node ID ${id}`); }
+    }
+  }
+
+  if(!(json.coverage && Array.isArray(json.coverage.transformations) && json.coverage.unresolved))
+    errors.push("coverage must include 'transformations' array and 'unresolved' object");
+
+  /* Optional emissions soft validation */
+  if (json.emissions && typeof json.emissions === "object"){
+    const e = json.emissions;
+    if (e.byOrg && typeof e.byOrg !== "object") errors.push("emissions.byOrg must be an object");
+    if (e.byLocation && typeof e.byLocation !== "object") errors.push("emissions.byLocation must be an object");
+  }
+
+  if (isVNext){
+    if (json.projectionRole !== "non-authoritative-display") errors.push("vNext projectionRole must be 'non-authoritative-display'");
+    if (!json.timeEvaluation || typeof json.timeEvaluation !== "object") errors.push("vNext timeEvaluation missing");
+    if (!json.lifecycleInsights || json.lifecycleInsights.method !== "seed-lifecycle-diagnostics-v1") errors.push("vNext lifecycleInsights missing or unsupported");
+    if (!json.planningProfile || !String(json.planningProfile.file || "").endsWith(".d3.pjson")) errors.push("vNext sibling planning profile binding missing");
+    if (!json.emissionsEvaluation || typeof json.emissionsEvaluation !== "object") errors.push("vNext emissionsEvaluation missing");
+    for (const n of (json.nodes || [])){
+      if (!/^\w[\w+.-]*:/.test(n.eventId || "")) errors.push(`vNext eventId must be a URI (${n.id || "?"})`);
+      if (!n.eventTimeZoneOffset) errors.push(`vNext eventTimeZoneOffset missing (${n.id || "?"})`);
+      const ee = n.eventEmissions;
+      if (!ee) continue;
+      if (ee.namespace !== "https://lxndigital.com/ns/emissions/1.0") errors.push(`Unsupported EventEmissions namespace (${n.id})`);
+      if (!Array.isArray(ee.records) || !ee.records.length) errors.push(`EventEmissions records missing (${n.id})`);
+      if (!isUriReference(ee.sourceOfTruthRef)) errors.push(`EventEmissions sourceOfTruthRef must be a non-empty URI reference (event ${n.id || "?"})`);
+      for (const r of (ee.records || [])){
+        if (!["checkpoint", "directEmissionsContribution", "purchasedEnergyEmissionsContribution", "logisticsContribution"].includes(r.kind)) errors.push(`Unknown EventEmissions record kind (${n.id})`);
+        if (r.unit !== "kgCO2e") errors.push(`EventEmissions unit must be kgCO2e (${n.id})`);
+      }
+    }
+  }
+
+  const allEpcs=new Set(Object.keys(json.indices?.byEpc||{}));
+  for(const t of (json.coverage?.transformations||[])){
+    if(!t?.eventId || !byId.has(t.eventId)) errors.push(`coverage transformation.eventId not found: ${t?.eventId}`);
+    (t.inputs||[]).forEach(i=>{ if(!isEpc(i.epc) || !allEpcs.has(i.epc)) errors.push(`coverage.inputs EPC not indexed: ${i.epc}`); });
+    (t.outputs||[]).forEach(o=>{ if(!isEpc(o.epc) || !allEpcs.has(o.epc)) errors.push(`coverage.outputs EPC not indexed: ${o.epc}`); });
+  }
+
+  return errors;
+}
+
+/* Screen → SVG "world" coords */
+function pointerToWorld(nativeEvent){
+  const [sx, sy] = d3.pointer(nativeEvent, svg.node());
+  const z = d3.zoomTransform(svg.node());
+  return [(sx - z.x) / z.k, (sy - z.y) / z.k];
+}
+
+function getLocRecord(sgln){
+  const L = current.masterData?.locations;
+  if (!L || !sgln) return null;
+  if (Array.isArray(L)) return L.find(l => l.sgln === sgln) || null;
+  if (typeof L === "object" && L[sgln]) {
+    const rec = L[sgln];
+    return { ...rec, attributes: rec.attributes || rec };
+  }
+  return null;
+}
+
+/* Tooltip (XSS safe) */
+function nodeTooltip(n){
+  const key=orgKeyFromSGLN(n.bizLocation);
+  const mdLoc = getLocRecord(n.bizLocation);
+  const orgLabel = key ? (orgNameByKey.get(key) || key) : null;
+
+  let lines=[];
+  lines.push(`<h3>${esc(shortBizStep(n.bizStep))} <span class="kv">(${esc(n.type||"")})</span></h3>`);
+  lines.push(`<div class="kv"><b>eventId</b>: ${esc(n.eventId||"")}</div>`);
+  lines.push(`<div class="kv"><b>eventTime</b>: ${esc(n.eventTime||"")}</div>`);
+  if(n.eventTimeZoneOffset) lines.push(`<div class="kv"><b>eventTimeZoneOffset</b>: ${esc(n.eventTimeZoneOffset)}</div>`);
+  if(n.recordTime) lines.push(`<div class="kv"><b>recordTime</b>: ${esc(n.recordTime)}</div>`);
+  if(n.bizLocation) lines.push(`<div class="kv"><b>bizLocation</b>: ${esc(n.bizLocation)}${orgLabel?` — <i>${esc(orgLabel)}</i>`:""}</div>`);
+  if(mdLoc){
+    const attrs = mdLoc.attributes||{};
+    const nm = attrs["urn:epcglobal:cbv:mda#name"] || mdLoc.name;
+    const city = attrs["urn:epcglobal:cbv:mda#city"] || mdLoc.city;
+    const region = attrs["urn:epcglobal:cbv:mda#state"] || mdLoc.region;
+    const cc = attrs["urn:epcglobal:cbv:mda#countryCode"] || mdLoc.countryCode;
+    const addr = [nm, city, region, cc].filter(Boolean).map(esc).join(", ");
+    if(addr) lines.push(`<div class="kv"><b>location</b>: ${addr}</div>`);
+  }
+  if(n.readPoint) lines.push(`<div class="kv"><b>readPoint</b>: ${esc(n.readPoint)}</div>`);
+  if(n.disposition) lines.push(`<div class="kv"><b>disposition</b>: ${esc(n.disposition)}</div>`);
+  if(Array.isArray(n.epcs)) lines.push(`<div class="kv"><b>epcs</b>: ${esc(n.epcs.join(", "))}</div>`);
+  if(Array.isArray(n.parentIds)) lines.push(`<div class="kv"><b>parentIds</b>: ${esc(n.parentIds.join(", "))}</div>`);
+  if(Array.isArray(n.childIds) && n.childIds.length) lines.push(`<div class="kv"><b>childIds</b>: ${esc(n.childIds.join(", "))}</div>`);
+  if(n.action) lines.push(`<div class="kv"><b>action</b>: ${esc(n.action)}</div>`);
+  const inList = nodeInputs(n);
+  const outList = nodeOutputs(n);
+  if(inList.length) lines.push(`<div class="kv"><b>inputEPCList</b>: ${esc(inList.join(", "))}</div>`);
+  if(outList.length) lines.push(`<div class="kv"><b>outputEPCList</b>: ${esc(outList.join(", "))}</div>`);
+  if(n?.derived?.time){
+    const t = n.derived.time;
+    lines.push(`<div class="kv"><b>timeClass</b>: ${esc(t.class || "UNKNOWN")} <i>(${esc(t.source || "derived")}${t.ruleId ? ` · ${esc(t.ruleId)}` : ""})</i></div>`);
+  }
+  if(n.eventEmissions){
+    lines.push(`<div class="kv"><b>EventEmissions 1.0</b>:</div><code>${esc(pretty(n.eventEmissions))}</code>`);
+  }
+
+  if(n.type==="TransformationEvent" && current.coverage){
+    const entry = (current.coverage.transformations||[]).find(t => t.eventId===n.id || t.eventId===n.eventId);
+    if(entry){
+      const inSumm = (entry.inputs||[]).map(i => `${i.epc} [commissioned:${i.hasCommissioning?'yes':'no'}; lastPre:${i.lastEventBeforeT||'—'}]`).join("\n");
+      const outSumm = (entry.outputs||[]).map(o => `${o.epc} [firstPost:${o.firstEventAfterT||'—'}]`).join("\n");
+      if(inSumm) lines.push(`<div class="kv"><b>coverage.inputs</b>:\n${esc(inSumm)}</div>`);
+      if(outSumm) lines.push(`<div class="kv"><b>coverage.outputs</b>:\n${esc(outSumm)}</div>`);
+    }
+  }
+
+  if (n.ilmd && typeof n.ilmd === 'object' && Object.keys(n.ilmd).length) {
+    lines.push(`<div class="kv"><b>ilmd</b>:</div><code>${esc(pretty(n.ilmd))}</code>`);
+  }
+  return lines.join("\n");
+}
+
+/* Path drawing */
+function bezierPath(u,v){
+  const r=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius'))||8;
+  const strokeW=2, pad=r+strokeW*0.5;
+  const ux=(u.fx??u.x), uy=(u.fy??u.y);
+  const vx=(v.fx??v.x), vy=(v.fy??v.y);
+  const dx=vx-ux, dy=vy-uy;
+  const len=Math.hypot(dx,dy)||1;
+  const nx=dx/len, ny=dy/len;
+  const sx=ux+nx*pad, sy=uy+ny*pad;
+  const ex=vx-nx*pad, ey=vy-ny*pad;
+  const t=0.25;
+  const c1x=sx+dx*t, c1y=sy+dy*t;
+  const c2x=ex-dx*t, c2y=ey-dy*t;
+  return `M ${sx},${sy} C ${c1x},${c1y} ${c2x},${c2y} ${ex},${ey}`;
+}
+
+/* Emissions parser/merger (v2.2.15 + legacy) */
+function parseEmissions(json){
+  const byOrg = new Map();
+  const unit = (json?.emissions?.unit && typeof json.emissions.unit === "string")
+    ? json.emissions.unit
+    : "kgCO2e";
+
+  // vNext: display the compiler's seed-specific evaluation. The browser does not
+  // recalculate checkpoint replacement, allocation, or double-counting rules.
+  const evaluation = json?.emissionsEvaluation;
+  if (evaluation && typeof evaluation === "object"){
+    const checkpoint = evaluation?.selectedCheckpoint?.allocatedAmountKgCO2e;
+    const logistics = evaluation.postCheckpointLogisticsKgCO2e;
+    const seedTotals = {
+      kind: "vnext",
+      checkpoint,
+      logistics,
+      total: evaluation.totalKgCO2e,
+      asOfLastShipping: evaluation.asOfLastShippingKgCO2e ?? checkpoint,
+      asOfFinalEvent: evaluation.asOfFinalEventKgCO2e ?? evaluation.totalKgCO2e,
+      directEmissions: evaluation.terminalPartyDirectEmissionsKgCO2e,
+      purchasedEnergyEmissions: evaluation.terminalPartyPurchasedEnergyEmissionsKgCO2e,
+      otherPostCheckpointContributions: evaluation.otherPostCheckpointContributionsKgCO2e,
+      terminalParty: evaluation.terminalParty,
+      terminalUltimateParent: evaluation.terminalUltimateParent,
+      status: evaluation.status,
+      reason: evaluation.reason || null,
+      boundary: evaluation.boundary || null,
+      diagnosticCount: Array.isArray(evaluation.diagnostics) ? evaluation.diagnostics.length : 0
+    };
+    for (const [orgKey, rec] of Object.entries(evaluation.byUltimateParent || {})) {
+      byOrg.set(orgKey, {
+        direct_emissions: num2(rec?.directEmissionsKgCO2e),
+        purchased_energy_emissions: num2(rec?.purchasedEnergyEmissionsKgCO2e),
+        declared_pcf: rec?.latestDeclaredPcfKgCO2e,
+        logistics: num2(rec?.logisticsKgCO2e),
+        checkpoint_event_id: rec?.checkpointEventId || null
+      });
+    }
+    return { byOrg, unit: evaluation.unit || "kgCO2e", seedTotals, evaluation };
+  }
+
+  // legacy byOrg
+  const srcOrg = json?.emissions?.byOrg;
+  if (srcOrg && typeof srcOrg === "object"){
+    for (const [orgKey, rec] of Object.entries(srcOrg)){
+      if (typeof orgKey !== "string") continue;
+      const s1 = num2(rec?.scope1);
+      const s2 = num2(rec?.scope2);
+      const s3 = num2(rec?.scope3_declared);
+      const tot = (typeof rec?.total === "number" && isFinite(rec.total)) ? rec.total : (s1+s2+s3);
+      byOrg.set(orgKey, { scope1:s1, scope2:s2, scope3_declared:s3, scope3_cat1:null, scope3_cat4:null, total:tot });
+    }
+  }
+
+  // legacy byLocation
+  const srcLoc = json?.emissions?.byLocation;
+  if (srcLoc && typeof srcLoc === "object"){
+    for (const [sgln, rec] of Object.entries(srcLoc)){
+      const orgKey = orgKeyFromSGLN(sgln);
+      if (!orgKey) continue;
+      const s1 = num2(rec?.scope1), s2 = num2(rec?.scope2), s3 = num2(rec?.scope3_declared);
+      const add = s1 + s2 + s3;
+      if (!byOrg.has(orgKey)) byOrg.set(orgKey, { scope1:0, scope2:0, scope3_declared:0, scope3_cat1:null, scope3_cat4:null, total:0 });
+      const cur = byOrg.get(orgKey);
+      cur.scope1 += s1; cur.scope2 += s2; cur.scope3_declared += s3; cur.total += add;
+    }
+  }
+
+  // v2.2.15 orgs[]
+  const orgs = json?.emissions?.orgs;
+  if (Array.isArray(orgs)){
+    for (const o of orgs){
+      const key = (typeof o?.orgSglnRoot === "string") ? o.orgSglnRoot : null;
+      if (!key) continue;
+
+      const s1 = num2(o?.scope1Total ?? o?.scope1);
+      const s2 = num2(o?.scope2Total ?? o?.scope2);
+      const s3c1 = num2(o?.scope3Cat1Total ?? o?.scope3Cat1);
+      const s3c4 = num2(o?.scope3Cat4Total ?? o?.scope3Cat4);
+      const s3other = num2(o?.scope3OtherTotal ?? o?.scope3Other);
+      const s3decl = num2(o?.scope3Total) + s3c1 + s3c4 + s3other;
+      const tot = num2(o?.total ?? (s1 + s2 + s3decl));
+
+      if (!byOrg.has(key)) byOrg.set(key, { scope1:0, scope2:0, scope3_declared:0, scope3_cat1:0, scope3_cat4:0, total:0 });
+      const cur = byOrg.get(key);
+      cur.scope1 += s1;
+      cur.scope2 += s2;
+      cur.scope3_cat1 += s3c1;
+      cur.scope3_cat4 += s3c4;
+      cur.scope3_declared += s3decl;
+      cur.total += tot;
+
+      if (o?.orgName && !orgNameByKey.has(key)) orgNameByKey.set(key, String(o.orgName));
+    }
+  }
+
+  // seed totals for ribbon
+  const seed = json?.emissions?.seedEpcTotals || json?.emissions?.seedTotals;
+  let seedTotals = null;
+  if (seed && typeof seed === "object"){
+    const s1 = num2(seed.scope1 ?? seed.scope1Total);
+    const s2 = num2(seed.scope2 ?? seed.scope2Total);
+    const s3c1 = num2(seed.scope3Cat1 ?? seed.scope3Cat1Total);
+    const s3c4 = num2(seed.scope3Cat4 ?? seed.scope3Cat4Total);
+    const total = num2(seed.total ?? (s1 + s2 + s3c1 + s3c4));
+    seedTotals = { scope1:s1, scope2:s2, scope3Cat1:s3c1, scope3Cat4:s3c4, total };
+  }
+
+  return { byOrg, unit, seedTotals, evaluation: null };
+}
+
+/* Legend + mode-aware summaries */
+function parseHoursMaybe(v){
+  if (v == null) return null;
+  if (typeof v === "number" && isFinite(v)) return v;
+  if (typeof v !== "string") return null;
+  const n = parseFloat(v);
+  return isFinite(n) ? n : null;
+}
+function parseBoolMaybe(v){
+  return v === true || v === "true" || v === 1 || v === "1";
+}
+function classifyNodeTime(d){
+  const derived = String(d?.derived?.time?.class || "").trim().toLowerCase();
+  if (derived === "va") return "va";
+  if (derived === "nva") return "nva";
+  if (derived === "unknown") return "unknown";
+  const ilmd = d?.ilmd || {};
+
+  const cls = (
+    ilmd["lxn:timeClass"] ??
+    ilmd["mro:timeClass"] ??
+    ilmd["cbvmda:timeClass"] ??
+    ilmd["timeClass"] ??
+    ilmd["cbvmda:valueAddClass"] ??
+    ilmd["valueAddClass"] ??
+    ""
+  ).toString().trim().toLowerCase();
+
+  if (["va","value_add","valueadded","value-added","value added","value add"].includes(cls)) return "va";
+  if (["nva","non_value_add","nonvalueadded","non-value-added","non value added","non value add","non-value-add"].includes(cls)) return "nva";
+
+  if (parseBoolMaybe(ilmd["lxn:valueAdded"]) || parseBoolMaybe(ilmd["valueAdded"])) return "va";
+  if (parseBoolMaybe(ilmd["lxn:nonValueAdded"]) || parseBoolMaybe(ilmd["nonValueAdded"])) return "nva";
+
+  const va = parseHoursMaybe(ilmd["cbvmda:valueAddedHours"] ?? ilmd["valueAddedHours"] ?? ilmd["cbvmda:vaHours"] ?? ilmd["vaHours"]);
+  const nva = parseHoursMaybe(ilmd["cbvmda:nonValueAddedHours"] ?? ilmd["nonValueAddedHours"] ?? ilmd["cbvmda:nvaHours"] ?? ilmd["nvaHours"]);
+  if ((va ?? 0) > 0 && (nva ?? 0) <= 0) return "va";
+  if ((nva ?? 0) > 0 && (va ?? 0) <= 0) return "nva";
+
+  return "unknown";
+}
+function nodeTimeHours(d){
+  const ilmd = d?.ilmd || {};
+  const va = parseHoursMaybe(ilmd["cbvmda:valueAddedHours"] ?? ilmd["valueAddedHours"] ?? ilmd["cbvmda:vaHours"] ?? ilmd["vaHours"]);
+  const nva = parseHoursMaybe(ilmd["cbvmda:nonValueAddedHours"] ?? ilmd["nonValueAddedHours"] ?? ilmd["cbvmda:nvaHours"] ?? ilmd["nvaHours"]);
+  return {
+    va: va || 0,
+    nva: nva || 0,
+    total: (va || 0) + (nva || 0),
+    explicit: (va != null || nva != null)
+  };
+}
+function computeScenarioTimeTotals(nodes){
+  if (current.timeEvaluation && typeof current.timeEvaluation === "object"){
+    const t = current.timeEvaluation;
+    const classified = num2(t.vaHours) + num2(t.nvaHours);
+    return {
+      va: num2(t.vaHours),
+      nva: num2(t.nvaHours),
+      total: num2(t.totalHours),
+      pctNva: classified > 0 ? num2(t.nvaHours) / classified * 100 : 0,
+      unclassified: num2(t.unclassifiedHours),
+      method: t.method
+    };
+  }
+  const sorted = (nodes || []).filter(n => n.eventTime).slice().sort((a,b) => T(a.eventTime) - T(b.eventTime));
+
+  let va = 0, nva = 0, total = 0;
+  let usedExplicit = false;
+
+  for (const n of sorted){
+    const t = nodeTimeHours(n);
+    if (t.explicit){
+      va += t.va;
+      nva += t.nva;
+      total += t.total;
+      usedExplicit = true;
+    }
+  }
+
+  if (!usedExplicit){
+    for (let i = 1; i < sorted.length; i++){
+      const prev = sorted[i - 1], cur = sorted[i];
+      const dtH = (T(cur.eventTime) - T(prev.eventTime)) / 36e5;
+      if (!(dtH > 0)) continue;
+      total += dtH;
+      const cls = classifyNodeTime(cur);
+      if (cls === "va") va += dtH;
+      else if (cls === "nva") nva += dtH;
+    }
+  }
+
+  return {
+    va: +va.toFixed(2),
+    nva: +nva.toFixed(2),
+    total: +total.toFixed(2),
+    pctNva: total > 0 ? (nva / total) * 100 : 0
+  };
+}
+function buildTimeByOrg(nodes){
+  const sorted = (nodes || []).filter(n => n.eventTime).slice().sort((a,b) => T(a.eventTime) - T(b.eventTime));
+  const out = new Map();
+  let usedExplicit = false;
+
+  for (const n of sorted){
+    const key = nodeOrgKey(n);
+    if (!key || key === "__nogroup__") continue;
+    if (!out.has(key)) out.set(key, { va:0, nva:0, total:0, unknown:0 });
+
+    const cur = out.get(key);
+    const t = nodeTimeHours(n);
+    if (t.explicit){
+      cur.va += t.va;
+      cur.nva += t.nva;
+      cur.total += t.total;
+      usedExplicit = true;
+    }
+    if (classifyNodeTime(n) === "unknown") cur.unknown += 1;
+  }
+
+  if (!usedExplicit){
+    for (let i = 1; i < sorted.length; i++){
+      const prev = sorted[i - 1], curNode = sorted[i];
+      const key = orgKeyFromSGLN(curNode.bizLocation);
+      if (!key) continue;
+      if (!out.has(key)) out.set(key, { va:0, nva:0, total:0, unknown:0 });
+      const dtH = (T(curNode.eventTime) - T(prev.eventTime)) / 36e5;
+      if (!(dtH > 0)) continue;
+      const agg = out.get(key);
+      agg.total += dtH;
+      const cls = classifyNodeTime(curNode);
+      if (cls === "va") agg.va += dtH;
+      else if (cls === "nva") agg.nva += dtH;
+    }
+  }
+
+  for (const agg of out.values()){
+    agg.va = +agg.va.toFixed(2);
+    agg.nva = +agg.nva.toFixed(2);
+    agg.total = +agg.total.toFixed(2);
+  }
+  return out;
+}
+function countHandoffs(nodes){
+  return (nodes || []).filter(n => ["loading","unloading"].includes(shortBizStep(n.bizStep))).length;
+}
+function countSensors(nodes){
+  return (nodes || []).filter(n => shortBizStep(n.bizStep) === "sensor_reporting").length;
+}
+function kpiCard(label, value, title="", extraClass="", sub=""){
+  return `
+    <div class="kpi ${extraClass}" title="${esc(title)}">
+      <div class="label">${esc(label)}</div>
+      <div class="value">${value}</div>
+      ${sub ? `<div class="sub">${sub}</div>` : ``}
+    </div>
+  `;
+}
+function masterDataLabel(bucket,key){
+  if (!key) return "Unknown";
+  const record=current.masterData?.[bucket]?.[key];
+  const attrs=record?.attributes || record || {};
+  return attrs["urn:epcglobal:cbv:mda#name"] || attrs["urn:epcglobal:cbv:mda#descriptionShort"] || attrs["urn:epcglobal:cbv:mda#tradeItemDescription"] || key;
+}
+function insightCard(key,label,value,sub,title,status){
+  const available=status === "complete";
+  return `<button type="button" class="kpi insight-kpi${activeInsightKey===key ? " active" : ""}" data-insight="${esc(key)}"
+    title="${esc(title || sub || label)}" aria-pressed="${activeInsightKey===key ? "true" : "false"}" ${available ? "" : "disabled"}>
+    <span class="label">${esc(label)}</span>
+    <span class="value">${esc(value)}</span>
+    ${sub ? `<span class="sub">${esc(sub)}</span>` : ""}
+  </button>`;
+}
+function lifecycleInsightCardsHtml(){
+  const insights=current.lifecycleInsights || {};
+  const dwell=insights.dwellConcentration || {};
+  const largest=dwell.largestContributor || null;
+  const dwellLocation=largest ? masterDataLabel("locations",largest.location) : "Profile unavailable";
+  const dwellSub=largest ? `${fmt2(largest.shareOfNvaPercent)}% of NVA · ${dwellLocation}` : (dwell.reason || "No NVA interval available");
+
+  const handoff=insights.handoffLatency || {};
+  const maximum=handoff.maximum || null;
+  const fromName=maximum ? (orgNameByKey.get(maximum.fromUltimateParent) || masterDataLabel("locations",maximum.fromLocation)) : "Unknown";
+  const toName=maximum ? (orgNameByKey.get(maximum.toUltimateParent) || masterDataLabel("locations",maximum.toLocation)) : "Unknown";
+  const handoffSub=maximum ? `${fromName} → ${toName}` : (handoff.reason || "No explicit custody correspondence");
+
+  const delay=insights.delayOrigin || {};
+  const amplification=insights.delayAmplification || {};
+  const exposure=insights.conditionExposure || {};
+  const observedRange=Number.isFinite(exposure.observedMin) && Number.isFinite(exposure.observedMax)
+    ? `${fmt2(exposure.observedMin)}–${fmt2(exposure.observedMax)} ${exposure.uom || ""} observed`
+    : "No condition readings";
+  let exposureValue="—", exposureSub=exposure.reason || observedRange;
+  if(exposure.status === "complete"){
+    exposureValue=formatHoursCompact(exposure.exposureHours || 0);
+    exposureSub=exposure.exposureHours>0
+      ? `${exposure.excursionCount || 0} excursion${exposure.excursionCount===1?"":"s"} · ${observedRange}`
+      : `${exposure.observationCount || 0} readings · within planned range`;
+  } else if(exposure.status === "evidence-gap") exposureValue="Evidence gap";
+  else if(exposure.status === "not-applicable") exposureValue="Not applicable";
+
+  const delayValue=delay.status === "complete"
+    ? (delay.delayDetected === false ? "On plan" : `+${fmt2(delay.delayHours)} h`)
+    : "—";
+  const delaySub=delay.status === "complete"
+    ? (delay.delayDetected === false ? "No material segment variance" : (delay.label || "First material deviation"))
+    : (delay.reason || "Planning comparison unavailable");
+  const amplificationValue=amplification.status === "complete" ? `${fmt2(amplification.factor)}×` : "—";
+  const amplificationSub=amplification.status === "complete"
+    ? `${String(amplification.interpretation || "").replaceAll("-"," ")} · ${fmt2(amplification.finalResidualHours)} h residual`
+    : (amplification.reason || "Planning comparison unavailable");
+  const profileName=current.planningProfile?.file || insights.expectedLifecycleProfileRef || "profile unavailable";
+
+  return `
+    <div class="ribbon-section-label" title="${esc(profileName)}">Lifecycle insights · v${esc(current.planningProfile?.profileVersion || "—")}</div>
+    ${insightCard("dwellConcentration","Largest dwell contributor",largest ? `${fmt2(largest.durationHours)} h` : "—",dwellSub,dwell.basis || dwell.reason,dwell.status)}
+    ${insightCard("handoffLatency","Handoff latency",maximum ? `${fmt2(maximum.durationHours)} h` : "—",handoffSub,handoff.basis || handoff.reason,handoff.status)}
+    ${insightCard("delayOrigin","Delay origin",delayValue,delaySub,delay.basis || delay.reason,delay.status)}
+    ${insightCard("delayAmplification","Delay amplification",amplificationValue,amplificationSub,amplification.basis || amplification.reason,amplification.status)}
+    ${insightCard("conditionExposure","Condition exposure",exposureValue,exposureSub,exposure.reason || exposure.basis,exposure.status)}`;
+}
+function seedEmissionsHtml(){
+  if (!emissionsSeedTotals) return kpiCard("Seed emissions", "—", "Declared emissions totals for the seed EPC", "seed-emissions seed-emissions-static");
+  const s = emissionsSeedTotals;
+  if (s.kind === "vnext"){
+    const boundary = s.boundary ? `${s.boundary.startEventId || "?"} → ${s.boundary.endEventId || "?"}` : "No evaluation boundary";
+    if (s.status !== "complete") {
+      return `<div class="kpi seed-emissions seed-emissions-static" title="${esc(s.reason || "Seed PCF could not be evaluated")}">
+        <div class="label">Declared PCF @ latest shipping · ${esc(s.status || "unknown")}</div>
+        <div class="value">—</div>
+        <div class="sub">${esc(s.reason || "No applicable seed-lineage checkpoint")}</div>
+      </div>`;
+    }
+    const additiveValues=[
+      s.asOfLastShipping,
+      s.logistics,
+      s.directEmissions,
+      s.purchasedEnergyEmissions,
+      s.otherPostCheckpointContributions
+    ];
+    const precision=additiveDisplayPrecision(additiveValues,s.asOfFinalEvent);
+    const format=value=>fmtFixed(value,precision);
+    const other=num2(s.otherPostCheckpointContributions);
+    const partyName=orgNameByKey.get(s.terminalUltimateParent) || s.terminalParty || s.terminalUltimateParent || "unknown";
+    return `
+      <details class="kpi seed-emissions" title="Terminal-party view. The declared PCF is inherited from the latest applicable shipping checkpoint. Post-checkpoint logistics belong to other parties; DE and PE are later emissions of the terminal party. Display precision expands when needed so the visible components reconcile with the visible total. ${esc(boundary)}">
+        <summary>
+          <span class="seed-emissions-summary">
+            <span class="label">Seed emissions · ${esc(s.status || "unknown")}</span>
+            <span class="sub">${esc(partyName)} · as-of final event</span>
+          </span>
+          <span class="seed-emissions-total">
+            <span class="value">${format(s.asOfFinalEvent)} <span class="u">${esc(emissionsUnit)}</span></span>
+            <span class="seed-emissions-toggle">Breakdown</span>
+          </span>
+        </summary>
+        <div class="seed-emissions-breakdown">
+        <div class="legend-emissions"><div class="row">
+          <span class="legend-chip"><span class="k">DE · last party</span><span class="v">${format(s.directEmissions)}</span></span>
+          <span class="legend-chip"><span class="k">PE · last party</span><span class="v">${format(s.purchasedEnergyEmissions)}</span></span>
+          <span class="legend-chip"><span class="k">Declared PCF @ shipping</span><span class="v">${format(s.asOfLastShipping)}</span></span>
+          <span class="legend-chip"><span class="k">Post-checkpoint logistics</span><span class="v">${format(s.logistics)}</span></span>
+          ${other ? `<span class="legend-chip"><span class="k">Other post-checkpoint</span><span class="v">${format(other)}</span></span>` : ""}
+          ${s.diagnosticCount ? `<span class="legend-chip"><span class="k">Diagnostics</span><span class="v">${s.diagnosticCount}</span></span>` : ""}
+        </div></div>
+        <div class="sub">PCF may inform Cat 1 or Cat 2; qualifying inbound logistics may inform Cat 4.</div>
+        </div>
+      </details>`;
+  }
+  const total = s.total ?? (num2(s.scope1) + num2(s.scope2) + num2(s.scope3Cat1) + num2(s.scope3Cat4));
+  return `
+    <div class="kpi seed-emissions seed-emissions-static" title="Legacy corporate-scope summary; compatibility display only">
+      <div class="label">Legacy declared scope summary</div>
+      <div class="legend-emissions">
+        <div class="row">
+          <span class="legend-chip"><span class="k">S1</span><span class="v">${fmt2(s.scope1)}</span></span>
+          <span class="legend-chip"><span class="k">S2</span><span class="v">${fmt2(s.scope2)}</span></span>
+          <span class="legend-chip"><span class="k">CU.1</span><span class="v">${fmt2(s.scope3Cat1)}</span></span>
+          <span class="legend-chip"><span class="k">CU.4</span><span class="v">${fmt2(s.scope3Cat4)}</span></span>
+          <span class="legend-chip"><span class="k">Total</span><span class="v">${fmt2(total)}</span><span class="u">${esc(emissionsUnit)}</span></span>
+        </div>
+      </div>
+    </div>`;
+}
+function temperatureStripHtml(points){
+  const values=points.map(point=>point.y).filter(Number.isFinite);
+  const min=d3.min(values),max=d3.max(values);
+  const range=(min==null || max==null) ? "" : (min===max ? `${fmt2(min)}°C` : `${fmt2(min)}–${fmt2(max)}°C`);
+  return `
+    <div id="kpiTemp" title="Cold-chain: product temperature over time from ilmd.cbvmda:productTempC.">
+      <div class="label">Temperature</div>
+      <div class="temperature-value">${esc(range)} · ${points.length} reading${points.length===1?"":"s"}</div>
+      <svg id="tempStrip" viewBox="0 0 600 26" preserveAspectRatio="none"></svg>
+    </div>`;
+}
+function renderKpiBar(){
+  const el = document.getElementById("kpiBar");
+  if (!el) return;
+  el.classList.toggle("mode-sustainability",rendererMode === "sustainability");
+  el.classList.toggle("mode-time",rendererMode === "time");
+  if (rendererMode === "sustainability"){
+    const { leadHours, transitHours, dwellHours, handoffs, sensorPings } = computeKpis_SPEC();
+    const temperaturePoints=getTempPoints();
+    const h = v => v==null ? "—" : `${v} h`;
+    el.innerHTML = `
+      <div class="sustainability-summary-row${temperaturePoints.length?" has-temperature":""}">
+      ${kpiCard("Lead time (Transform→Receive)", h(leadHours), "Lead time: from the earliest TransformationEvent to the last Receiving event at or after that time.")}
+      ${kpiCard("Transit time (Σ Depart→Arrive)", h(transitHours), "Total transit: sum of all legs pairing Departing→next Arriving, considering only events at or after the first transform.")}
+      ${kpiCard("Dwell (Lead − Transit)", h(dwellHours), "Total dwell (non-transit) = Lead − Transit, floored at 0.")}
+      ${kpiCard("Handoffs", String(handoffs), "Handoffs: AssociationEvents whose bizStep ends with loading or unloading.")}
+      ${kpiCard("Sensor pings", String(sensorPings), "Sensor pings: events whose bizStep ends with sensor_reporting.")}
+      ${seedEmissionsHtml()}
+      ${temperaturePoints.length?temperatureStripHtml(temperaturePoints):""}
+      </div>`;
+  } else {
+    const t = computeScenarioTimeTotals(current.nodes);
+    const timeTitle = t.method ? `Compiler result: ${t.method}` : "Legacy renderer calculation";
+    el.innerHTML = `
+      <div class="time-summary-row">
+        ${kpiCard("Value-added seed time", `${fmt2(t.va)} h`, timeTitle)}
+        ${kpiCard("Non-value-added seed time", `${fmt2(t.nva)} h`, timeTitle)}
+        ${kpiCard("Seed elapsed time", `${fmt2(t.total)} h`, timeTitle, "", t.unclassified ? `${fmt2(t.unclassified)}h unclassified` : "")}
+        ${kpiCard("NVA % of classified", `${fmt2(t.pctNva)}%`, "Unclassified intervals are excluded from this percentage.", "", `${fmt2(t.nva)}h NVA`)}
+        ${kpiCard("Handoffs", String(countHandoffs(current.nodes)), "Handoffs: AssociationEvents whose bizStep ends with loading or unloading.")}
+        ${kpiCard("Sensor pings", String(countSensors(current.nodes)), "Sensor pings: events whose bizStep ends with sensor_reporting.")}
+      </div>
+      <div class="lifecycle-insights-row">${lifecycleInsightCardsHtml()}</div>`;
+    el.querySelectorAll("button[data-insight]:not(:disabled)").forEach(button => {
+      button.addEventListener("click",()=>focusLifecycleInsight(button.dataset.insight));
+    });
+  }
+  el.querySelectorAll("details").forEach(details=>details.addEventListener("toggle",()=>{
+    const toggle=details.querySelector(".seed-emissions-toggle");
+    if(toggle) toggle.textContent=details.open ? "Hide breakdown" : "Breakdown";
+    requestAnimationFrame(syncRibbonHeight);
+  }));
+  if (showRibbon) requestAnimationFrame(syncRibbonHeight);
+}
+function updateLegend(nodes){
+  legendDiv.innerHTML="";
+  if (rendererMode === "sustainability") {
+    const badgeKey = document.createElement("div");
+    badgeKey.className = "legend-badge-key";
+    badgeKey.innerHTML = `<b>Node badges</b><br>C = Declared PCF checkpoint · L = logistics contribution · C+L = both`;
+    legendDiv.appendChild(badgeKey);
+  }
+  const seen=new Set(), entries=[];
+  for(const n of nodes){
+    const key=nodeOrgKey(n);
+    if(!key || key === "__nogroup__" || seen.has(key)) continue;
+    seen.add(key);
+    entries.push({key,name:orgNameByKey.get(key) || key,color:getOrgColor(key)});
+  }
+
+  if (!legendOrder){
+    const groups = new Map();
+    for (const n of nodes){
+      const key = nodeOrgKey(n);
+      if (!key || key === "__nogroup__") continue;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(n);
+    }
+
+    const median = arr => {
+      if (!arr.length) return 0;
+      const s = arr.slice().sort((a,b)=>a-b);
+      const mid = Math.floor(s.length / 2);
+      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    };
+
+    legendOrder = Array.from(groups.entries())
+      .map(([key, groupNodes]) => {
+        const ys = groupNodes.map(n => n.y).filter(v => Number.isFinite(v));
+        const xs = groupNodes.map(n => n.x).filter(v => Number.isFinite(v));
+        return {
+          key,
+          medianY: median(ys),
+          medianX: median(xs),
+          avgY: ys.length ? ys.reduce((a,b)=>a+b,0) / ys.length : 0,
+          avgX: xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : 0
+        };
+      })
+      .sort((a,b) => {
+        if (a.medianY !== b.medianY) return a.medianY - b.medianY;
+        if (a.medianX !== b.medianX) return a.medianX - b.medianX;
+        if (a.avgY !== b.avgY) return a.avgY - b.avgY;
+        return a.avgX - b.avgX;
+      })
+      .map(d => d.key);
+  }
+
+  entries.sort((a,b) => {
+    const ia = legendOrder.indexOf(a.key);
+    const ib = legendOrder.indexOf(b.key);
+    if (ia >= 0 && ib >= 0) return ia - ib;
+    if (ia >= 0) return -1;
+    if (ib >= 0) return 1;
+    return a.name.localeCompare(b.name);
+  });
+  for(const e of entries){
+    const item=document.createElement("div");
+    item.className="legend-item";
+    item.dataset.orgkey = e.key;
+    let metaHtml = "";
+    if (rendererMode === "sustainability"){
+      const em = emissionsByOrg.get(e.key);
+      if (em) metaHtml = `
+        <div class="legend-emissions"><div class="row">
+          <span class="legend-chip"><span class="k">DE</span><span class="v">${fmt2(em.direct_emissions ?? em.scope1)}</span></span>
+          <span class="legend-chip"><span class="k">PE</span><span class="v">${fmt2(em.purchased_energy_emissions ?? em.scope2)}</span></span>
+          <span class="legend-chip"><span class="k">Declared PCF</span><span class="v">${fmt2(em.declared_pcf ?? em.total)}</span></span>
+          <span class="legend-chip"><span class="k">Logistics</span><span class="v">${fmt2(em.logistics)}</span><span class="u">${esc(emissionsUnit)}</span></span>
+        </div></div>`;
+      else if (current.schemaVersion === "vci-d3-trace-2.0.0"){
+        metaHtml = `<div class="legend-emissions">No emissions records on the selected seed lineage</div>`;
+      }
+    } else {
+      const t = timeByOrg.get(e.key) || { va:0, nva:0, total:0, unknown:0 };
+      metaHtml = `
+        <div class="legend-times">
+          <span class="legend-timechip"><span class="k">VA</span><span class="v">${fmt2(t.va)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">NVA</span><span class="v">${fmt2(t.nva)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">Total</span><span class="v">${fmt2(t.total)}</span><span class="u">h</span></span>
+          <span class="legend-timechip"><span class="k">Unknown</span><span class="v">${t.unknown}</span></span>
+        </div>`;
+    }
+    item.innerHTML = `<span class="legend-swatch" style="background:${e.color}"></span>
+      <div><div>${esc(e.name)}</div><div class="legend-key">${esc(e.key)}</div>${metaHtml}</div>`;
+    item.addEventListener("pointerdown", (ev)=>{
+      ev.preventDefault();
+    });
+    item.addEventListener("click", ()=> toggleGroupSelection(e.key));
+    legendDiv.appendChild(item);
+  }
+  if(!entries.length){
+    const empty=document.createElement("div");
+    empty.className="legend-item";
+    empty.innerHTML=`<span class="legend-swatch" style="background:#e5e7eb"></span><div>No bizLocation keys</div>`;
+    legendDiv.appendChild(empty);
+  }
+  applyGroupSelectionState();
+}
+function applyGroupSelectionState(){
+  if (selectedGroupKey){
+    selectedGroupSet = new Set(current.nodes.filter(n => nodeOrgKey(n) === selectedGroupKey).map(n => n.id));
+  } else {
+    selectedGroupSet = new Set();
+  }
+  gNodes.selectAll("g.node").classed("group-selected", n => selectedGroupSet.has(n.id));
+  Array.from(legendDiv.children).forEach(el => {
+    if (el.dataset.orgkey){
+      el.classList.toggle("active", el.dataset.orgkey === selectedGroupKey);
+    }
+  });
+}
+function getNodesForSelectedGroup(){
+  if (!selectedGroupKey) return [];
+  return current.nodes.filter(n => nodeOrgKey(n) === selectedGroupKey);
+}
+function syncNodeVisualPosition(n){
+  if (!n) return;
+  if (n._circle) d3.select(n._circle).attr("cx", n.fx).attr("cy", n.fy);
+  if (n._label) d3.select(n._label)
+    .attr("x", n.fx + (n._labelDx ?? 12))
+    .attr("y", n.fy + (n._labelDy ?? 0))
+    .attr("text-anchor",n._labelAnchor ?? "start");
+  if (n._badge) d3.select(n._badge).attr("x", n.fx).attr("y", n.fy);
+  if (n._timeBadge) d3.select(n._timeBadge).attr("x", n.fx).attr("y", n.fy);
+  if (n._emissionsBadge) d3.select(n._emissionsBadge).attr("x", n.fx + 9).attr("y", n.fy - 9);
+  if (n.id === selectedEventNodeId) updateTimeCallout();
+}
+function getNodeCurrentPos(n){
+  if (Number.isFinite(n.fx) && Number.isFinite(n.fy)) return { x:n.fx, y:n.fy };
+  if (spreadMode) return { x:(n.x_spread ?? n.x), y:(n.y_spread ?? n.y) };
+  return { x:n.x, y:n.y };
+}
+function computeGroupCenter(groupNodes){
+  if (!groupNodes.length) return { x:0, y:0 };
+  const xs = groupNodes.map(n => getNodeCurrentPos(n).x).sort((a,b)=>a-b);
+  const ys = groupNodes.map(n => getNodeCurrentPos(n).y).sort((a,b)=>a-b);
+  const mid = Math.floor(xs.length/2);
+  return { x: xs[mid], y: ys[mid] };
+}
+function saveOriginalPositionsForGroup(groupKey, groupNodes){
+  if (!groupKey || localGroupOriginalPositions.has(groupKey)) return;
+  const pos = new Map();
+  groupNodes.forEach(n => {
+    const p = getNodeCurrentPos(n);
+    pos.set(n.id, { x:p.x, y:p.y, arcSign:n._arcSign, labelDx:n._labelDx, labelDy:n._labelDy, labelAnchor:n._labelAnchor, localLayoutMode:n._localLayoutMode });
+  });
+  localGroupOriginalPositions.set(groupKey, pos);
+}
+function restoreOriginalPositionsForGroup(groupKey, groupNodes){
+  const stored = localGroupOriginalPositions.get(groupKey);
+  if (!stored) return false;
+  groupNodes.forEach(n => {
+    const p = stored.get(n.id);
+    if (p){
+      n.fx = p.x;
+      n.fy = p.y;
+      n._arcSign = p.arcSign ?? 0;
+      n._labelDx = p.labelDx ?? 12;
+      n._labelDy = p.labelDy ?? 0;
+      n._labelAnchor = p.labelAnchor ?? "start";
+      n._localLayoutMode = p.localLayoutMode ?? null;
+      syncNodeVisualPosition(n);
+    }
+  });
+  localGroupOriginalPositions.delete(groupKey);
+  localGroupSpread.set(groupKey, 0);
+  clearDirtyChronologyForParent(groupKey);
+  refreshParentArcFromCurrentPositions(groupKey,groupNodes);
+  return true;
+}
+function updateGraphPaths(){
+  gEdges.selectAll("path.edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+  gLineage.selectAll("path.lineage-edge")
+    .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+}
+function spreadSelectedGroup(groupKey, groupNodes){
+  if (!groupKey || !groupNodes.length) return;
+  const nextLevel = (localGroupSpread.get(groupKey) || 0) + 1;
+  localGroupSpread.set(groupKey, nextLevel);
+  saveOriginalPositionsForGroup(groupKey, groupNodes);
+
+  const ordered = orderedNodesForArc(groupNodes);
+  const {width=1100,height=650,margin={left:60,right:60,top:40,bottom:60}} = current.layout || {};
+  const center = computeGroupCenter(groupNodes);
+  const usableWidth = Math.max(180,width-margin.left-margin.right-40);
+  const usableHeight = Math.max(120,height-margin.top-margin.bottom-60);
+  const stepX = nextLevel === 1 ? 46 : 68;
+  const stepY = nextLevel === 1 ? 24 : 34;
+  const spanX = Math.min(usableWidth,Math.max(0,(ordered.length-1)*stepX));
+  const spanY = Math.min(usableHeight*.72,Math.max(0,(ordered.length-1)*stepY));
+  const x0 = Math.max(margin.left+20,Math.min(width-margin.right-20-spanX,center.x-spanX/2));
+  const yMin = margin.top+34;
+  const yMax = height-margin.bottom-34;
+  const yCenter = Math.max(yMin+spanY/2,Math.min(yMax-spanY/2,center.y));
+
+  ordered.forEach((n,index) => {
+    const t = ordered.length === 1 ? .5 : index/(ordered.length-1);
+    n.fx = x0 + t*spanX;
+    n.fy = yCenter + (t-.5)*spanY;
+    n._arcSign = t < .5 ? -1 : 1;
+    n._labelDx = 12;
+    n._labelDy = t < .5 ? -8 : 8;
+    n._labelAnchor = "start";
+    n._localLayoutMode = "diagonal";
+    syncNodeVisualPosition(n);
+  });
+  refreshParentArcFromCurrentPositions(groupKey,groupNodes);
+  hideChronologyRailForGroup(groupKey);
+}
+function updateSpreadButtonLabel(){
+  const btn = document.getElementById("toggleSpread");
+  if (!btn) return;
+  if (selectedGroupKey){
+    const level=localGroupSpread.get(selectedGroupKey)||0;
+    btn.textContent=level===0 ? "Spread Selected" : level===1 ? "Open Selected" : "Reset Selected";
+  } else {
+    btn.textContent=SPREAD_LEVELS[spreadIndex].label;
+  }
+}
+function toggleGroupSelection(key){
+  if(selectedGroupKey===key){
+    selectedGroupKey=null;
+  } else {
+    selectedGroupKey=key;
+  }
+  applyGroupSelectionState();
+  updateSpreadButtonLabel();
+}
+
+/* ---------- SPEC utilities for KPIs ---------- */
+const T = d => new Date(d);
+const hours2 = ms => (ms == null || !isFinite(ms)) ? null : +(ms/36e5).toFixed(2);
+const endsWithStep = (n, suf) => ((n?.bizStep)||"").endsWith(suf);
+
+function firstTransformForSeed(nodes, seedEpc){
+  const transforms = nodes.filter(n => n.type === "TransformationEvent");
+  if (!transforms.length) return null;
+
+  const outputsSeed = n => nodeOutputs(n).some(o =>
+    (typeof o === "string") ? (o === seedEpc) : (o && o.epc === seedEpc)
+  );
+
+  const tfsForSeed = transforms.filter(outputsSeed);
+  const pickFrom = (tfsForSeed.length ? tfsForSeed : transforms);
+  return pickFrom.sort((a,b)=> T(a.eventTime) - T(b.eventTime))[0];
+}
+
+/** Compute KPIs per spec */
+function computeKpis_SPEC(){
+  const nodes = current.nodes || [];
+  const seedEpc = (document.getElementById("seedTag").textContent || "").replace("seedEpc: ","").trim();
+
+  const firstTf = firstTransformForSeed(nodes, seedEpc);
+
+  // 1) Lead: first Transform → last Receiving >= transform
+  let leadHours = null;
+  if (firstTf){
+    const lastRecv = nodes
+      .filter(n => endsWithStep(n,"receiving") && T(n.eventTime) >= T(firstTf.eventTime))
+      .sort((a,b)=> T(b.eventTime) - T(a.eventTime))[0];
+    if (lastRecv){
+      leadHours = hours2(T(lastRecv.eventTime) - T(firstTf.eventTime));
+    }
+  }
+
+  // 2) Transit: Σ departing→arriving after first transform
+  let transitHours = null;
+  if (firstTf){
+    const post = nodes
+      .filter(n => T(n.eventTime) >= T(firstTf.eventTime))
+      .sort((a,b)=> T(a.eventTime) - T(b.eventTime));
+
+    let sec = 0, pendingDepart = null;
+    for (const e of post){
+      if (endsWithStep(e,"departing")) pendingDepart = e;
+      else if (endsWithStep(e,"arriving") && pendingDepart){
+        sec += (T(e.eventTime) - T(pendingDepart.eventTime)) / 1000;
+        pendingDepart = null;
+      }
+    }
+    transitHours = +(sec/3600).toFixed(2);
+  }
+
+  // 3) Dwell = max(0, lead - transit)
+  let dwellHours = null;
+  if (leadHours != null && transitHours != null){
+    dwellHours = Math.max(0, +(leadHours - transitHours).toFixed(2));
+  } else if (leadHours != null){
+    dwellHours = leadHours;
+  }
+
+  // 4) Handoffs
+  const handoffs = nodes.filter(n =>
+    n.type === "AssociationEvent" &&
+    (endsWithStep(n,"loading") || endsWithStep(n,"unloading"))
+  ).length;
+
+  // 5) Sensor pings
+  const sensorPings = nodes.filter(n => endsWithStep(n,"sensor_reporting")).length;
+
+  return { leadHours, transitHours, dwellHours, handoffs, sensorPings };
+}
+
+function renderKpis_SPEC(){
+  const { leadHours, transitHours, dwellHours, handoffs, sensorPings } = computeKpis_SPEC();
+  const setH = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "—" : `${v} h`); };
+  const setI = (sel, v) => { const el=document.querySelector(sel); if(el) el.textContent = (v==null ? "—" : String(v)); };
+  setH("#kpiLeadTime .value",    leadHours);
+  setH("#kpiTransitTime .value", transitHours);
+  setH("#kpiDwell .value",       dwellHours);
+  setI("#kpiHandoffs .value",    handoffs);
+  setI("#kpiSensors .value",     sensorPings);
+}
+
+/* Temperature strip */
+function getTempPoints(){
+  return (current.nodes||[]).flatMap(n => {
+      const projected=(n.sensorReadings || []).filter(item=>item.measure === "Temperature" && item.uom === "CEL")
+        .map(item=>({t:new Date(item.time || n.eventTime),y:Number(item.value)}));
+      if(projected.length) return projected.filter(item=>isFinite(item.y));
+      const ilmd = n.ilmd || {};
+      const v = ilmd["cbvmda:productTempC"];
+      const c = (Array.isArray(v) ? v[0] : (v && typeof v==="object" ? v.value : v));
+      return (typeof c === "number" && isFinite(c)) ? [{ t:new Date(n.eventTime), y:c }] : [];
+    })
+    .sort((a,b)=>a.t-b.t);
+}
+function renderTempStrip(){
+  const element=document.getElementById("tempStrip");
+  if(!element) return;
+  const svg = d3.select(element);
+  svg.selectAll("*").remove(); // clear
+  const w = element.clientWidth || 600;
+  const h = element.clientHeight || 26;
+  const pts = getTempPoints();
+  if (!pts.length) return;
+  const x = d3.scaleTime().domain(d3.extent(pts, d=>d.t)).range([0, w]);
+  const y = d3.scaleLinear().domain(d3.extent(pts, d=>d.y)).nice().range([h-2, 2]);
+  const line = d3.line().x(d=>x(d.t)).y(d=>y(d.y));
+  svg.append("path")
+    .datum(pts)
+    .attr("fill","none")
+    .attr("stroke","currentColor")
+    .attr("stroke-width",1.5)
+    .attr("d", line);
+  svg.selectAll("circle")
+    .data(pts).enter().append("circle")
+    .attr("cx", d=>x(d.t)).attr("cy", d=>y(d.y)).attr("r", 2).attr("fill","currentColor");
+}
+
+/* Seed emissions KPI renderer */
+function renderSeedEmissionsKpi(){
+  const card = document.getElementById("kpiSeedEmissions");
+  const row  = document.getElementById("kpiSeedEmissionsRow");
+  if (!card || !row) return;
+
+  if (!emissionsSeedTotals){
+    card.style.display = "none";
+    return;
+  }
+  card.style.display = "";
+
+  const u = esc(emissionsUnit);
+  const chips = [
+    { k: "S1",   v: emissionsSeedTotals.scope1 },
+    { k: "S2",   v: emissionsSeedTotals.scope2 },
+    { k: "CU.1", v: emissionsSeedTotals.scope3Cat1 },
+    { k: "CU.4", v: emissionsSeedTotals.scope3Cat4 },
+    { k: "Total", v: (emissionsSeedTotals.total ?? (num2(emissionsSeedTotals.scope1) + num2(emissionsSeedTotals.scope2) + num2(emissionsSeedTotals.scope3Cat1) + num2(emissionsSeedTotals.scope3Cat4))) }
+  ];
+
+  row.innerHTML = chips.map(c => `
+    <span class="legend-chip">
+      <span class="k">${c.k}</span>
+      <span class="v">${fmt2(c.v)}</span>${c.k==="Total" ? `<span class="u">${u}</span>`:""}
+    </span>`).join("");
+}
+
+/* NEW: ribbon show/hide + dynamic height */
+const kpiBarEl = document.getElementById("kpiBar");
+function syncRibbonHeight(){
+  if (!kpiBarEl) return;
+  const headerHeight=document.querySelector("header")?.offsetHeight || 0;
+  const h = kpiBarEl.offsetHeight || 0;
+  document.documentElement.style.setProperty('--header-h', headerHeight + 'px');
+  document.documentElement.style.setProperty('--ribbon-h', (showRibbon ? h : 0) + 'px');
+  if (h) kpiBarEl.dataset.h = h + 'px';
+}
+function setRibbonVisible(vis){
+  showRibbon = !!vis;
+  if (showRibbon){
+    kpiBarEl.style.display = "grid";
+    // after showing, measure and set height
+    requestAnimationFrame(syncRibbonHeight);
+  } else {
+    kpiBarEl.style.display = "none";
+    document.documentElement.style.setProperty('--ribbon-h', '0px');
+  }
+  const btn = document.getElementById("toggleRibbon");
+  if (btn) btn.textContent = showRibbon ? "Hide Ribbon" : "Show Ribbon";
+}
+
+/* Render */
+function render(data){
+  clearBanner();
+  activeInsightKey=null;
+  seedTag.text(data.seedEpc ? `seedEpc: ${data.seedEpc}` : "");
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const layoutTransition = animateNextLayout && !reduceMotion
+    ? d3.transition("layout").duration(720).ease(d3.easeCubicInOut)
+    : null;
+  animateNextLayout=false;
+
+  const errs=validate2_2_15(data);
+
+  const md = data.masterData ?? current.masterData ?? {};
+  current.masterData = md;
+  ({nameByKey:orgNameByKey, colorByKey:orgColorByKey} = buildOrgLookups(md));
+
+  const nodes = sortNodesDeterministically(data.nodes);
+  const byId = new Map(nodes.map(n=>[n.id,n]));
+  
+
+// Build a stable palette allocation for org keys present in this dataset (no per-org hardcoding)
+const orgKeysPresent = new Set();
+for (const n of nodes){
+  const k = nodeOrgKey(n);
+  if (k && k !== "__nogroup__") orgKeysPresent.add(k);
+  if (isSensorVehicleNode(n)){
+    const vehEpc = findVehicleEpcForNode(n);
+    const vk = vehEpc ? vehicleOwnerOrgKey(vehEpc) : null;
+    if (vk) orgKeysPresent.add(vk);
+  }
+}
+ensureOrgColors(Array.from(orgKeysPresent));
+
+const links = (data.links||[]).filter(e=>{
+    const u=byId.get(e.source), v=byId.get(e.target);
+    return u && v && new Date(u.eventTime)<=new Date(v.eventTime);
+  });
+
+  current.nodes=nodes;
+  current.links=links;
+  current.custodyLinks=Array.isArray(data.custodyLinks) ? data.custodyLinks : [];
+  current.byId=byId;
+  current.masterData=md;
+  current.coverage=data.coverage || null;
+  current.indices=data.indices || null;
+  current.timeEvaluation=data.timeEvaluation || null;
+  current.lifecycleInsights=data.lifecycleInsights || null;
+  current.planningProfile=data.planningProfile || null;
+  current.emissionsEvaluation=data.emissionsEvaluation || null;
+  current.schemaVersion=data.schemaVersion || null;
+
+  /* Emissions (optional) */
+  {
+  // Parse only what came in with *this* data payload
+  const parsed = parseEmissions(data || {});
+  emissionsByOrg       = parsed.byOrg;
+  emissionsUnit        = parsed.unit;
+  emissionsSeedTotals  = parsed.seedTotals;
+  emissionsEvaluation  = parsed.evaluation;
+
+  // Cache exactly what the current dataset has (or null)
+  current.emissionsData = data?.emissions ?? null;
+  }
+
+  const suppliedLL = Array.isArray(data.lineageLinks) ? data.lineageLinks : [];
+  const lineageDataRaw = suppliedLL.map(ll => ({...ll, u: byId.get(ll.source), v: byId.get(ll.target)}))
+                                   .filter(x=>x.u && x.v);
+  current.lineageLinks = suppliedLL;
+
+  current.layout=baseLayout(nodes, svg.node().clientWidth, svg.node().clientHeight);
+  current.parentArcs = spreadIndex > 0
+    ? applyParentArcLayout(nodes, { strength:SPREAD_LEVELS[spreadIndex].strength, height:current.layout.height })
+    : [];
+  usePositions(nodes, spreadMode);
+
+  const axis=d3.axisBottom(current.layout.x).ticks(8).tickSizeOuter(0);
+  gAxis.attr("transform",`translate(0, ${svg.node().clientHeight - current.layout.margin.bottom})`).call(axis);
+  renderParentArcBackdrops();
+  updateTimelinePresentation();
+
+  const edgeSel=gEdges.selectAll("path.edge").data(links, d=>d.source+"->"+d.target);
+  edgeSel.exit().remove();
+  const edgeMerged=edgeSel.enter().append("path").attr("class","edge").attr("marker-end","url(#arrow)")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : null)
+    .merge(edgeSel);
+  (layoutTransition ? edgeMerged.transition(layoutTransition) : edgeMerged)
+    .attr("d", d=> bezierPath(byId.get(d.source), byId.get(d.target)));
+
+  const linSel=gLineage.selectAll("path.lineage-edge")
+    .data(lineageDataRaw, d=>`${d.source}->${d.target}|${d.role}|${d.epc}`);
+  linSel.exit().remove();
+  const linMerged=linSel.enter().append("path")
+    .attr("class", d=>`lineage-edge ${d.role==="xform-input"?"input":"output"}`)
+    .attr("marker-end","url(#arrow)")
+    .merge(linSel)
+    .classed("lineage-hidden", !showLineage);
+  linMerged.raise();
+  (layoutTransition ? linMerged.transition(layoutTransition) : linMerged)
+    .attr("d", d=> bezierPath(d.u, d.v));
+
+  const nodeSel=gNodes.selectAll("g.node").data(nodes, d=>d.id);
+  nodeSel.exit().remove();
+  const nodeEnter=nodeSel.enter().append("g").attr("class","node")
+    .call(d3.drag()
+      .on("start",(event,d)=>{
+        d3.select(event.sourceEvent.target).style("cursor","grabbing");
+        const cx = +d3.select(d._circle).attr("cx");
+        const cy = +d3.select(d._circle).attr("cy");
+        d.fx = cx; d.fy = cy;
+        const [wx0, wy0] = pointerToWorld(event.sourceEvent);
+        d._grab = { dx: cx - wx0, dy: cy - wy0 };
+
+        const nodeGroupKey = nodeOrgKey(d);
+        const selected = !!selectedGroupKey && nodeGroupKey === selectedGroupKey;
+        if(selected){
+          applyGroupSelectionState();
+          const starts = new Map();
+          getNodesForSelectedGroup().forEach(n => {
+            const ncx = Number.isFinite(n.fx) ? n.fx : +d3.select(n._circle).attr("cx");
+            const ncy = Number.isFinite(n.fy) ? n.fy : +d3.select(n._circle).attr("cy");
+            n.fx = ncx;
+            n.fy = ncy;
+            starts.set(n.id, { fx: ncx, fy: ncy });
+          });
+          d._groupDrag = { wx0, wy0, starts, key: selectedGroupKey };
+        } else {
+          d._groupDrag = null;
+        }
+      })
+      .on("drag",(event,d)=>{
+        if(d._groupDrag){
+          const [wx, wy] = pointerToWorld(event.sourceEvent);
+          const dx = wx - d._groupDrag.wx0;
+          const dy = wy - d._groupDrag.wy0;
+          d._groupDrag.starts.forEach((st, id)=>{
+            const n = current.byId.get(id);
+            n.fx = st.fx + dx;
+            n.fy = st.fy + dy;
+            syncNodeVisualPosition(n);
+          });
+        } else {
+          const [wx, wy] = pointerToWorld(event.sourceEvent);
+          d.fx = wx + d._grab.dx;
+          d.fy = wy + d._grab.dy;
+          syncNodeVisualPosition(d);
+        }
+        gEdges.selectAll("path.edge")
+          .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+        gLineage.selectAll("path.lineage-edge")
+          .attr("d", e => bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      })
+      .on("end",(event,d)=>{
+        const movedWholeGroup=!!d._groupDrag;
+        const movedGroupKey = d._groupDrag?.key || nodeOrgKey(d);
+        d3.select(event.sourceEvent.target).style("cursor","grab");
+        d._grab = null;
+        d._groupDrag = null;
+        if (movedGroupKey){
+          hideChronologyRailForGroup(movedGroupKey,movedWholeGroup?null:nodeIdForLayout(d));
+          refreshParentArcFromCurrentPositions(movedGroupKey,current.nodes.filter(n=>nodeOrgKey(n)===movedGroupKey));
+        }
+      })
+    )
+    .on("dblclick",(event,d)=>{
+      delete d.fx; delete d.fy;
+      const cx = spreadMode ? (d.x_spread ?? d.x) : d.x;
+      const cy = spreadMode ? (d.y_spread ?? d.y) : d.y;
+      d3.select(d._circle).attr("cx", cx).attr("cy", cy);
+      d3.select(d._label).attr("x", cx+(d._labelDx ?? 12)).attr("y", cy+(d._labelDy ?? 0));
+      const b = d._badge; if (b) d3.select(b).attr("x", cx).attr("y", cy);
+      const tb = d._timeBadge; if (tb) d3.select(tb).attr("x", cx).attr("y", cy);
+      const eb = d._emissionsBadge; if (eb) d3.select(eb).attr("x", cx + 9).attr("y", cy - 9);
+      gEdges.selectAll("path.edge")
+        .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      gLineage.selectAll("path.lineage-edge")
+        .attr("d", e=>bezierPath(current.byId.get(e.source), current.byId.get(e.target)));
+      const groupKey=nodeOrgKey(d);
+      if(groupKey) refreshParentArcFromCurrentPositions(groupKey,current.nodes.filter(n=>nodeOrgKey(n)===groupKey));
+      updateTimeCallout();
+    })
+    .on("click",(event,d)=>{
+      clearLifecycleInsightFocus(false);
+      setSelectedEventNode(d);
+      if (sidePaneMode === "event") renderSidePanel(current.nodes);
+      handleLineageFocus(d);
+    });
+
+  nodeEnter.append("circle")
+    .attr("r", parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')))
+    .each(function(d){ d._circle=this; });
+
+  nodeEnter.append("text")
+    .attr("class","badge")
+    .text("T")
+    .style("display","none")
+    .each(function(d){ d._badge=this; });
+
+  nodeEnter.append("text")
+    .attr("class","time-badge hidden")
+    .attr("text-anchor","middle")
+    .attr("dy","0.35em")
+    .text("")
+    .each(function(d){ d._timeBadge=this; });
+
+  nodeEnter.append("text")
+    .attr("class","emissions-badge hidden")
+    .text("")
+    .each(function(d){ d._emissionsBadge=this; });
+
+  nodeEnter.append("text")
+    .attr("dy","0").attr("text-anchor",d=>d._labelAnchor ?? "start")
+    .text(d=> labelForNode(d))
+    .each(function(d){ d._label=this; });
+
+  const nodesAll=nodeEnter.merge(nodeSel);
+
+  const baseR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-radius')) || 8;
+
+  const circleNodes=nodesAll.select("circle")
+    .attr("fill", d=> colorForNode(d))
+    .attr("stroke", d=> isSensorVehicleNode(d) ? "#ef4444" : "#ffffff")
+    .attr("stroke-width", d=> isSensorVehicleNode(d) ? 3 : 2)
+    .attr("r", d=> isSensorVehicleNode(d) ? baseR + 3 : baseR);
+  (layoutTransition ? circleNodes.transition(layoutTransition) : circleNodes)
+    .attr("cx", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("cy", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  const badgeNodes=nodesAll.select("text.badge")
+    .style("display", d=> isSensorVehicleNode(d) ? "block" : "none");
+  (layoutTransition ? badgeNodes.transition(layoutTransition) : badgeNodes)
+    .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  const timeBadgeNodes=nodesAll.select("text.time-badge")
+    .text(d => {
+      if (rendererMode !== "time") return "";
+      const cls = classifyNodeTime(d);
+      if (cls === "va") return "+";
+      if (cls === "nva") return "−";
+      return "";
+    })
+    .attr("class", d => {
+      if (rendererMode !== "time") return "time-badge hidden";
+      const cls = classifyNodeTime(d);
+      return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
+    });
+  (layoutTransition ? timeBadgeNodes.transition(layoutTransition) : timeBadgeNodes)
+    .attr("x", d=> d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d=> d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  const emissionsBadgeNodes=nodesAll.select("text.emissions-badge")
+    .text(d => rendererMode === "sustainability" ? emissionsBadgeText(d) : "")
+    .attr("class", d => rendererMode === "sustainability" && emissionsBadgeText(d) ? "emissions-badge" : "emissions-badge hidden")
+    .attr("aria-label", d => {
+      if (rendererMode !== "sustainability") return null;
+      const badge = emissionsBadgeText(d);
+      return badge === "C" ? "Declared PCF checkpoint" : badge === "L" ? "Logistics contribution" : badge === "C+L" ? "Declared PCF checkpoint and logistics contribution" : null;
+    });
+  (layoutTransition ? emissionsBadgeNodes.transition(layoutTransition) : emissionsBadgeNodes)
+    .attr("x", d=> (d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x)) + 9)
+    .attr("y", d=> (d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y)) - 9);
+
+  const labelNodes=nodesAll.select("text:not(.badge):not(.time-badge):not(.emissions-badge)")
+    .text(d => labelForNode(d));
+  (layoutTransition ? labelNodes.transition(layoutTransition) : labelNodes)
+    .attr("x", d=> (d.fx ?? (spreadMode ? (d.x_spread ?? d.x) : d.x)) + (d._labelDx ?? 12))
+    .attr("y", d=> (d.fy ?? (spreadMode ? (d.y_spread ?? d.y) : d.y)) + (d._labelDy ?? 0))
+    .attr("text-anchor",d=>d._labelAnchor ?? "start");
+
+  gNodes.selectAll("g.node")
+    .classed("group-selected", n=> selectedGroupSet.has(n.id))
+    .classed("va", d => rendererMode === "time" && classifyNodeTime(d) === "va")
+    .classed("nva", d => rendererMode === "time" && classifyNodeTime(d) === "nva")
+    .classed("unknownva", d => rendererMode === "time" && classifyNodeTime(d) === "unknown");
+
+  timeByOrg = buildTimeByOrg(nodes);
+  renderSidePanel(nodes);
+  applyGroupSelectionState();
+  updateTimeCallout();
+
+  if(errs.length){
+    setBanner("Validation failed: "+errs[0], false);
+  }else{
+    const contract = data.schemaVersion || "legacy D3";
+    const profileLabel=data.planningProfile?.file ? ` · profile: ${data.planningProfile.file}` : "";
+    setBanner(`Loaded OK — ${contract}${profileLabel} · lineage links: ${lineageDataRaw.length}`, true);
+  }
+
+  applyShipRecvHiding();
+
+  /* Render mode-specific ribbon + legend details */
+  renderKpiBar();
+  if (rendererMode === "sustainability") renderTempStrip();
+
+  /* After ribbon content changes, sync its height for layout */
+  syncRibbonHeight();
+  return errs;
+}
+
+/* Lineage focus/highlight */
+let activeT=null;
+function handleLineageFocus(node){
+  if(node?.type!=="TransformationEvent"){ clearLineageFocus(); return; }
+  activeT = node.id || node.eventId;
+
+  const lin = gLineage.selectAll("path.lineage-edge");
+  lin.classed("active-lineage", false).classed("faded", true);
+  gNodes.selectAll("g.node").classed("active-node", false);
+
+  const inputs = current.lineageLinks.filter(ll => ll.role==="xform-input" && ll.target===activeT);
+  const outputs= current.lineageLinks.filter(ll => ll.role==="xform-output" && ll.source===activeT);
+  const ids = new Set([activeT]);
+  inputs.forEach(ll=>{ ids.add(ll.source); });
+  outputs.forEach(ll=>{ ids.add(ll.target); });
+
+  lin.filter(d => (d.role==="xform-input" && d.target===activeT) || (d.role==="xform-output" && d.source===activeT))
+     .classed("active-lineage", true).classed("faded", false);
+
+  gNodes.selectAll("g.node").classed("active-node", n=> ids.has(n.id));
+}
+function clearLineageFocus(){
+  activeT=null;
+  gLineage.selectAll("path.lineage-edge").classed("active-lineage", false).classed("faded", false);
+  gNodes.selectAll("g.node").classed("active-node", false);
+}
+
+/* -------------------- Zoom/Pan -------------------- */
+const zoom=d3.zoom().scaleExtent([0.5,4]).on("zoom",(event)=>{ viewport.attr("transform",event.transform); });
+const svgNode=document.getElementById("svg");
+svg.call(zoom);
+document.getElementById("resetZoom").addEventListener("click",()=>{ d3.select(svgNode).transition().duration(300).call(zoom.transform,d3.zoomIdentity); });
+
+/* -------------------- Controls -------------------- */
+document.querySelectorAll(".control-menu-panel .btn").forEach(button=>button.addEventListener("click",()=>{
+  const menu=button.closest("details.control-menu");
+  if(menu) menu.open=false;
+}));
+document.addEventListener("click",event=>{
+  document.querySelectorAll("details.control-menu[open]").forEach(menu=>{
+    if(!menu.contains(event.target)) menu.open=false;
+  });
+  document.querySelectorAll("details.seed-emissions[open]").forEach(details=>{
+    if(!details.contains(event.target)) details.open=false;
+  });
+});
+document.getElementById("unpinAll").addEventListener("click",()=>{
+  current.nodes.forEach(n=>{ delete n.fx; delete n.fy; });
+  localGroupSpread.clear();
+  localGroupOriginalPositions.clear();
+  dirtyChronologyArcs.clear();
+  usePositions(current.nodes, spreadMode);
+  render({
+    schemaVersion: current.schemaVersion,
+    projectionRole: current.schemaVersion === "vci-d3-trace-2.0.0" ? "non-authoritative-display" : undefined,
+    seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
+    nodes: current.nodes,
+    links: current.links,
+    custodyLinks: current.custodyLinks,
+    lineageLinks: current.lineageLinks,
+    masterData: current.masterData,
+    indices: current.indices || { byEpc:{} },
+    coverage: current.coverage || {transformations:[], unresolved:{xformInputsWithoutPrehistory:[], xformOutputsWithoutPosthistory:[], danglingParentIds:[]}},
+    emissions: current.emissionsData,
+    emissionsEvaluation: current.emissionsEvaluation,
+    timeEvaluation: current.timeEvaluation,
+    lifecycleInsights: current.lifecycleInsights,
+    planningProfile: current.planningProfile
+  });
+});
+document.getElementById("toggleAxis").addEventListener("click",()=>{
+  timelineOverride=!fullTimelineVisible();
+  updateTimelinePresentation();
+});
+document.getElementById("toggleLineage").addEventListener("click",()=>{
+  lineageDashed=!lineageDashed;
+  gLineage.selectAll("path.lineage-edge")
+    .style("stroke-dasharray", lineageDashed ? "6 6" : "0")
+    .style("opacity", 0.95);
+  document.getElementById("toggleLineage").textContent = lineageDashed ? "Lineage: Dotted" : "Lineage: Solid";
+});
+document.getElementById("toggleSpread").addEventListener("click",(e)=>{
+  if (selectedGroupKey){
+    const groupNodes = getNodesForSelectedGroup();
+    if (!groupNodes.length) return;
+
+    const currentLevel = localGroupSpread.get(selectedGroupKey) || 0;
+    if (currentLevel >= 2){
+      restoreOriginalPositionsForGroup(selectedGroupKey, groupNodes);
+    } else {
+      spreadSelectedGroup(selectedGroupKey, groupNodes);
+    }
+    updateGraphPaths();
+    applyGroupSelectionState();
+    updateTimelinePresentation();
+    updateSpreadButtonLabel();
+    return;
+  }
+
+  spreadIndex=(spreadIndex+1)%SPREAD_LEVELS.length;
+  spreadMode=(spreadIndex>0);
+  dirtyChronologyArcs.clear();
+  e.target.textContent=SPREAD_LEVELS[spreadIndex].label;
+  if(current.nodes.length){
+    animateNextLayout=true;
+    render({
+      schemaVersion: current.schemaVersion,
+      projectionRole: current.schemaVersion === "vci-d3-trace-2.0.0" ? "non-authoritative-display" : undefined,
+      seedEpc: document.getElementById("seedTag").textContent.replace("seedEpc: ",""),
+      nodes: current.nodes,
+      links: current.links,
+      custodyLinks: current.custodyLinks,
+      lineageLinks: current.lineageLinks,
+      masterData: current.masterData,
+      indices: current.indices || { byEpc:{} },
+      coverage: current.coverage || {transformations:[], unresolved:{xformInputsWithoutPrehistory:[], xformOutputsWithoutPosthistory:[], danglingParentIds:[]}},
+      emissions: current.emissionsData,
+      emissionsEvaluation: current.emissionsEvaluation,
+      timeEvaluation: current.timeEvaluation,
+      lifecycleInsights: current.lifecycleInsights,
+      planningProfile: current.planningProfile
+    });
+  }
+});
+
+/* Toggle button for Ship→Recv path display
+   Cycle: show all → hide between shipping/receiving → show only shipping/receiving corridors. */
+document.getElementById("toggleShipRecvPaths").addEventListener("click", () => {
+  shipRecvViewMode = (shipRecvViewMode + 1) % 3;
+  applyShipRecvHiding();
+  updateShipRecvButtonLabel();
+});
+updateShipRecvButtonLabel();
+
+/* NEW: Ribbon toggle */
+document.getElementById("toggleRibbon").addEventListener("click", () => {
+  setRibbonVisible(!showRibbon);
+});
+
+/* NEW: Hover panel toggle */
+document.getElementById("toggleEventTooltip").addEventListener("click", () => {
+  sidePaneMode = sidePaneMode === "legend" ? "event" : "legend";
+  hideTooltip();
+  renderSidePanel(current.nodes);
+  document.getElementById("toggleEventTooltip").textContent =
+    sidePaneMode === "legend" ? "Show Event Data" : "Show Legend";
+});
+
+document.getElementById("toggleMode").addEventListener("click", () => {
+  rendererMode = rendererMode === "sustainability" ? "time" : "sustainability";
+  document.getElementById("toggleMode").textContent = rendererMode === "sustainability" ? "Mode: Sustainability" : "Mode: Time";
+  timeByOrg = buildTimeByOrg(current.nodes);
+  renderSidePanel(current.nodes);
+  applyGroupSelectionState();
+  renderKpiBar();
+  gNodes.selectAll("g.node")
+    .classed("va", d => rendererMode === "time" && classifyNodeTime(d) === "va")
+    .classed("nva", d => rendererMode === "time" && classifyNodeTime(d) === "nva")
+    .classed("unknownva", d => rendererMode === "time" && classifyNodeTime(d) === "unknown");
+
+  gNodes.selectAll("text.time-badge")
+    .text(d => {
+      if (rendererMode !== "time") return "";
+      const cls = classifyNodeTime(d);
+      if (cls === "va") return "+";
+      if (cls === "nva") return "−";
+      return "";
+    })
+    .attr("class", d => {
+      if (rendererMode !== "time") return "time-badge hidden";
+      const cls = classifyNodeTime(d);
+      return cls === "va" || cls === "nva" ? "time-badge" : "time-badge hidden";
+    })
+    .attr("x", d => Number.isFinite(d.fx) ? d.fx : (spreadMode ? (d.x_spread ?? d.x) : d.x))
+    .attr("y", d => Number.isFinite(d.fy) ? d.fy : (spreadMode ? (d.y_spread ?? d.y) : d.y));
+
+  gNodes.selectAll("text.emissions-badge")
+    .text(d => rendererMode === "sustainability" ? emissionsBadgeText(d) : "")
+    .attr("class", d => rendererMode === "sustainability" && emissionsBadgeText(d) ? "emissions-badge" : "emissions-badge hidden")
+    .attr("aria-label", d => {
+      if (rendererMode !== "sustainability") return null;
+      const badge = emissionsBadgeText(d);
+      return badge === "C" ? "Declared PCF checkpoint" : badge === "L" ? "Logistics contribution" : badge === "C+L" ? "Declared PCF checkpoint and logistics contribution" : null;
+    });
+
+  if (rendererMode === "sustainability") renderTempStrip();
+  updateTimelinePresentation();
+  updateSpreadButtonLabel();
+});
+
+document.getElementById("saveLayout").addEventListener("click", () => {
+  saveLayoutToLocFile();
+});
+
+document.getElementById("restoreLayout").addEventListener("click", () => {
+  document.getElementById("layoutInput").value = "";
+  document.getElementById("layoutInput").click();
+});
+
+document.getElementById("layoutInput").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if(!f) return;
+  await handleRestoreLayoutFile(f);
+});
+
+/* Update ribbon height on resize (only if visible) */
+window.addEventListener("resize", () => { if (showRibbon) syncRibbonHeight(); });
+
+/* -------------------- File loader -------------------- */
+document.getElementById("fileInput").addEventListener("change", async (e)=>{
+  const f = e.target.files?.[0];
+  if(!f) return;
+  try{
+    const txt = await f.text();
+    const json = JSON.parse(txt);
+    currentSourceFileName = f.name || null;
+    legendOrder = null;
+    timelineOverride = null;
+    spreadIndex = 0;
+    spreadMode = false;
+    selectedEventNodeId = null;
+    localGroupSpread.clear();
+    localGroupOriginalPositions.clear();
+    dirtyChronologyArcs.clear();
+    selectedGroupKey = null;
+    selectedGroupSet = new Set();
+    const validationErrors=render(json);
+    updateSpreadButtonLabel();
+    if(!validationErrors.length){
+      const profileLabel=json.planningProfile?.file ? ` · bound profile: ${json.planningProfile.file}` : "";
+      setBanner(`Loaded JSON: ${currentSourceFileName}${profileLabel}`, true);
+    }
+  }catch(err){
+    setBanner("Failed to load JSON: " + (err?.message||err), false); console.error(err);
+  }
+});
+
+/* -------------------- Initial state -------------------- */
+setBanner("Load a v2.2.15-compliant JSON to render (File ▶︎ choose JSON). Lineage links are ON by default.", true);
+/* Initialize ribbon height based on current content */
+requestAnimationFrame(syncRibbonHeight);
+updateSpreadButtonLabel();
+</script>
+</body>
+</html>

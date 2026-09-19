@@ -1,5 +1,12 @@
 {
   "articles": [
+   {
+  "title": "The Carbon Footprint Must Follow the Product",
+  "category": "Carbon Continuity & Lifecycle Evidence",
+  "theme": "Product carbon footprint, chain of custody, lifecycle continuity",
+  "highlight": "Carbon data cannot sit beside the product in a disconnected reporting layer. This article argues that product carbon footprints need to follow the physical lifecycle of the product through custody, transformation, movement, and use, so emissions claims can be connected to operational evidence rather than reconstructed after the fact.",
+  "url": "https://insights.lxndigital.com/p/the-carbon-footprint-must-follow"
+},
     {
   "title": "Differentiating Legitimate Transshipment from Origin Manipulation",
   "category": "Trade Compliance & Lifecycle Evidence",
