@@ -1,4 +1,30 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.lxndigital.com/sitemap.xml
+# Google Search and AI experiences use Google Search crawling infrastructure.
+User-agent: Googlebot
+Allow: /
+
+# Microsoft Copilot web answers are supported by Bing search infrastructure.
+User-agent: bingbot
+Allow: /
+
+# OpenAI search crawling for ChatGPT Search.
+User-agent: OAI-SearchBot
+Allow: /
+
+# OpenAI user-triggered browsing and training crawler controls.
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+# Anthropic crawler names commonly seen in robots.txt configurations.
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+Sitemap: https://lxndigital.com/sitemap.xml

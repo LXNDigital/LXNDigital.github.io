@@ -851,3 +851,24 @@ header.masthead .hero-resolution-copy p {
         content: "\2193"; /* Down arrow */
     }
 }
+.focus-definition {
+    border-left: 3px solid #07988B;
+    padding-left: 0.85rem;
+}
+
+.focus-definition summary {
+    cursor: pointer;
+    color: #07988B;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+}
+
+.focus-definition summary:hover {
+    text-decoration: underline;
+}
+
+.focus-definition p {
+    font-size: 0.875rem;
+    line-height: 1.55;
+}
