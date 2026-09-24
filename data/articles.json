@@ -1,6 +1,13 @@
 {
   "articles": [
    {
+  "title": "Orchestration Needs More Than AI",
+  "category": "Operational Continuity & AI",
+  "theme": "AI orchestration, operational context, lifecycle continuity",
+  "highlight": "AI can help identify affected commitments and compare response options, but inference is not the same as coordinated execution. This article explains why orchestration across value chains needs lifecycle continuity underneath it, so operational context survives across organisations, handoffs, commitments, and changing conditions.",
+  "url": "https://insights.lxndigital.com/p/orchestration-needs-more-than-ai"
+},
+{
   "title": "The Carbon Footprint Must Follow the Product",
   "category": "Carbon Continuity & Lifecycle Evidence",
   "theme": "Product carbon footprint, chain of custody, lifecycle continuity",
