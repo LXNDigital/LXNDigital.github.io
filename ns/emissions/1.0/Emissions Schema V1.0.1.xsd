@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:lxnem="https://lxndigital.com/ns/emissions/1.0"
+    targetNamespace="https://lxndigital.com/ns/emissions/1.0"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="1.0.1"
+    id="LXNDigital_Emissions_1_0_1">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      Emissions Schema V1.0.1, maintained by LXNDigital for voluntary global
+      business use as an optional extension to an EPCIS event. This edition is
+      a final publication candidate; its publication date is assigned when the
+      controlled artefacts are released.
+      Revision date: 26 September 2026.
+
+      Copyright 2026 LXNDigital. Permission is granted, without fee, to
+      implement and reference this schema and to reproduce or redistribute
+      unmodified copies with the LXNDigital source, object identifier and
+      edition retained accurately. Modified semantics must not use the
+      controlled object identifiers, namespace or OIDs or imply LXNDigital
+      approval, certification or endorsement. The schema is provided as is
+      without warranty.
+
+      Canonical schema identifier:
+      https://lxndigital.com/id/schema/emissions/1.0.1
+
+      Canonical schema location:
+      https://lxndigital.com/schemas/emissions/1.0/Emissions-Schema-V1.0.1.xsd
+
+      IANA Private Enterprise Number: 66369
+      Enterprise OID: 1.3.6.1.4.1.66369
+      Lifecycle Continuity OID: 1.3.6.1.4.1.66369.7
+      Emissions Guidance Family OID: 1.3.6.1.4.1.66369.7.2
+      Schema Family OID: 1.3.6.1.4.1.66369.7.2.2
+      Schema Edition OID: 1.3.6.1.4.1.66369.7.2.2.1.1.0.1
+      Schema Edition OID URN: urn:oid:1.3.6.1.4.1.66369.7.2.2.1.1.0.1
+
+      EventEmissions is not a standalone business object. Its context is the
+      enclosing EPCIS event. Event identity, products, quantities, input and
+      output relationships, parties, locations, times, business steps,
+      dispositions and transactions are inherited from that event and are not
+      repeated here.
+
+      The extension has four mutually exclusive record types.
+      CradleToGateCheckpoint is a cumulative product carbon footprint result at
+      a product-responsible organisation's outbound gate. It is normally placed
+      on an EPCIS event whose business step is shipping or consigning, or on
+      departing where the granular GS1 outbound pattern replaces shipping. It
+      includes all upstream and organisation-attributable product emissions
+      through that gate and replaces all earlier emissions inside its boundary.
+      The checkpoint is the declared cumulative PCF only. Direct and purchased-
+      energy activity occurring after it is recorded separately and is never
+      inserted into or added twice within the checkpoint.
+
+      DirectEmissionsContribution and PurchasedEnergyEmissionsContribution are
+      incremental, product-attributable results for qualifying physical
+      activities. For facility-based activities, the enclosing EPCIS event's
+      bizLocation anchors the physical facility and SourceOfTruthRef identifies
+      the Facility-activity operator and the applicable source-control or
+      energy-purchase or procurement basis. For transporting activities,
+      SourceOfTruthRef identifies the Transport-leg operator, the transport
+      activity boundary and the applicable responsibility basis. No LCS
+      authoring field is required.
+
+      LogisticsFootprintContribution is an incremental, product-attributable
+      life-cycle greenhouse-gas result for one physical logistics activity after
+      an applicable outbound checkpoint and before the next product-responsible
+      receiving boundary. Emissions Guidance V1.0.1 defines the permitted and
+      prohibited business steps. The XSD cannot inspect the enclosing EPCIS
+      business step, commercial segment or duplicate-event state; those are
+      mandatory semantic conformance rules.
+
+      Each record states a result in kgCO2e and a deterministic DeclaredUnit.
+      DeclaredUnit is either Count, for a positive whole number of selected
+      instances, or Measure plus Uom, where Uom is a two- or three-character
+      UN/CEFACT Recommendation 20 Common Code for length, area, volume or mass.
+      Implementations must validate the code against Recommendation 20 Annexes
+      Revision 17 (2021), reject status X or D, and reject other quantity types.
+      A later code-list revision may be used only where an exchange profile names
+      it and all participants apply it consistently. Packaging levels such as
+      pack, case and pallet are EPCIS
+      identities, not free-text units: one selected pack, case or pallet is
+      represented as Count 1. This quantity convention follows international
+      trade and EPCIS quantity semantics; it is not derived from a PACT PCF data
+      exchange unit enumeration.
+
+      AppliesToIdentifier, when present, selects an EPC, EPC class, quantity
+      class or parent identifier present in the enclosing event or
+      deterministically resolved in its containment state. SourceOfTruthRef
+      identifies the versioned calculation and evidence needed to test
+      methodological compatibility before arithmetic addition.
+
+      Corporate Scope 1, Scope 2 and Scope 3 classifications are reporter-
+      relative and intentionally outside this schema. DirectEmissionsContribution
+      and PurchasedEnergyEmissionsContribution are activity-source
+      classifications, not universal corporate-inventory labels. Corporate
+      Scope and Reporting-organisation-relative treatment are determined outside
+      the schema using the explicit analytical context and responsibility
+      evidence defined in Emissions Guidance V1.0.1. XML conformance requires
+      the XSD plus the semantic rules in that guidance. JSON-LD is outside the
+      normative conformance scope of this edition.
+    </xs:documentation>
+    <xs:appinfo source="https://lxndigital.com/id/schema/emissions/1.0.1">
+      canonicalIdentifier=https://lxndigital.com/id/schema/emissions/1.0.1;
+      canonicalSchemaLocation=https://lxndigital.com/schemas/emissions/1.0/Emissions-Schema-V1.0.1.xsd;
+      guidanceLandingPage=https://lxndigital.com/standards/emissions/1.0.1/;
+      targetNamespace=https://lxndigital.com/ns/emissions/1.0;
+      lifecycleContinuityOid=1.3.6.1.4.1.66369.7;
+      emissionsGuidanceFamilyOid=1.3.6.1.4.1.66369.7.2;
+      schemaFamilyOid=1.3.6.1.4.1.66369.7.2.2;
+      schemaEditionOid=1.3.6.1.4.1.66369.7.2.2.1.1.0.1;
+      schemaEditionOidUrn=urn:oid:1.3.6.1.4.1.66369.7.2.2.1.1.0.1;
+      schemaVersion=1.0.1;
+      status=final-publication-candidate;
+      publicationDate=unassigned-until-release;
+      standardsCurrencyDate=2026-09-26;
+      rights=Copyright-2026-LXNDigital-unmodified-redistribution-permitted;
+      usage=EPCIS-event-extension;
+      conformanceRepresentation=XML;
+      jsonLdStatus=informative-future-mapping;
+      declaredQuantityAuthority=UN-ECE-Recommendation-20-Common-Code;
+      declaredQuantityCodeListBaseline=Recommendation-20-Annexes-Revision-17-2021;
+      declaredPhysicalQuantities=length,area,volume,mass;
+      declaredQuantitySemantics=EPCIS-compatible-count-or-physical-measure;
+      recordTypes=cradle-to-gate-checkpoint,direct-emissions-contribution,purchased-energy-emissions-contribution,logistics-footprint-contribution;
+      checkpointComponents=none-cumulative-pcf-only;
+      checkpointBizSteps=shipping,consigning,departing-as-granular-outbound-gate;
+      logisticsBizSteps=loading,transporting,unloading,storing,holding,picking,staging_outbound,qualifying-packing,qualifying-unpacking,qualifying-repackaging,qualifying-logistics-inspecting;
+      prohibitedLogisticsBizSteps=shipping,consigning,departing,arriving,accepting,receiving,sensor_reporting,void_shipping;
+      responsibilityModel=source-of-truth-plus-epcis-context;
+      facilityActivityAnchor=bizLocation;
+      facilityOperatorAuthority=SourceOfTruthRef;
+      transportOperatorAuthority=SourceOfTruthRef;
+      reportingOrganisation=explicit-analysis-context;
+      lcsEventAuthorRequired=false;
+      corporateScopeClassification=outside-schema.
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="EventEmissions" type="lxnem:EventEmissionsType">
+    <xs:unique name="UniqueCheckpointAppliesToIdentifier">
+      <xs:selector xpath="lxnem:CradleToGateCheckpoint"/>
+      <xs:field xpath="lxnem:AppliesToIdentifier"/>
+    </xs:unique>
+    <xs:unique name="UniqueLogisticsAppliesToIdentifier">
+      <xs:selector xpath="lxnem:LogisticsFootprintContribution"/>
+      <xs:field xpath="lxnem:AppliesToIdentifier"/>
+    </xs:unique>
+    <xs:unique name="UniqueDirectEmissionsAppliesToIdentifier">
+      <xs:selector xpath="lxnem:DirectEmissionsContribution"/>
+      <xs:field xpath="lxnem:AppliesToIdentifier"/>
+    </xs:unique>
+    <xs:unique name="UniquePurchasedEnergyAppliesToIdentifier">
+      <xs:selector xpath="lxnem:PurchasedEnergyEmissionsContribution"/>
+      <xs:field xpath="lxnem:AppliesToIdentifier"/>
+    </xs:unique>
+  </xs:element>
+
+  <xs:simpleType name="NonNegativeDecimalType">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PositiveDecimalType">
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonEmptyUriType">
+    <xs:restriction base="xs:anyURI">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="GhgUnitType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="kgCO2e"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TradeUomCodeType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Two- or three-character alphanumeric lexical form for a UN/CEFACT
+        Recommendation 20 Common Code. XSD pattern validation does not prove
+        that a code is active or appropriate. Semantic validation must use the
+        Recommendation 20 Annexes Revision 17 (2021), limited to length, area,
+        volume or mass. Rows with status X or D and dimensionally incompatible
+        codes are prohibited. A later code-list revision may be used only when a
+        controlled exchange profile names it for all participants.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z0-9]{2,3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="PcfAmountType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Net product carbon footprint result. A negative amount is conforming only
+        where the referenced methodology permits the relevant removals or credits
+        and SourceOfTruthRef documents their treatment.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Amount" type="xs:decimal"/>
+      <xs:element name="Unit" type="lxnem:GhgUnitType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DeclaredUnitType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Deterministic quantity basis for the stated result. Use Count for a
+        positive whole number of selected EPC or EPC-class instances. Use
+        Measure and Uom for a positive physical quantity expressed with an
+        active UN/CEFACT Recommendation 20 Common Code. Count has no Uom because
+        EPCIS denotes instance counts by omitting a physical unit. A selected
+        pack, case, pallet or other logistics unit is an EPCIS identity and uses
+        Count 1; it is not represented by a free-text packaging unit.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="Count" type="xs:positiveInteger"/>
+      <xs:sequence>
+        <xs:element name="Measure" type="lxnem:PositiveDecimalType"/>
+        <xs:element name="Uom" type="lxnem:TradeUomCodeType"/>
+      </xs:sequence>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="CradleToGateCheckpointType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Cumulative PCF through the product-responsible supplier's outbound gate.
+        Omit AppliesToIdentifier only when one result applies to the complete
+        homogeneous product population identified by the event. If the event
+        needs several results, every checkpoint must contain a distinct selector
+        matching an identifier in the event or its deterministically resolved
+        containment state. The checkpoint is a replacement boundary: earlier
+        emissions included in it are not added.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AppliesToIdentifier" type="lxnem:NonEmptyUriType" minOccurs="0"/>
+      <xs:element name="Pcf" type="lxnem:PcfAmountType"/>
+      <xs:element name="DeclaredUnit" type="lxnem:DeclaredUnitType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EventContributionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Non-negative incremental product-attributable event result. The source
+        category is determined by the containing emissions element.
+        Responsibility is resolved semantically under Emissions Guidance V1.0.1
+        from the qualifying physical activity, its EPCIS context and
+        SourceOfTruthRef. Facility-based activities use bizLocation as the
+        physical facility anchor and SourceOfTruthRef to identify the
+        Facility-activity operator. Transporting activities use SourceOfTruthRef
+        to identify the Transport-leg operator and physical activity boundary.
+        No LCS authoring field is required. Party-relative analysis receives the
+        Reporting organisation as explicit analytical context.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AppliesToIdentifier" type="lxnem:NonEmptyUriType" minOccurs="0"/>
+      <xs:element name="Amount" type="lxnem:NonNegativeDecimalType"/>
+      <xs:element name="Unit" type="lxnem:GhgUnitType"/>
+      <xs:element name="DeclaredUnit" type="lxnem:DeclaredUnitType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LogisticsFootprintContributionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Incremental life-cycle GHG burden of the single qualifying physical
+        logistics activity represented by the enclosing event, expressed for the
+        declared quantity basis. It includes all material sources required by the
+        selected logistics method, such as direct fuel, upstream fuel and energy,
+        purchased electricity, storage or refrigeration energy, as applicable.
+        It is not labelled Scope 1, Scope 2 or Scope 3. It must be non-negative,
+        allocated to the selected event population and not duplicated in another
+        logistics event or checkpoint.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AppliesToIdentifier" type="lxnem:NonEmptyUriType" minOccurs="0"/>
+      <xs:element name="Amount" type="lxnem:NonNegativeDecimalType"/>
+      <xs:element name="Unit" type="lxnem:GhgUnitType"/>
+      <xs:element name="DeclaredUnit" type="lxnem:DeclaredUnitType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EventEmissionsType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Minimal emissions payload embedded as a direct vendor-extension child of
+        an EPCIS event, after all EPCIS standard fields and any EPCIS extension
+        element. It must never be nested inside the EPCIS extension element. The
+        payload contains one or more records of a single emissions kind,
+        followed by one required source-of-truth reference. Emissions Guidance
+        V1.0.1 supplies
+        the mandatory event-context, boundary, selection, allocation,
+        methodological-compatibility and double-counting rules.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="CradleToGateCheckpoint" type="lxnem:CradleToGateCheckpointType" maxOccurs="unbounded"/>
+        <xs:element name="DirectEmissionsContribution" type="lxnem:EventContributionType" maxOccurs="unbounded"/>
+        <xs:element name="PurchasedEnergyEmissionsContribution" type="lxnem:EventContributionType" maxOccurs="unbounded"/>
+        <xs:element name="LogisticsFootprintContribution" type="lxnem:LogisticsFootprintContributionType" maxOccurs="unbounded"/>
+      </xs:choice>
+      <xs:element name="SourceOfTruthRef" type="lxnem:NonEmptyUriType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
