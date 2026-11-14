@@ -1,5 +1,12 @@
 {
   "articles": [
+    {
+  "title": "The Maintenance Paradox",
+  "category": "Asset Lifecycle Continuity",
+  "theme": "Asset-intensive supply chains, maintenance intelligence, lifecycle continuity",
+  "highlight": "Sophisticated maintenance systems do not necessarily provide a continuous picture of an asset's operational history. This article explores how fragmented component histories, maintenance records, spares movements, and organisational handoffs can undermine asset availability, decision confidence, and operational performance.",
+  "url": "https://insights.lxndigital.com/p/the-maintenance-paradox-sophisticated"
+},
    {
   "title": "Orchestration Needs More Than AI",
   "category": "Operational Continuity & AI",
