@@ -15,19 +15,24 @@
   const chapterLabel = page => page.chapter === null ? 'Applied example · Air-domain MRO' : page.chapter === 0 ? 'Prologue · Opening context' : `Chapter ${page.chapter} · Section ${page.section}`;
   const pageLink = page => `#/concept/${page.id}`;
   const groups = [
-    {title:'Understand',ref:'Chapters 1–2',text:'Recognise the conditions that make a lifecycle actionable.',href:'#/area/understand'},
-    {title:'Map gaps',ref:'Chapter 3',text:'Find where movement, evidence and responsibility separate.',href:'#/chapters/3'},
-    {title:'Assess value',ref:'Chapter 4',text:'Distinguish useful protection from avoidable burden.',href:'#/chapters/4'},
-    {title:'Measure',ref:'Chapter 5',text:'Examine the gap, response and restoration of continuity.',href:'#/chapters/5'},
-    {title:'Embed',ref:'Chapter 10',text:'Make continuity part of ordinary management and learning.',href:'#/chapters/10'},
-    {title:'Prove',ref:'Chapter 8',text:'Establish what changed and whether the improvement holds.',href:'#/chapters/8'},
-    {title:'Redesign',ref:'Chapter 7',text:'Connect handoffs, authority and workable recovery.',href:'#/chapters/7'},
-    {title:'Test assumptions',ref:'Chapter 6',text:'Check that the conditions beneath the plan remain true.',href:'#/chapters/6'}
+    {id:'understand',chapters:[1,2],title:'Understand',ref:'Chapters 1–2',text:'Recognise the conditions that make a lifecycle actionable.',href:'#/area/understand'},
+    {id:'diagnose',chapters:[3],title:'Map gaps',ref:'Chapter 3',text:'Find where movement, evidence and responsibility separate.',href:'#/chapters/3'},
+    {id:'value',chapters:[4],title:'Assess value',ref:'Chapter 4',text:'Distinguish useful protection from avoidable burden.',href:'#/chapters/4'},
+    {id:'measure',chapters:[5],title:'Measure',ref:'Chapter 5',text:'Examine the gap, response and restoration of continuity.',href:'#/chapters/5'},
+    {id:'embed',chapters:[10],title:'Embed',ref:'Chapter 10',text:'Make continuity part of ordinary management and learning.',href:'#/chapters/10'},
+    {id:'prove',chapters:[8],title:'Prove',ref:'Chapter 8',text:'Establish what changed and whether the improvement holds.',href:'#/chapters/8'},
+    {id:'respond',chapters:[7],title:'Redesign',ref:'Chapter 7',text:'Connect handoffs, authority and workable recovery.',href:'#/chapters/7'},
+    {id:'plan',chapters:[6],title:'Test assumptions',ref:'Chapter 6',text:'Check that the conditions beneath the plan remain true.',href:'#/chapters/6'}
   ];
   const featuredIds = ['know-own-decide-recover','stock-present-unavailable','response-intervals','usable-recovery','evidence-before-scaling','mro-availability'];
-  const filters = [['all','All questions'],['understand','Understand'],['diagnose','Diagnose'],['value','Assess value'],['measure','Measure'],['plan','Plan'],['respond','Respond'],['prove','Prove'],['sustain','Sustainability'],['embed','Embed'],['case','Worked case']];
-  const defaultTags = {0:['understand'],1:['understand','diagnose'],2:['understand'],3:['diagnose'],4:['value'],5:['measure'],6:['plan'],7:['respond'],8:['prove'],9:['sustain'],10:['embed']};
-  const tagsFor = p => p.tags || (p.chapter===null?['case','diagnose','respond']:defaultTags[p.chapter]||[]);
+  // The questions and map share labels and chapter membership. Keep existing filter URLs valid.
+  const questionGroups = [
+    ...groups.slice().sort((a,b)=>a.chapters[0]-b.chapters[0]),
+    {id:'opening',title:'Opening context',chapters:[0]},
+    {id:'sustain',title:'Net Zero',chapters:[9]},
+    {id:'case',title:'MRO case',chapters:[null]}
+  ];
+  const filters = [['all','All questions'],...questionGroups.map(g=>[g.id,g.title])];
   function mapNode(g) {
     return `<a class="map-node" href="${g.href}"><span class="node-ref">${g.ref}<span class="node-open" aria-hidden="true">${arrow}</span></span><h3>${g.title}</h3><p>${g.text}</p></a>`;
   }
@@ -77,8 +82,9 @@
   function renderQuestions(filter='all') {
     document.title='Operating questions | Lifecycle Continuity Field Guide';
     if(!filters.some(([id])=>id===filter))filter='all';
-    const available=pages.filter(p=>filter==='all'||tagsFor(p).includes(filter));
-    return `<section class="content-page">${breadcrumbs([{label:'Operating questions'}])}<header><span class="eyebrow">Find a starting point</span><h1>Explore an operating question</h1><p class="page-intro">Begin with a situation you recognise. Each page explains the relevant connections and helps you identify what to examine in your own operation.</p></header><div class="filter-controls" role="group" aria-label="Filter operating questions">${filters.map(([v,label])=>`<button class="filter-button" data-filter="${v}" aria-pressed="${v===filter}">${label}</button>`).join('')}</div><p class="results-count">${available.length} ${available.length===1?'operating question':'operating questions'}</p><div class="result-list">${available.map(resultItem).join('')}</div></section>`;
+    const selectedGroup=questionGroups.find(g=>g.id===filter);
+    const available=pages.filter(p=>filter==='all'||selectedGroup.chapters.includes(p.chapter));
+    return `<section class="content-page">${breadcrumbs([{label:'Operating questions'}])}<header><span class="eyebrow">Find a starting point</span><h1>Explore an operating question</h1><p class="page-intro">Begin with a situation you recognise. Choose the same areas as the management map, or explore the opening context, Net Zero and the MRO case.</p></header><div class="filter-controls" role="group" aria-label="Filter operating questions">${filters.map(([v,label])=>`<button class="filter-button" data-filter="${v}" aria-pressed="${v===filter}">${label}</button>`).join('')}</div><p class="results-count">${available.length} ${available.length===1?'operating question':'operating questions'}</p><div class="result-list">${available.map(resultItem).join('')}</div></section>`;
   }
   function renderChapterIndex() {
     document.title='Browse chapters | Lifecycle Continuity Field Guide';
