@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#001624">
+  <meta name="author" content="Levine Naidoo">
+  <meta name="description" content="A visual field guide to Lifecycle Continuity. Explore the management map, start with an operating question, and connect diagrams to practical checks and evidence.">
+  <title>Lifecycle Continuity Field Guide | Levine Naidoo</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="guide.css">
+  <script src="content.js" defer></script>
+  <script src="chapters.js" defer></script>
+  <script src="guide.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <a class="brand-logo-link" href="https://lxndigital.com/" aria-label="LXNDigital home">
+          <img class="brand-logo" src="assets/lxn-logo.png" alt="LXNDigital" width="91" height="30">
+        </a>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <a class="brand-name" href="index.html" aria-label="Lifecycle Continuity Field Guide home">Lifecycle Continuity<span>Field Guide</span></a>
+      </div>
+      <nav class="header-nav" aria-label="Main navigation">
+        <a href="#/map" data-nav="map">The map</a>
+        <a href="#/questions" data-nav="questions">Operating questions</a>
+        <a href="#/chapters" data-nav="chapters">Chapters</a>
+        <a href="#/search" data-nav="search" class="search-link"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><span>Search</span></a>
+      </nav>
+      <button class="menu-button" id="menu-toggle" aria-controls="site-drawer" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Contents</span></button>
+    </div>
+  </header>
+  <div class="mobile-drawer" id="site-drawer" hidden>
+    <nav aria-label="Mobile navigation">
+      <a href="#/map">The management map</a>
+      <a href="#/questions">Explore an operating question</a>
+      <a href="#/chapters">Browse chapters</a>
+      <a href="#/search">Search the guide</a>
+      <a href="https://lxndigital.com/lifecycle-continuity-book/">Book resources</a>
+    </nav>
+  </div>
+  <main id="main-content" tabindex="-1">
+    <section class="loading-shell"><p class="eyebrow">A visual companion by Levine Naidoo</p><h1>Lifecycle Continuity Field Guide</h1><p>Preparing the management map…</p></section>
+    <noscript><section class="loading-shell"><h2>Reading the field guide</h2><p>Enable JavaScript to explore the chapter map and concept pages. You can also visit the <a href="https://lxndigital.com/lifecycle-continuity-book/">book resources page</a>.</p></section></noscript>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner"><div><strong>Lifecycle Continuity Field Guide</strong><p>By Levine Naidoo · A visual companion to the book</p></div><div class="footer-links"><span>Prologue · Ten chapters · Applied MRO case</span><a href="https://lxndigital.com/lifecycle-continuity-book/">Book resources <svg class="link-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div></div>
+  </footer>
+  <dialog class="diagram-dialog" id="diagram-dialog" aria-labelledby="diagram-dialog-title">
+    <div class="dialog-header"><div><span class="eyebrow">Diagram view</span><h2 id="diagram-dialog-title"></h2></div><button class="icon-button" id="close-diagram" aria-label="Close diagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="dialog-controls"><div><button id="zoom-out" aria-label="Zoom out">−</button><output id="zoom-value" aria-live="polite">100%</output><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset">Fit</button></div><p>Enlarge the diagram, then scroll to explore. Press Esc to close.</p></div>
+    <div class="diagram-viewport" id="diagram-viewport"><img id="dialog-image" alt=""></div>
+  </dialog>
+  <div class="sr-only" id="live-message" aria-live="polite"></div>
+</body>
+</html>
